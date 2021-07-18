@@ -1,0 +1,248 @@
+import "reflect-metadata";
+import { Response, Request } from "express";
+import { JsonController, Req, Res, Get, Post, QueryParams, UseBefore, Put, Delete } from "routing-controllers";
+import { Inject } from "typedi";
+import { ShortListService } from "../services/short-list-service";
+import { ResponseModel } from "../../common/models/response-model";
+import { PassportAuthMiddleware } from '../middleware/passport-auth-middleware';
+import { DatabaseService } from '../../common/services/database-service';
+const shortListModel = require('../models/mongoose/short-list');
+import fs from 'fs'
+import { promisify } from "util";
+const multer = require('multer');
+var upload = multer({ dest: 'short-listed/' })
+
+var storage = multer.diskStorage({
+	destination: function (req: any, file: any, cb: any) {
+	  cb(null, 'attached-files/')
+	},
+	filename: function (req: any, file: any, cb: any) {
+	  cb(null, file.originalname) //Appending .jpg
+	}
+  })
+  
+var uploadFile = multer({ storage: storage });
+
+const XLSX = require('xlsx');
+var excel = require('exceljs');
+
+const constants = require('../constants/constant');
+
+@JsonController(constants.appRoutingPrefix)
+@UseBefore(PassportAuthMiddleware)
+export class ShortListController {
+
+	@Inject()
+	private shortListService: ShortListService;
+
+	@Inject()
+    private _databaseService: DatabaseService;
+
+	@Post("/short-list-items/upload")
+	@UseBefore(
+		upload.single("file")
+	)
+	public async saveShortListedItems(
+		@Req() req: any,
+		@Res() res: Response,
+	): Promise<Response<ResponseModel<any>>> {
+		var workbook = XLSX.readFile(`short-listed/${req.file.filename}`);
+
+		const result = await this.shortListService.saveShortListedItems(req.body,workbook);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send({
+				hasErrors: true,
+				message: "Could not upload file!"
+			});		
+		}
+	}
+
+	@Get("/short-list-items/get")
+	public async getData(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+
+		const result = await this.shortListService.getData(query);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send({
+				hasErrors: true,
+				message: "No match found for shorlisting!"
+			});
+		}
+	}
+
+	@Put("/short-list-items/add")
+	public async addItem(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<Response<ResponseModel<any>>> {
+
+		const result = await this.shortListService.addItem(req.body);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send({
+				hasErrors: true,
+				message: "Couldn't add the item to the short list!"
+			});
+		}
+	}
+
+	@Put("/short-list-items/update-item")
+	public async updateItem(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<Response<ResponseModel<any>>> {
+
+		const result = await this.shortListService.updateItem(req.body);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send({
+				hasErrors: true,
+				message: "Could not update the item!"
+			});
+		}
+	}
+
+	@Delete("/short-list-items/delete-item/:id/:userName")
+	public async deleteItem(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<Response<ResponseModel<any>>> {
+
+		const result = await this.shortListService.deleteItem(req.params);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send({
+				hasErrors: true,
+				message: "Could not delete the item!"
+			});
+		}
+	}
+
+	@Put("/short-list-items/add-file")
+	@UseBefore(
+		uploadFile.single("file")
+	)
+	public async addFile(
+		@Req() req: any,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<Response<ResponseModel<any>>> {
+
+		const result = await this.shortListService.addFile(req.body,req.file);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send({
+				hasErrors: true,
+				message: "Could not add the file!"
+			});
+		}
+	}
+
+	@Get("/short-list-items/get-file")
+	public async getFile(
+		@Req() req: any,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+		try {
+			const directory = ((__dirname.split('/')).slice(0,6)).join('/'); 
+			const url = `${directory}/${query.destination}`;
+			await promisify<string, void>(res.download.bind(res))(url)
+			return res; 
+		} catch (error) {
+			console.log(error)
+		}
+	}
+	
+
+	@Get("/short-list-items/export-excel")
+	public async getExportedFile(
+		@Req() req: any,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+		try {
+            var Excel = require('exceljs');
+            var workbook = new Excel.Workbook();
+            var worksheet = workbook.addWorksheet('exported-shorlists-items');
+            worksheet.columns = [
+                { header: 'ID', key: 'itemId', width: 20 },
+                { header: 'Description', key: 'description', width: 45 },
+                { header: 'Unit', key: 'unit', width: 20 },
+                { header: 'Price', key: 'price', width: 20 },
+                { header: 'Amount', key: 'amount', width: 20 },
+                { header: 'Remarks', key: 'remarks', width: 50 },
+				{ header: 'Summary', key: 'summary', width: 100, innerHeight:200 },
+            ]
+            let rows: any[] = [];
+            const data = await this._databaseService.getManyItems(shortListModel , query);
+            if(data) {
+
+                data.forEach((item: any)=>{
+                    rows.push({
+                        itemId: item.itemId,
+                        description: item.description,
+                        unit: item.unit,
+                        price: item.price,
+                        amount: item.amount,
+                        remarks: item.remarks,
+						summary: '-',
+                    })
+                });
+
+                worksheet.addRows([...rows,{
+					summary: `Summaries: ${await this.shortListService.getSummaries(query)}`
+				}]);
+                res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                res.setHeader("Content-Disposition", "attachment; filename=" + 'exported-shortlists.xlsx');
+            
+                await workbook.xlsx.write(res); 
+				res.end();
+			}
+		} catch (error) {
+			res.send(error);			
+		}
+	}
+
+	@Get("/short-list-items/get-summary")
+	public async getSummary(
+		@Req() req: any,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+		try {
+			const result = await this.shortListService.getSummaries(req.params);
+			if (result) {
+				return res.send(result);
+			}
+		} catch (error) {
+			return res.send({
+				hasErrors:true,
+				message:"Couldn't get summary!"
+			})
+		}
+	}
+	
+
+
+}

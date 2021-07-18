@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+    web:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: supplier-short-list
+        restart: always
+        environment:
+            - DB_PORT=27017
+            - DB_NAME=supplier-short-list
+            - DB_HOSTNAME=mongoclientdb
+            - SSL_ENABLE_VALIDATION=false
+        ports:
+            - '3001:3001'
+        volumes:
+            - ./src:/app/src
+            - ./tests:/app/tests
+            - ./logs:/var/log/supplier-short-list-app-logs/
+    mongoclientdb:
+        image: mongo:latest
+        container_name: mongoclientdb
+        restart: always
+        ports:
+            - 27018:27017
+        volumes:
+            - dbdata:/data/db
+
+volumes:
+    dbdata:
