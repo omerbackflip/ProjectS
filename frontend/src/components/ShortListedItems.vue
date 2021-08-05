@@ -46,7 +46,7 @@
 		</div>
 		<div class="col-md-11">
 			<div class="search-wrapper d-flex">
-				<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="Search by description keywords..." style="width:15%">
+				<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="חפש מילים מסויימיות..." style="width:15%">
 				<button @click="loadShortListedItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
 					Search
 				</button>
@@ -57,7 +57,7 @@
 					<md-table-head>Description</md-table-head>
 					<md-table-head>Unit</md-table-head>
 					<md-table-head>Price</md-table-head>
-					<md-table-head>Amount</md-table-head>
+					<md-table-head style="width:11%">Amount</md-table-head>
 					<md-table-head>Total</md-table-head>
 					<md-table-head>Remarks</md-table-head>
 					<md-table-head>Controls</md-table-head>
@@ -72,8 +72,8 @@
 						{{item.unit}}</md-table-cell>
 					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
 						{{item.price}}</md-table-cell>
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						<input  @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
+					<md-table-cell  v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
+						<input class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
 					</md-table-cell>
 					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
 						{{item.amount * item.price}}</md-table-cell>
@@ -213,7 +213,7 @@ export default {
 		async updateItem(e,itemId, key) {
 			try {
 				const body = {};
-				if(e && e.target && e.target.value) {
+				if(e && e.target) {
 					body[key] = String(e.target.value);
 					body.itemId = itemId;
 					body.userName = this.user.userName;
@@ -312,6 +312,7 @@ export default {
 
 .md-column-description {
     max-width: 200px;
+	text-align: center !important;
 }
 
 .filters-container{
@@ -331,7 +332,7 @@ export default {
 }
 
 .width-controls{
-    width: 20px;
+    width: 5px;
 }
 
 .icon-clickable{
@@ -340,13 +341,15 @@ export default {
 .description-width{
 	width: 28% !important;
 }
-
+.amount-width{
+	width: 56% !important;
+}
 .remarks-width{
 	width: 20% !important;
 }
 
 .controls-width{
-	width: 25% !important;
+	width: 5% !important;
 	text-align-last: center;
 }
 

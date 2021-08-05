@@ -20,7 +20,7 @@ export const routes = [
         path: '/import-data',
     },
     {
-        title: 'Summary',
+        title: 'סיכום',
         icon: 'money',
         path: '/summary',
     },

@@ -1,0 +1,17 @@
+open front end command line
+just type "npm run serve"
+
+open backend command line
+just type "npm start"
+
+go to chrom and 
+http://localhost:8080
+
+
+___________________________
+
+User : admin
+Pass : p@ssWord
+
+User : Test1
+Pass : 123456

@@ -163,11 +163,13 @@ export class ShortListService {
         try {
             const payload: any = {};
 
-            if(body.remarks) {
+            if("remarks" in body) {
                 payload.remarks = body.remarks;
             }
 
-            if(body.amount) {
+            //This is the function for adding remarks or amount to the item
+
+            if("amount" in body) {
                 payload.amount = body.amount;
             }
 

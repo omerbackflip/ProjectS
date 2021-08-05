@@ -42,7 +42,7 @@
 					<md-table-head>Description</md-table-head>
 					<md-table-head>Unit</md-table-head>
 					<md-table-head>Price</md-table-head>
-					<md-table-head>Add to my short list</md-table-head>
+					<md-table-head>Add to short list</md-table-head>
 				</md-table-row>
 
 				<md-table-row :key="item.itemId" v-for="item of payableItems">
@@ -194,6 +194,7 @@ export default {
 
 .md-column-description {
     max-width: 200px;
+	text-align: right !important;
 }
 
 .filters-container{
