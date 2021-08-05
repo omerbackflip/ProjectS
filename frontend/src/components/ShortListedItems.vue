@@ -339,6 +339,7 @@ export default {
 }
 .description-width{
 	width: 28% !important;
+	text-align: right;
 }
 
 .remarks-width{
