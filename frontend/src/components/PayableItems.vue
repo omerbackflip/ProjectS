@@ -15,21 +15,46 @@
 	</div>
 	<template v-if="!isLoading && payableItems">
 	<div class="row">
-		<div class="col-md-1">
-			<div :key="page.itemId" v-for="(page) of idPrefixes" class="text-center item-wrapper mt-1">
-				<div class="row">
-					<div class="col">
-						<button @click="()=>onPageChange(page.itemId)" class="btn bg-primary mt-2 mb-2 text-white">
-							{{page.itemId}}
-						</button>
+		<div class="col-md-2">
+			<div  :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" class="text-center accordion mt-1" id="myAccordion">
+				<div class="card">
+					<div class="card-header" id="headingOne">
+						<h2 class="mb-0">
+							<button type="button" class="btn bg-primary text-white" data-toggle="collapse" :data-target="'#data'+page.itemId">
+								{{page.itemId}}	
+							</button>
+						</h2>
 					</div>
 					<div class="col description-box">
 						<span>{{page.description}}</span>
 					</div>
+					<div :id="'data'+page.itemId" class="collapse" aria-labelledby="headingOne" data-parent="#myAccordion">
+						<div class="card-body">
+							<template  v-for="(element,index) of page.subItems">
+								<button
+									class="item-decoration btn btn-link bg-blue"
+									v-show="index === 0"
+									:key="element.itemId+Math.floor(Math.random() * 2579) + index"
+									@click="()=>onPageChange(page.itemId)"
+								>
+								{{page.itemId}}
+								</button>
+								<div :key="page.itemId+Math.floor(Math.random() * 8325) + index" class="list-item">
+									<button
+										v-bind:class="{'bg-yellow':  element.itemId.length === 5 }"  
+										class="item-decoration btn btn-link"
+										@click="()=>onPageChange(element.itemId)"
+									>
+										{{element.itemId}}
+									</button>
+								</div>
+							</template>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-11">
+		<div class="col-md-10">
 			<div class="search-wrapper d-flex">
 				<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="Search by description keywords..." style="width:15%">
 				<button @click="loadPayableItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
@@ -45,7 +70,7 @@
 					<md-table-head>Add to my short list</md-table-head>
 				</md-table-row>
 
-				<md-table-row :key="item.itemId" v-for="item of payableItems">
+				<md-table-row v-bind:class="{'bg-green': item.added}" cl :key="item.itemId+Math.floor(Math.random() * 77824) + 'index'" v-for="item of payableItems">
 					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
 						{{item.itemId}}</md-table-cell>
 					<md-table-cell class="description-width" v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
@@ -54,8 +79,14 @@
 						{{item.unit}}</md-table-cell>
 					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
 						{{item.price}}</md-table-cell>
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						<input v-if="item.itemId.length === 10" @change="addToList(item.itemId)" type="checkbox" />
+					<md-table-cell v-if="item && item.itemId && !(item.added) && !(item.unit === 'הערה')" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
+						<input :checked="itemIds.includes(item.itemId)" v-if="item.itemId.length === 10" @change="addToList(item.itemId)" type="checkbox" />
+					</md-table-cell>
+					<md-table-cell v-if="item && item.itemId && (item.added)" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
+						<p v-if="item.itemId.length === 10">{{item.amount}}</p>
+					</md-table-cell>
+					<md-table-cell v-if="item && item.itemId && item.unit === 'הערה' && !(item.added)" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
+						<p v-if="item.itemId.length === 10"></p>
 					</md-table-cell>
 				</md-table-row>
 
@@ -106,7 +137,9 @@ export default {
 		async loadPayableItems() {
 			try {
 				this.isLoading = true;
-				const params = {};
+				const params = {
+					userName: this.user.userName
+				};
 				if(!(this.keyword)) {
 					params['itemId'] = this.idPrefix;
 				} else {
@@ -234,6 +267,23 @@ td{
 
 .description-width{
 	text-align: right;
+}
+
+.item-decoration{
+	text-decoration: none;
+	cursor: pointer;
+	margin-bottom: 4px;
+	color: black;
+}
+.bg-yellow{
+	color: yellow !important;
+}
+
+.bg-blue{
+	color: blue !important;
+}
+.bg-green{
+	background-color: lightgreen !important;
 }
 
 </style>

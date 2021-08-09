@@ -7,6 +7,7 @@ import { CustomErrorModel } from '../../common/models/custom-error-model';
 import { CustomInject } from '../../common/injector/custom-injector';
 import { PayableItemsResponseModel } from "../models/payable-items-response-model";
 import { ResponseModel } from "../../common/models/response-model";
+import { ShortListService } from "./short-list-service";
 
 const appConstants = require('../constants/constant');
 const appResponses = require('../../common/constants/app-responses');
@@ -38,7 +39,25 @@ export class PayableItemsService {
                 params["description"] = { "$regex": query.keyword , "$options": "i"};
             }
 
-            const allData = await payableItemsModel.find(params).sort({"itemId":1})
+            let allData = await payableItemsModel.find(params).sort({"itemId":1})
+            allData = await Promise.all(allData.map(async (data:any) => {
+                if(await shortListModel.exists({
+                    itemId: data.itemId,
+                    userName: query.userName
+                })) {
+                    const item = await shortListModel.findOne({
+                        itemId: data.itemId,
+                        userName: query.userName
+                    });
+
+                    let tempData = data.toObject();
+                    tempData.added = true;
+                    tempData.amount = item.amount;
+                    return tempData;
+                } else {
+                    return data;
+                }
+            }));
 
             const idPrefixes = await this.getIdPrefixes(payableItemsModel);
 
@@ -57,9 +76,16 @@ export class PayableItemsService {
         }
     }
 
-    public async getIdPrefixes(model: any) {
+    public async getIdPrefixes(model: any, userName? : any) {
         try {
-            let data = await model.find();
+            let data: any;
+            if(userName){
+               data = await model.find({
+                   userName
+               })
+            } else {
+                data = await model.find();                
+            }
             if(data) {
                 const unique = [ ... new Set(data.map((item: any) => {
                     return item.itemId.slice(0,2)
@@ -67,10 +93,8 @@ export class PayableItemsService {
                 return await Promise.all(unique.map(async (id: any) => {
                     return {
                         itemId: id,
-                        description: data.filter((el: any) => el.itemId === id)[0]?.description 
-                        ||
-                        (await this.getItemById({id}))?.description
-                        ,
+                        description: (await this.getItemById({id}))?.description ,
+                        subItems: data.filter((el: any) => el.itemId?.slice(0,2) === id && el.itemId.length !== 2 ),
                     }
                 }));
             }
@@ -88,6 +112,7 @@ export class PayableItemsService {
             if(data) {
                 const filteredData = [].concat.apply([], data).filter((element: any) => element!== null);
                 if(filteredData && filteredData.length) {
+                    await this.deletePayableItems();
                     await this._databaseService.addManyItems(payableItemsModel , this.getPayableItems(filteredData));
                     return {
                         hasErrors: false,
@@ -175,6 +200,11 @@ export class PayableItemsService {
 
     public async getCount() {
         return await this._databaseService.getDocumentCount(payableItemsModel,{});
+    }
+
+    public async deletePayableItems() {
+        await shortListModel.remove({});
+        return await payableItemsModel.remove({});
     }
     
 }

@@ -35,9 +35,7 @@ export default {
 	methods: {
 		async getSummary() {
 			try {
-				const response = await getSummary({
-					userName: this.user.userName
-				});
+				const response = await getSummary(this.user.userName);
 				if(response.data) {
 					this.summary = response.data;
 				} 		
@@ -46,9 +44,9 @@ export default {
 			}
 		},
 	},
-	created(){
+	async created(){
+		this.user = JSON.parse(await getUser());
 		this.getSummary();
-		this.user = JSON.parse(getUser());
 	}
 }
 </script>

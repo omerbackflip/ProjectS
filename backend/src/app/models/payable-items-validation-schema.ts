@@ -5,6 +5,7 @@ module.exports = {
         query: {
             itemId: Joi.any(),
             keyword: Joi.any(),
+            userName: Joi.any()
         },
     },
 }
