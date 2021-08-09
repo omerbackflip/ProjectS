@@ -340,6 +340,7 @@ export default {
 }
 .description-width{
 	width: 28% !important;
+	text-align: right;
 }
 .amount-width{
 	width: 56% !important;

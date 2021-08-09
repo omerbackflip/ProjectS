@@ -233,4 +233,8 @@ td{
     font-size: 10px;
 }
 
+.description-width{
+	text-align: right;
+}
+
 </style>
