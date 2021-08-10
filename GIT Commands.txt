@@ -1,0 +1,12 @@
+
+1. 	Git clone https://.....		Fatch files from Githab
+
+2. 	Git status				Show Differences
+
+3.	Git add .				Adding files  " . " or "-a" - means all files
+
+4.	Git commit -m "Add botton"		"m" stands for Massege
+
+5.	Git push				Pushing code from our mechine to the Github
+
+6.	Git pull				Pull version from Github

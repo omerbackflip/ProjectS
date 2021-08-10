@@ -33,6 +33,10 @@ export async function getCount() {
     return await get('/payable-items/get-count', {});
 }
 
+export async function deletePayableItems() {
+    return await put('/payable-items/delete', {});
+}
+
 // ****** SHORTLISTED ITEMS ******** //
 
 
@@ -86,8 +90,20 @@ export function logout() {
     return true;
 }
 
-export async function getSummary(query) {
-    return await get('/short-list-items/get-summary', query);
+export async function getSummary(userName) {
+    return await put('/short-list-items/get-summary', {userName});
+}
+
+export async function deleteShortListedItems(userName) {
+    return await put('/short-list-items/delete', {userName});
+}
+
+export async function copyShortListUser(users,userName) {
+    return await put('/short-list-items/copy', {users,userName});
+}
+
+export async function getImageById(query) {
+    return await get('/short-list-items/get-image', {}, query);
 }
 
 
@@ -99,4 +115,12 @@ export async function getAllUsers() {
 
 export async function createUser(payload) {
     return await post('/auth/createUser', payload);
+}
+
+export async function updateUserById(payload) {
+    return await put('/users/update', payload);
+}
+
+export async function deleteUserById(id) {
+    return await put('/users/delete/'+id);
 }

@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Response, Request } from "express";
-import { JsonController, Req, Res, Get, Post, QueryParams, UseBefore } from "routing-controllers";
+import { JsonController, Req, Res, Get, Post, QueryParams, UseBefore, Put } from "routing-controllers";
 import { Inject } from "typedi";
 import { UserService } from "../services/user-service";
 import { ResponseModel } from "../../common/models/response-model";
@@ -32,5 +32,36 @@ export class UsersController {
 		}
 	}
 	
+	@Put("/users/update")
+	public async updateUser(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<Response<ResponseModel<any>>> {
+
+		const result = await this.userService.updateUser(req.body);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send("Error");
+		}
+	}
+
+	@Put("/users/delete/:userId")
+	public async deleteUser(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<Response<ResponseModel<any>>> {
+
+		const result = await this.userService.deleteUser(req.params);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send("Error");
+		}
+	}
 
 }

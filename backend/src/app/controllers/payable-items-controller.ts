@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Response, Request } from "express";
-import { JsonController, Req, Res, Get, Post, QueryParams, UseBefore } from "routing-controllers";
+import { JsonController, Req, Res, Get, Post, QueryParams, UseBefore, Put } from "routing-controllers";
 import { Inject } from "typedi";
 import { PayableItemsService } from "../services/payable-items-service";
 import { ResponseModel } from "../../common/models/response-model";
@@ -91,6 +91,20 @@ export class PayableItemsController {
 		if(response){
 			res.send({
 				count:response,
+			});
+		}
+	}
+	
+	@Put("/payable-items/delete")
+	public async deletePayableItems(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+		const response = await this.payableItemsService.deletePayableItems();
+		if(response){
+			res.send({
+				success:true
 			});
 		}
 	}

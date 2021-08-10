@@ -165,7 +165,7 @@ export class ShortListController {
 		@QueryParams() query: any
 	): Promise<any> {
 		try {
-			const directory = ((__dirname.split('/')).slice(0,6)).join('/'); 
+			const directory = ((__dirname.split('/')).slice(0,7)).join('/'); 
 			const url = `${directory}/${query.destination}`;
 			await promisify<string, void>(res.download.bind(res))(url)
 			return res; 
@@ -211,7 +211,7 @@ export class ShortListController {
                 });
 
                 worksheet.addRows([...rows,{
-					summary: `Summaries: ${await this.shortListService.getSummaries(query)}`
+					summary: `Summaries: ${await this.shortListService.getSummaries(query,true)}`
 				}]);
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 res.setHeader("Content-Disposition", "attachment; filename=" + 'exported-shortlists.xlsx');
@@ -224,14 +224,14 @@ export class ShortListController {
 		}
 	}
 
-	@Get("/short-list-items/get-summary")
+	@Put("/short-list-items/get-summary")
 	public async getSummary(
 		@Req() req: any,
 		@Res() res: Response,
 		@QueryParams() query: any
 	): Promise<any> {
 		try {
-			const result = await this.shortListService.getSummaries(req.params);
+			const result = await this.shortListService.getSummaries(req.body);
 			if (result) {
 				return res.send(result);
 			}
@@ -243,6 +243,47 @@ export class ShortListController {
 		}
 	}
 	
+	@Put("/short-list-items/delete")
+	public async deleteShortListItems(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+		const response = await this.shortListService.deleteShortListItems(req.body);
+		if(response){
+			res.send({
+				success:true
+			});
+		}
+	}
 
+	@Put("/short-list-items/copy")
+	public async copyShortListItems(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+		const response = await this.shortListService.copyShortListItems(req.body);
+		if(response){
+			res.send({
+				success:true
+			});
+		}
+	}
+
+	@Get("/short-list-items/get-image")
+	public async getImage(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+		console.log("*******************");
+		console.log(query);
+		console.log("*******************");
+		const url = `${query.destination}`;
+		const bitmap: any = fs.readFileSync(url);
+		const base64:any = Buffer.from(bitmap).toString("base64");
+		res.send(base64);  // Send base64 instead of the raw file binary
+	}
 
 }

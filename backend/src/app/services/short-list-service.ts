@@ -39,14 +39,27 @@ export class ShortListService {
                     params["description"] = { "$regex": query.keyword , "$options": "i"};
                 }
 
-                const allData = await shortListModel.find(params).sort({"createdAt": -1})
+                let allData = await shortListModel.find(params).sort({"createdAt": -1})
                 
-                const idPrefixes = await this.payableItemsService.getIdPrefixes(shortListModel);
-
+                const idPrefixes = await this.payableItemsService.getIdPrefixes(shortListModel,query.userName);
+                
+                allData = allData.map((data:any) => {
+                    if(data.attachedFile) {
+                        const directory = ((__dirname.split('/')).slice(0,7)).join('/'); 
+                        const url = `${directory}/${data.attachedFile.path}`;    
+                        let tempData = data.toObject();
+                        tempData.attachedFile.urlImage = url;
+                        return tempData;
+                    }
+                    return data;
+                })
+                
+                delete params.userName
                 if (allData) {
                     return {
                         result:allData,
-                        idPrefixes
+                        idPrefixes,
+                        summaries: await this.getSummaries(params)
                     };
                 }
                 else {
@@ -58,7 +71,7 @@ export class ShortListService {
         }
     }
 
-    public async getSummaries(query: any) {
+    public async getSummaries(query: any, excel?: boolean) {
         try {
             const data = await this._databaseService.getManyItems(shortListModel , query);
             const priceIds = [... new Set(data.map((item:any) => item.itemId.slice(0,2)))];
@@ -71,10 +84,14 @@ export class ShortListService {
                             sum+=(el.price * el.amount) || 0;
                         }
                     });
-                    return {
-                        itemId:priceId,
-                        description:priceItem.description,
-                        total: sum,
+                    if(!excel) {
+                        return {
+                            itemId:priceId,
+                            description:priceItem.description,
+                            total: sum,
+                        }    
+                    } else {
+                        return `${priceId} - ${priceItem.description} - ${sum}`
                     }
                 }))
             }
@@ -90,6 +107,7 @@ export class ShortListService {
     public async saveShortListedItems(body: any, workbook: any) {
         try {
             var sheet_name_list = workbook.SheetNames;
+            await this.deleteShortListItems(body.userName);
             const data = this.payableItemsService.transformData(sheet_name_list , workbook);
             if(data) {
                 const filteredData = [].concat.apply([], data).filter((element: any) => element!== null);
@@ -243,6 +261,41 @@ export class ShortListService {
                 success:false,
                 error,
             }
+        }
+    }
+
+    public async deleteShortListItems(body?: any) {
+        if(body && body.userName) {
+            return await shortListModel.remove({userName: body.userName});
+        } else {
+            return await shortListModel.remove({});
+        }
+    }
+
+    public async copyShortListItems(body?: any) {
+        if(body && body.users) {
+            await Promise.all(body.users.map(async (user: any) => {
+                let items = await shortListModel.find({
+                    userName: body.userName
+                });
+                items = items.map((item: any) => {
+                    let tempData = item.toObject();
+                    tempData.userName = user;
+                    delete tempData._id;
+                    return tempData;
+                });
+                if(items && items.length) {
+                    await this._databaseService.addManyItems(
+                        shortListModel,
+                        items
+                    )
+                }
+            }));
+            return {
+                success: true
+            }
+        } else {
+            return await shortListModel.remove({});
         }
     }
 

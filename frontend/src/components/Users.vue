@@ -18,13 +18,19 @@
 			<input name="firstName" v-model="newUser.firstName" class="form-control"/>
 			<label class="mt-2 mb-2">Last name</label>
 			<input name="lastName" v-model="newUser.lastName" class="form-control"/>
-			<label class="mt-2 mb-2">Password name</label>
-			<input type="password" name="password" v-model="newUser.password" class="form-control"/>
+			<label class="mt-2 mb-2">Password</label>
+
+			<input type="password" v-if="!editMode"
+			v-model="newUser.password" autocomplete="off" class="form-control"/>
+
+			<input v-if="editMode" placeholder='Leave empty if not changed' type="password" 
+			v-model="updatedPassword" autocomplete="off" class="form-control"/>
+
 			<label class="mt-2 mb-2 mr-3 ml-3">Root user</label>
 			<input name="rootUser" v-model="newUser.rootUser" class="ml-3" type="checkbox"/>
 		</div>
 		<button type="submit" class="btn btn-success">
-			Submit
+			{{editMode ? 'Update' : 'Submit'}}
 		</button>
 	</form>
 
@@ -35,14 +41,29 @@
 			<md-table-head>Last Name</md-table-head>
 			<md-table-head>Root User</md-table-head>
 			<md-table-head>Date Created</md-table-head>
+			<md-table-head v-if="user.rootUser">Controls</md-table-head>
 		</md-table-row>
 
-		<md-table-row slot="md-table-row" :key="user.userName" v-for="user of users">
-			<md-table-cell>{{user.userName}}</md-table-cell>
-			<md-table-cell>{{user.firstName}}</md-table-cell>
-			<md-table-cell>{{user.lastName}}</md-table-cell>
-			<md-table-cell>{{user.rootUser ? 'Yes' : 'No'}}</md-table-cell>
-			<md-table-cell>{{user.createdAt | formatDate}}</md-table-cell>
+		<md-table-row slot="md-table-row" :key="userData.userName" v-for="userData of users">
+			<md-table-cell>{{userData.userName}}</md-table-cell>
+			<md-table-cell>{{userData.firstName}}</md-table-cell>
+			<md-table-cell>{{userData.lastName}}</md-table-cell>
+			<md-table-cell>{{userData.rootUser ? 'Yes' : 'No'}}</md-table-cell>
+			<md-table-cell>{{userData.createdAt | formatDate}}</md-table-cell>
+			<md-table-cell v-if="user.rootUser">
+				<div class="row">
+					<div class="col" @click="()=> deleteUser(userData._id)">
+						<md-icon class="control-icon">
+							delete
+						</md-icon>
+					</div>
+					<div class="col" @click="() => editUser(userData)">
+						<md-icon  class="control-icon">
+							edit
+						</md-icon>
+					</div>
+				</div>
+			</md-table-cell>
 		</md-table-row>
 
     </md-table>
@@ -51,7 +72,7 @@
 </template>
 
 <script>
-import { getAllUsers,createUser } from '../api';
+import { getAllUsers,createUser , updateUserById , deleteUserById } from '../api';
 import {getUser} from '../data/utils';
 import Vue from 'vue';
 import moment from 'moment';
@@ -76,6 +97,8 @@ export default {
 				password: '',
 				rootUser: false,
 			},
+			updatedPassword: '',
+			editMode: false,
 			message : '',
 			messageType : 'danger',
 		}
@@ -96,17 +119,29 @@ export default {
 				e.preventDefault();
 				const {userName , firstName , lastName , password} = this.newUser;
 				if(userName && firstName && lastName && password){
-					const response = await createUser(this.newUser);
+					let response;
+					if(this.editMode) {
+						delete this.newUser.password;
+						if(this.updatedPassword) {
+							this.newUser.password = this.updatedPassword;
+						}
+						response = await updateUserById(this.newUser);
+					} else {
+						response = await createUser(this.newUser);
+					}
 					if(response && !(response.hasErrors)) {
-						this.message = "User successfully created!";
+						this.message = "User successfully created/updated!";
 						this.messageType = "success";
-						newUser = {
+						this.newUser = {
 							userName: '',
 							firstName: '',
 							lastName: '',
 							password: '',
 							rootUser: false,
 						}
+						this.editMode= false;
+						this.openForm = false;
+						this.updatedPassword = '';
 						setTimeout(() => this.message = '', 4000);
 						this.getUsers();		
 					} 			
@@ -118,7 +153,25 @@ export default {
 			} catch (error) {
 				console.log(error);
 			}
-		}
+		},
+		editUser(user) {
+			this.openForm = true;
+			this.newUser = user;
+			this.editMode = true;
+		},
+		async deleteUser(id){
+			if(window.confirm("Are you sure you want to delete this user?")){
+				const response = await deleteUserById(id);
+				if(response && !(response.hasErrors)) {
+					this.message = "User successfully deleted!";
+					this.messageType = "success";
+					this.getUsers();
+				} else {
+					this.message = "Coundn't delete user!";
+					this.messageType = "danger";
+				}
+			}
+	  }
 	},
 	created(){
 		this.getUsers();
@@ -136,5 +189,8 @@ export default {
 
 td{
   text-align: -webkit-left;
+}
+.control-icon{
+	cursor: pointer;
 }
 </style>

@@ -1,56 +1,58 @@
 <template>
 <div class="main-container">
-	<div :class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
-		{{message}}
-	</div>
-	<div v-if="!(shortListedItems.length || keyword)" class="row">
-		<div class="float-right">
-			<input 
-				@change="onFileSelect($event)" 
-				id="fileSelect" 
-				ref="fileInput"
-				:disabled = "disableFileUpload"
-				type="file" 
-				accept=".xlsx, application/vnd.openxmlformds-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
-			/>
-		<button :disabled="!file || disableFileUpload" @click = "shortListItems()" class="mt-2 mb-2 btn btn-success">
-			Short List
-		</button>
-
-		</div>
-	</div>
 	<div class="row">
 		<div class="col">
 			<h2>Short Listed Items</h2>
 		</div>
 	</div>
-	<button v-show="shortListedItems.length" :disabled="!(shortListedItems.length)" @click = "exportExcel()" class="mt-2 mb-2 btn btn-primary ml-3">
-		<md-icon class="text-white">download</md-icon> Export Data
-	</button>
-
 	<template v-if="!isLoading && shortListedItems">
 	<div class="row">
-		<div class="col-md-1">
-			<div :key="page.itemId" v-for="(page) of idPrefixes" class="text-center item-wrapper">
-				<div class="row">
-					<div class="col">
-						<button @click="()=>onPageChange(page.itemId)" class="btn bg-primary mt-2 mb-2 text-white">
-							{{page.itemId}}
-						</button>
+		<div class="col-md-2">
+			<div  :key="page.itemId+Math.floor(Math.random() * 5870)" v-for="(page) of idPrefixes" class="text-center accordion mt-1" id="myAccordion">
+				<div class="card">
+					<div class="card-header" id="headingOne">
+						<h2 class="mb-0">
+							<button type="button" class="btn bg-primary text-white" data-toggle="collapse" :data-target="'#data'+page.itemId">
+								{{page.itemId}}	
+							</button>
+						</h2>
 					</div>
 					<div class="col description-box">
 						<span>{{page.description}}</span>
 					</div>
+					<div :id="'data'+page.itemId" class="collapse" aria-labelledby="headingOne" data-parent="#myAccordion">
+						<div class="card-body">
+							<template  v-for="(element,index) of page.subItems">
+								<button
+									class="item-decoration btn btn-link bg-blue"
+									v-show="index === 0"
+									:key="element.itemId+Math.floor(Math.random() * 1670) + page.itemId"
+									@click="()=>onPageChange(page.itemId)"
+								>
+								{{page.itemId}}
+								</button>
+								<div :key="element.itemId+Math.floor(Math.random() * 6897) + page.itemId" class="list-item">
+									<button
+										class="item-decoration btn btn-link "
+										@click="()=>onPageChange(element.itemId)"
+									>
+										{{element.itemId}}
+									</button>
+								</div>
+							</template>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-11">
+		<div class="col-md-10">
 			<div class="search-wrapper d-flex">
 				<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="חפש מילים מסויימיות..." style="width:15%">
 				<button @click="loadShortListedItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
 					Search
 				</button>
 			</div>
+			<div class="table-responsive">
 			<md-table v-model="shortListedItems" md-sort="ID" md-sort-order="asc" md-card>
 				<md-table-row>
 					<md-table-head>ID</md-table-head>
@@ -85,11 +87,16 @@
 					<md-table-cell class="controls-width" v-if="item && item.itemId">
 					<div class="row">
 						<div class="col">
-							<div v-if="!(item.attachedFile)">
+							<div class="width-0" v-if="!(item.attachedFile)">
 								<input 	ref="attachFile"  @input="addFile($event, item.itemId)" id="file-input" type="file"/>
 							</div>
-							<div v-if="(item.attachedFile)" class="image-upload">
-								<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+							<div v-if="(item.attachedFile)" class="image-upload ">
+								<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype)">
+									<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
+								</template>
+								<template v-else>
+									<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+								</template>
 							</div>
 						</div>
 						<div class="col">
@@ -101,6 +108,27 @@
 				</md-table-row>
 
 			</md-table> 
+			</div>
+
+		</div>
+		<div class="container mt-4">
+			<p class="ml-4">Summary</p>
+			<div v-if="summary && summary.length" class="ml-2">
+				<md-table v-model="summary" md-sort="name" md-sort-order="asc" md-card>
+					<md-table-row>
+						<md-table-head>ID</md-table-head>
+						<md-table-head>Description</md-table-head>
+						<md-table-head>Total</md-table-head>
+					</md-table-row>
+
+					<md-table-row slot="md-table-row" :key="sum.itemId" v-for="sum of summary">
+						<md-table-cell>{{sum.itemId}}</md-table-cell>
+						<md-table-cell>{{sum.description}}</md-table-cell>
+						<md-table-cell>{{sum.total}}</md-table-cell>
+					</md-table-row>
+
+				</md-table>
+			</div>
 		</div>
 	</div>
 	</template>
@@ -124,7 +152,8 @@ import {
 	deleteShortListItem,
 	exportData,
 	addFileToItem,
-	downloadAttachedFile
+	downloadAttachedFile,
+	getImageById
 } from '../api';
 import Paging from './Paging.vue';
 import {getUser} from '../data/utils';
@@ -163,8 +192,15 @@ export default {
 				}
 				const response = await getAllShortListedItems(params);
 				if (response.data) {
-					this.shortListedItems = response.data.result;
+					this.shortListedItems = await Promise.all(response.data.result.map(async (item) => {
+						if(item.attachedFile) {
+							console.log(item);
+							item.imageSrc = await getImageById({destination: item.attachedFile.urlImage});
+						}
+						return item;
+					}));
 					this.idPrefixes = response.data.idPrefixes;
+					this.summary = response.data.summaries;
 					this.isLoading = false;
 				}
 			} catch (error) {
@@ -384,5 +420,24 @@ td{
     padding: 5px;
     font-size: 10px;
 }
+.bg-yellow{
+	color: yellow !important;
+}
 
+.bg-blue{
+	color: blue !important;
+}
+.item-decoration{
+	text-decoration: none;
+	cursor: pointer;
+	margin-bottom: 4px;
+	color: black;
+}
+.width-0{
+	width: 160px !important;
+}
+.width-thumb{
+	width: 30px;
+	cursor: pointer;
+}
 </style>
