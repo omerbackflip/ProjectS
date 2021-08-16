@@ -187,32 +187,46 @@ export class ShortListController {
             var worksheet = workbook.addWorksheet('exported-shorlists-items');
             worksheet.columns = [
                 { header: 'ID', key: 'itemId', width: 20 },
-                { header: 'Description', key: 'description', width: 45 },
+                { header: 'Description', key: 'description', width: 75 },
                 { header: 'Unit', key: 'unit', width: 20 },
                 { header: 'Price', key: 'price', width: 20 },
                 { header: 'Amount', key: 'amount', width: 20 },
+				{ header: 'Total', key: 'total', width: 20 },
                 { header: 'Remarks', key: 'remarks', width: 50 },
-				{ header: 'Summary', key: 'summary', width: 100, innerHeight:200 },
             ]
             let rows: any[] = [];
             const data = await this._databaseService.getManyItems(shortListModel , query);
             if(data) {
 
-                data.forEach((item: any)=>{
+                data.forEach((item: any,index: number)=>{
                     rows.push({
                         itemId: item.itemId,
                         description: item.description,
                         unit: item.unit,
                         price: item.price,
                         amount: item.amount,
+						total: item.amount * item.price,
                         remarks: item.remarks,
-						summary: '-',
-                    })
+                    });
                 });
+				const summary = await this.shortListService.getSummaries(query,true);
+				if(summary && summary?.summary.length) {
+					rows.push({});
+					rows.push({});
+					summary.summary.forEach((sum: any) => {
+						rows.push({
+							description: sum
+						})
+					})
+					rows.push({
+						description:`Grand Total:  ${summary.grandTotal}`
+					})
+				}
+				
+                worksheet.addRows([
+					...rows,
+				]);
 
-                worksheet.addRows([...rows,{
-					summary: `Summaries: ${await this.shortListService.getSummaries(query,true)}`
-				}]);
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 res.setHeader("Content-Disposition", "attachment; filename=" + 'exported-shortlists.xlsx');
             
@@ -277,9 +291,6 @@ export class ShortListController {
 		@Res() res: Response,
 		@QueryParams() query: any
 	): Promise<any> {
-		console.log("*******************");
-		console.log(query);
-		console.log("*******************");
 		const url = `${query.destination}`;
 		const bitmap: any = fs.readFileSync(url);
 		const base64:any = Buffer.from(bitmap).toString("base64");

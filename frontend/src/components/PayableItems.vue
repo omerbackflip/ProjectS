@@ -13,7 +13,7 @@
 			</button>
 		</div>
 	</div>
-	<template v-if="!isLoading && payableItems">
+	<template >
 	<div class="row">
 		<div class="col-md-2">
 			<div  :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" class="text-center accordion mt-1" id="myAccordion">
@@ -61,7 +61,7 @@
 					Search
 				</button>
 			</div>
-			<md-table v-model="payableItems" md-sort="ID" md-sort-order="asc" md-card>
+			<md-table v-if="!isLoading && payableItems" v-model="payableItems" md-sort="ID" md-sort-order="asc" md-card>
 				<md-table-row>
 					<md-table-head>ID</md-table-head>
 					<md-table-head>Description</md-table-head>

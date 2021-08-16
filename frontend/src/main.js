@@ -15,8 +15,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
+import Element from 'element-ui'
 
 Vue.use(VueMaterial)
+Vue.use(Element)
 
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue)

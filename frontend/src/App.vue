@@ -132,6 +132,10 @@
 						</div>
 
         </div>    		  
+			<div class="ml-auto mt-2">
+				<md-icon>person</md-icon>
+				{{user.userName}}
+			</div>
           </md-app-toolbar>
           <md-app-content>
             <router-view/>

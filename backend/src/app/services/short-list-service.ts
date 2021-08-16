@@ -59,7 +59,9 @@ export class ShortListService {
                     return {
                         result:allData,
                         idPrefixes,
-                        summaries: await this.getSummaries(params)
+                        summaries: await this.getSummaries({
+                            userName: query.userName
+                        })
                     };
                 }
                 else {
@@ -76,7 +78,8 @@ export class ShortListService {
             const data = await this._databaseService.getManyItems(shortListModel , query);
             const priceIds = [... new Set(data.map((item:any) => item.itemId.slice(0,2)))];
             if(data && priceIds) {
-                return await Promise.all(priceIds.map( async (priceId: any) =>{
+                let response: any = {};
+                response.summary = await Promise.all(priceIds.map( async (priceId: any) =>{
                     let priceItem = await this._databaseService.getSingleItem(payableItemsModel, {itemId : priceId});
                     let sum = 0;
                     data.forEach((el: any)=> {
@@ -93,8 +96,14 @@ export class ShortListService {
                     } else {
                         return `${priceId} - ${priceItem.description} - ${sum}`
                     }
-                }))
-            }
+                }));
+                let total = 0;
+                data.forEach((num: any) => {
+                    total+=(num.price * num.amount) || 0;
+                })
+                response.grandTotal = total;
+                return response;
+          }
         } catch (error) {
             return {
                 success:false,

@@ -16,6 +16,9 @@
 			</md-table-row>
 
 		</md-table>
+		<div class="grand-total mt-3 ml-3">
+			<strong>Grand Total = {{grandTotal}}</strong>
+		</div>
 	</div>
 </div>
 </template>
@@ -30,6 +33,7 @@ export default {
 		return {
 			summary: [],
 			user: {},
+			grandTotal:0,
 		}
 	},
 	methods: {
@@ -37,7 +41,8 @@ export default {
 			try {
 				const response = await getSummary(this.user.userName);
 				if(response.data) {
-					this.summary = response.data;
+					this.summary = response.data.summary;
+					this.grandTotal = response.data.grandTotal;
 				} 		
 			} catch (error) {
 				console.log(error);

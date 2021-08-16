@@ -5,7 +5,7 @@
 			<h2>Short Listed Items</h2>
 		</div>
 	</div>
-	<template v-if="!isLoading && shortListedItems">
+	<template >
 	<div class="row">
 		<div class="col-md-2">
 			<div  :key="page.itemId+Math.floor(Math.random() * 5870)" v-for="(page) of idPrefixes" class="text-center accordion mt-1" id="myAccordion">
@@ -52,7 +52,7 @@
 					Search
 				</button>
 			</div>
-			<div class="table-responsive">
+			<div v-if="!isLoading && shortListedItems" class="table-responsive">
 			<md-table v-model="shortListedItems" md-sort="ID" md-sort-order="asc" md-card>
 				<md-table-row>
 					<md-table-head>ID</md-table-head>
@@ -84,14 +84,26 @@
 						class="form-control form-control-sm" type="text" :value="item.remarks"></textarea>	
 					</md-table-cell>
 
-					<md-table-cell class="controls-width" v-if="item && item.itemId">
+					<md-table-cell class="controls-" v-if="item && item.itemId">
 					<div class="row">
 						<div class="col">
-							<div class="width-0" v-if="!(item.attachedFile)">
-								<input 	ref="attachFile"  @input="addFile($event, item.itemId)" id="file-input" type="file"/>
+							<div  v-if="!(item.attachedFile)" class="image-upload">
+								<input
+									style="display: 'none'"
+									id="raised-button-file"
+									ref="attachFile"  @input="addFile($event, item.itemId)"
+									type="file"
+								/>
+								<label htmlFor="raised-button-file">
+								<div @click="openFilePicker()">
+									<md-icon class="icon-clickable" variant="raised" component="span" >
+										upload
+									</md-icon>
+								</div>
+								</label> 
 							</div>
 							<div v-if="(item.attachedFile)" class="image-upload ">
-								<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype)">
+								<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
 									<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
 								</template>
 								<template v-else>
@@ -112,22 +124,16 @@
 
 		</div>
 		<div class="container mt-4">
-			<p class="ml-4">Summary</p>
+			<p class="font-weight-bold ml-1">Summary</p>
 			<div v-if="summary && summary.length" class="ml-2">
-				<md-table v-model="summary" md-sort="name" md-sort-order="asc" md-card>
-					<md-table-row>
-						<md-table-head>ID</md-table-head>
-						<md-table-head>Description</md-table-head>
-						<md-table-head>Total</md-table-head>
-					</md-table-row>
-
-					<md-table-row slot="md-table-row" :key="sum.itemId" v-for="sum of summary">
-						<md-table-cell>{{sum.itemId}}</md-table-cell>
-						<md-table-cell>{{sum.description}}</md-table-cell>
-						<md-table-cell>{{sum.total}}</md-table-cell>
-					</md-table-row>
-
-				</md-table>
+				<div class="row justify-content-space-around">
+					<div class="col">
+						{{`${summary[0].itemId}-${summary[0].total }-${summary[0].description} `}}
+					</div>
+					<div class="col">
+						{{`Grand Total= ${grandTotal} `}}
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -171,6 +177,7 @@ export default {
 			isLoading : false,
 			file: '',
 			keyword: '',
+			grandTotal:0,
 			summary: [],
 			user : {},
 			message : '',
@@ -193,14 +200,21 @@ export default {
 				const response = await getAllShortListedItems(params);
 				if (response.data) {
 					this.shortListedItems = await Promise.all(response.data.result.map(async (item) => {
-						if(item.attachedFile) {
-							console.log(item);
-							item.imageSrc = await getImageById({destination: item.attachedFile.urlImage});
+						try {
+							if(item.attachedFile) {
+								item.imageSrc = await getImageById({destination: item.attachedFile.urlImage});
+							}
+							return item;							
+						} catch (error) {
+							console.log(error);
+							return item;
 						}
-						return item;
 					}));
 					this.idPrefixes = response.data.idPrefixes;
-					this.summary = response.data.summaries;
+					this.grandTotal = response.data?.summaries?.grandTotal;
+					this.summary = response.data?.summaries?.summary.filter(item =>{
+						return this.idPrefix === item.itemId
+					});
 					this.isLoading = false;
 				}
 			} catch (error) {
@@ -306,6 +320,9 @@ export default {
 		getExtension(filename) {
 			var i = filename.lastIndexOf('.');
 			return (i < 0) ? '' : filename.substr(i);
+		},
+		openFilePicker() {
+			document.getElementById("raised-button-file").click();
 		},
 		onPageChange(page) {
 			this.idPrefix = page;
@@ -439,5 +456,15 @@ td{
 .width-thumb{
 	width: 30px;
 	cursor: pointer;
+}
+.image-upload > input
+{
+    display: none;
+}
+
+.icon-image
+{
+    width: 80px;
+    cursor: pointer;
 }
 </style>
