@@ -94,7 +94,9 @@ export class PayableItemsService {
                     return {
                         itemId: id,
                         description: (await this.getItemById({id}))?.description ,
-                        subItems: userName ? data.map((el: any) => el.itemId?.slice(0,5)) : data.filter((el: any) => el.itemId?.slice(0,2) === id && el.itemId.length !== 2 && el.itemId.length !== 10 ),
+                        subItems: userName ?
+                            data.filter((el: any) => el.itemId?.slice(0,2) === id)  
+                            : data.filter((el: any) => el.itemId?.slice(0,2) === id && el.itemId.length !== 2 && el.itemId.length !== 10 ),
                     }
                 }));
             }

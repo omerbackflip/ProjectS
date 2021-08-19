@@ -16,6 +16,7 @@ import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 import Element from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(VueMaterial)
 Vue.use(Element)

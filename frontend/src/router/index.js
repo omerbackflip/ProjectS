@@ -7,6 +7,7 @@ import ImportData from '../components/ImportData.vue';
 import PayableItems from '../components/PayableItems.vue';
 import ShortListedItems from '../components/ShortListedItems.vue';
 import Summary from '../components/Summary.vue';
+import Test from '../components/ElementUI.vue';
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/test',
+    name: 'Test',
+    component: Test
   },
   {
     path: '/login',

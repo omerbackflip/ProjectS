@@ -14,88 +14,99 @@
 		</div>
 	</div>
 	<template >
-	<div class="row">
-		<div class="col-md-2">
-			<div  :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" class="text-center accordion mt-1" id="myAccordion">
-				<div class="card">
-					<div class="card-header" id="headingOne">
-						<h2 class="mb-0">
-							<button type="button" class="btn bg-primary text-white" data-toggle="collapse" :data-target="'#data'+page.itemId">
-								{{page.itemId}}	
-							</button>
-						</h2>
-					</div>
-					<div class="col description-box">
-						<span>{{page.description}}</span>
-					</div>
-					<div :id="'data'+page.itemId" class="collapse" aria-labelledby="headingOne" data-parent="#myAccordion">
-						<div class="card-body">
-							<template  v-for="(element,index) of page.subItems">
-								<button
-									class="item-decoration btn btn-link bg-blue"
-									v-show="index === 0"
-									:key="element.itemId+Math.floor(Math.random() * 2579) + index"
-									@click="()=>onPageChange(page.itemId)"
-								>
-								{{page.itemId}}
-								</button>
-								<div :key="page.itemId+Math.floor(Math.random() * 8325) + index" class="list-item">
-									<button
-										v-bind:class="{'bg-yellow':  element.itemId.length === 5 }"  
-										class="item-decoration btn btn-link"
-										@click="()=>onPageChange(element.itemId)"
-									>
-										{{element.itemId}}
-									</button>
-								</div>
-							</template>
-						</div>
-					</div>
-				</div>
-			</div>
+		<div class="search-wrapper d-flex">
+			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="Search by description keywords..." style="width:15%">
+			<button @click="loadPayableItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
+				Search
+			</button>
 		</div>
-		<div class="col-md-10">
-			<div class="search-wrapper d-flex">
-				<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="Search by description keywords..." style="width:15%">
-				<button @click="loadPayableItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
-					Search
-				</button>
-			</div>
-			<md-table v-if="!isLoading && payableItems" v-model="payableItems" md-sort="ID" md-sort-order="asc" md-card>
-				<md-table-row>
-					<md-table-head>ID</md-table-head>
-					<md-table-head>Description</md-table-head>
-					<md-table-head>Unit</md-table-head>
-					<md-table-head>Price</md-table-head>
-					<md-table-head>Add to short list</md-table-head>
-				</md-table-row>
+	<el-container style="height: 800px; border: 1px solid #eee">
+		<el-aside width="200px">
+			<el-menu>
+    		  <el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
+				<template #title><i class="el-icon-box"></i>{{page.itemId}}</template>
 
-				<md-table-row v-bind:class="{'bg-green': item.added}" cl :key="item.itemId+Math.floor(Math.random() * 77824) + 'index'" v-for="item of payableItems">
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.itemId}}</md-table-cell>
-					<md-table-cell class="description-width" v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.description}}</md-table-cell>
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.unit}}</md-table-cell>
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.price}}</md-table-cell>
-					<md-table-cell v-if="item && item.itemId && !(item.added) && !(item.unit === 'הערה')" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						<input :checked="itemIds.includes(item.itemId)" v-if="item.itemId.length === 10" @change="addToList(item.itemId)" type="checkbox" />
-					</md-table-cell>
-					<md-table-cell v-if="item && item.itemId && (item.added)" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						<p v-if="item.itemId.length === 10">{{item.amount}}</p>
-					</md-table-cell>
-					<md-table-cell v-if="item && item.itemId && item.unit === 'הערה' && !(item.added)" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						<p v-if="item.itemId.length === 10"></p>
-					</md-table-cell>
-				</md-table-row>
+				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
+				   <el-menu-item
+					 index="1-1"
+					v-show="index === 0"
+					:key="element.itemId+Math.floor(Math.random() * 2579) + index"
+					@click="()=>onPageChange(page.itemId)"
+					 >
+	 				{{page.itemId}}
+					</el-menu-item>
 
-			</md-table> 
-		</div>
-	</div>
+					<el-menu-item
+					 :index="String(index)"
+					 v-bind:class="{'bg-yellow':  element.itemId.length === 5 }" 
+					 @click="()=>onPageChange(element.itemId)"
+					 >
+	 				{{element.itemId}}
+					</el-menu-item>					
+				</el-menu-item-group>
 
-		
+			</el-submenu>
+			</el-menu>
+		</el-aside>
+			  <el-container>
+			    <el-header>
+					<p>Payable Items List</p>
+				</el-header>
+				<el-main>
 
+					<el-table 
+						v-if="!isLoading && payableItems" 
+						:data="payableItems"
+						border
+					>
+						
+						<el-table-column prop="itemId" label="ID" >
+							<span slot-scope="scope" v-bind:class="{'bg-green': scope.row.added ,'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
+								{{scope.row.itemId}}
+							</span>
+						</el-table-column>
+
+						<el-table-column width="600" prop="description" label="Description" >
+							<span class="description-width" slot-scope="scope" v-bind:class="{'bg-green': scope.row.added ,'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
+								{{scope.row.description}}
+							</span>
+						</el-table-column>
+
+						<el-table-column prop="unit" label="Unit" >
+							<span slot-scope="scope">
+								{{scope.row.unit}}
+							</span>
+						</el-table-column>
+						
+						<el-table-column prop="price" label="Price" >
+							<span slot-scope="scope">
+								{{scope.row.price}}
+							</span>					
+						</el-table-column>
+						
+						<el-table-column prop="" label="Add to short list" >
+						
+							<span slot-scope="scope" v-if="!(scope.row.added) && !(scope.row.unit === 'הערה')">
+								<el-checkbox size="small"
+								:checked="itemIds.includes(scope.row.itemId)" v-if="scope.row.itemId.length === 10" @change="addToList(scope.row.itemId)" type="checkbox" 
+									style="text-align:center"
+									controls-position="right">
+								</el-checkbox>
+							</span>
+							
+							<span slot-scope="scope"  v-else-if="(scope.row.added)">
+								<p v-if="scope.row.itemId.length === 10">{{scope.row.amount}}</p>
+							</span>				
+						
+							<span slot-scope="scope" v-else-if="scope.row.unit === 'הערה' && !(scope.row.added)">
+								<p v-if="scope.row.itemId.length === 10"></p>
+							</span>	
+						
+						</el-table-column>
+					</el-table>
+				</el-main>
+		</el-container>
+	</el-container>
 	</template>
 
 	<div v-if="!(payableItems.length) && !isLoading" class="mt-3 mb-4 text-center alert alert-warning container">

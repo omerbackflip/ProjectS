@@ -6,9 +6,157 @@
 		</div>
 	</div>
 	<template >
-	<div class="row">
-		<div class="col-md-2">
-			<div  :key="page.itemId+Math.floor(Math.random() * 5870)" v-for="(page) of idPrefixes" class="text-center accordion mt-1" id="myAccordion">
+		<div class="search-wrapper d-flex">
+			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="חפש מילים מסויימיות..." style="width:15%">
+			<button @click="loadShortListedItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
+				Search
+			</button>
+		</div>
+
+		<el-container v-if="(shortListedItems.length)" style="height: 400px; border: 1px solid #eee">
+			<el-aside width="200px">
+				<el-menu>
+				<el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
+					<template #title><i class="el-icon-box"></i>{{page.itemId}}</template>
+
+-					<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
+					<el-menu-item
+						index="1-1"
+						v-show="index === 0"
+						:key="element.itemId+Math.floor(Math.random() * 2579) + index"
+						@click="()=>onPageChange(page.itemId)"
+						>
+						{{page.itemId}}
+						</el-menu-item>
+
+						<el-menu-item
+						:index="String(index)"
+						v-bind:class="{'bg-yellow':  element.itemId.length === 5 }" 
+						@click="()=>onPageChange(element.itemId)"
+						>
+						{{element.itemId}}
+						</el-menu-item>					
+					</el-menu-item-group>
+
+				</el-submenu>
+				</el-menu>
+			</el-aside>
+
+			<el-container>
+			    <el-header>
+					<p>Short Listed Items List</p>
+				</el-header>
+				<el-main>
+
+					<el-table 
+						v-if="!isLoading && shortListedItems" 
+						:data="shortListedItems"
+						border
+					>
+
+						<el-table-column prop="itemId" label="ID" >
+							<span slot-scope="scope" v-bind:class="{'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
+								{{scope.row.itemId}}
+							</span>
+						</el-table-column>
+
+						<el-table-column width="600" prop="description" label="Description" >
+							<span class="description-width" slot-scope="scope" v-bind:class="{'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
+								{{scope.row.description}}
+							</span>
+						</el-table-column>
+
+						<el-table-column prop="unit" label="Unit" >
+							<span slot-scope="scope">
+								{{scope.row.unit}}
+							</span>
+						</el-table-column>
+						
+						<el-table-column prop="price" label="Price" >
+							<span slot-scope="scope">
+								{{scope.row.price}}
+							</span>					
+						</el-table-column>
+
+						<el-table-column prop="amount" label="Amount" >
+							<span slot-scope="scope">
+								<input class="amount-width" @change="updateItem($event, scope.row.itemId, 'amount')" :value="scope.row.amount" />	
+							</span>					
+						</el-table-column>
+						
+						<el-table-column prop="total" label="Total" >
+							<span slot-scope="scope">
+								{{scope.row.amount * scope.row.price}}							
+							</span>					
+						</el-table-column>
+
+						<el-table-column prop="remarks" label="Remarks" >
+							<span slot-scope="scope">
+								<textarea @change="updateItem($event, scope.row.itemId, 'remarks')"
+								class="form-control form-control-sm" type="text" :value="scope.row.remarks"></textarea>
+							</span>					
+						</el-table-column>
+
+						<el-table-column prop="remarks" label="Remarks" >
+							<span slot-scope="scope">
+								<div class="row">
+									<div class="col">
+										<div  v-if="!(scope.row.attachedFile)" class="image-upload">
+											<input
+												style="display: 'none'"
+												id="raised-button-file"
+												ref="attachFile"  @input="addFile($event, scope.row.itemId)"
+												type="file"
+											/>
+											<label htmlFor="raised-button-file">
+											<div @click="openFilePicker()">
+												<md-icon class="icon-clickable" variant="raised" component="span" >
+													upload
+												</md-icon>
+											</div>
+											</label> 
+										</div>
+										<div v-if="(scope.row.attachedFile)" class="image-upload ">
+											<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(scope.row.attachedFile.mimetype) && scope.row.imageSrc && scope.row.imageSrc.data">
+												<img @click="downloadFile(scope.row.attachedFile)" :src="`data:image/png;base64,${scope.row.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
+											</template>
+											<template v-else>
+												<button class="icon-button" @click="downloadFile(scope.row.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+											</template>
+										</div>
+									</div>
+									<div class="col">
+										<button class="icon-button" @click="deleteItem(scope.row.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
+									</div>
+								</div>
+							</span>					
+						</el-table-column>
+
+
+					</el-table>
+				</el-main>
+
+				<el-footer>
+					<p class="font-weight-bold ml-1">Summary</p>
+					<div v-if="summary && summary.length" class="ml-2">
+						<div class="row justify-content-space-around">
+							<div class="col">
+								{{`${summary[0].itemId}-${summary[0].total }-${summary[0].description} `}}
+							</div>
+							<div class="col">
+								{{`Grand Total= ${grandTotal} `}}
+							</div>
+						</div>
+					</div>
+
+				</el-footer>
+		</el-container>
+
+		</el-container>
+
+	</template>
+
+			<!-- <div  :key="page.itemId+Math.floor(Math.random() * 5870)" v-for="(page) of idPrefixes" class="text-center accordion mt-1" id="myAccordion">
 				<div class="card">
 					<div class="card-header" id="headingOne">
 						<h2 class="mb-0">
@@ -43,16 +191,10 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div class="col-md-10">
-			<div class="search-wrapper d-flex">
-				<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="חפש מילים מסויימיות..." style="width:15%">
-				<button @click="loadShortListedItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
-					Search
-				</button>
-			</div>
-			<div v-if="!isLoading && shortListedItems" class="table-responsive">
+			</div> -->
+
+
+			<!-- <div v-if="!isLoading && shortListedItems" class="table-responsive">
 			<md-table v-model="shortListedItems" md-sort="ID" md-sort-order="asc" md-card>
 				<md-table-row>
 					<md-table-head>ID</md-table-head>
@@ -119,35 +261,17 @@
 
 				</md-table-row>
 
-			</md-table> 
-			</div>
+			</md-table>  -->
 
+		<div v-if="!(shortListedItems.length)" class="mt-3 mb-4 text-center alert alert-warning container">
+			No Data has been short listed!
 		</div>
-		<div class="container mt-4">
-			<p class="font-weight-bold ml-1">Summary</p>
-			<div v-if="summary && summary.length" class="ml-2">
-				<div class="row justify-content-space-around">
-					<div class="col">
-						{{`${summary[0].itemId}-${summary[0].total }-${summary[0].description} `}}
-					</div>
-					<div class="col">
-						{{`Grand Total= ${grandTotal} `}}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	</template>
+		<template v-if="isLoading">
+			<md-progress-spinner></md-progress-spinner>
+		</template>
 
-	<div v-if="!(shortListedItems.length)" class="mt-3 mb-4 text-center alert alert-warning container">
-		No Data has been short listed!
 	</div>
 
-	<template v-if="isLoading">
-		<md-progress-spinner></md-progress-spinner>
-	</template>
-
-</div>
 </template>
 
 <script>
@@ -210,7 +334,22 @@ export default {
 							return item;
 						}
 					}));
-					this.idPrefixes = response.data.idPrefixes;
+					this.idPrefixes = response.data.idPrefixes.map(prefix=>{
+						return   {
+							...prefix,
+							subItems: prefix.subItems.map(el=>{
+								if(el.itemId?.length === 10){
+									return {
+										...el,
+										itemId:el.itemId.slice(0,5)
+									};
+								} else {
+									return el;
+								}
+							})
+						}				
+
+					});
 					this.grandTotal = response.data?.summaries?.grandTotal;
 					this.summary = response.data?.summaries?.summary.filter(item =>{
 						return this.idPrefix === item.itemId
