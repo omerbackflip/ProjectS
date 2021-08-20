@@ -46,6 +46,7 @@ export default {
 		}
     },
 	methods: {
+		// User to check if payload items are already uploaded
 		async checkForData(){
 			try {
 				const response = await getCount({});
@@ -58,6 +59,7 @@ export default {
 				console.log(error);
 			}
 		},
+		// file handler function
 		onFileSelect(event) {
 			event.preventDefault();
 			if (event && event.target && event.target.files[0]) {
@@ -79,6 +81,7 @@ export default {
 				this.file = event.target.files[0];
 			}
 		},
+		// Import data API call
 		async importData(){
 			try {
 				if(this.file){

@@ -3,39 +3,16 @@
 	<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
         {{message}}
     </div>
-	<div class="row">
-		<div class="col text-left">
-			<h2>Payable Items</h2>
-		</div>
-		<div class="align-button col mr-4">
-			<button @click="addToShortList()" class="btn btn-success float-right mb-2" :disabled="!(itemIds.length)" >
-				Add Items
-			</button>
-		</div>
-	</div>
 	<template >
-		<div class="search-wrapper d-flex">
-			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="Search by description keywords..." style="width:15%">
-			<button @click="loadPayableItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
-				Search
-			</button>
-		</div>
-	<el-container style="height: 800px; border: 1px solid #eee">
+	<el-container style="height: 1000px; border: 1px solid #eee">
 		<el-aside width="200px">
 			<el-menu>
     		  <el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
-				<template #title><i class="el-icon-box"></i>{{page.itemId}}</template>
-
+				<template #title>
+					<span @click="onPageChange(page.itemId)">{{page.itemId+' '+page.description}} </span>
+				</template>
+				
 				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
-				   <el-menu-item
-					 index="1-1"
-					v-show="index === 0"
-					:key="element.itemId+Math.floor(Math.random() * 2579) + index"
-					@click="()=>onPageChange(page.itemId)"
-					 >
-	 				{{page.itemId}}
-					</el-menu-item>
-
 					<el-menu-item
 					 :index="String(index)"
 					 v-bind:class="{'bg-yellow':  element.itemId.length === 5 }" 
@@ -50,7 +27,13 @@
 		</el-aside>
 			  <el-container>
 			    <el-header>
-					<p>Payable Items List</p>
+					<main-header
+						title="Payable Items List"
+						:payable="true"
+						@loadList="loadPayableItems"
+						:itemIds="itemIds"
+						@addList="addToShortList"
+					></main-header>
 				</el-header>
 				<el-main>
 
@@ -66,7 +49,7 @@
 							</span>
 						</el-table-column>
 
-						<el-table-column width="600" prop="description" label="Description" >
+						<el-table-column class="description-width" width="600" prop="description" label="Description" >
 							<span class="description-width" slot-scope="scope" v-bind:class="{'bg-green': scope.row.added ,'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
 								{{scope.row.description}}
 							</span>
@@ -124,11 +107,13 @@
 import { getAllPayableItems,addShortListItems } from '../api';
 import Paging from './Paging.vue';
 import {getUser} from '../data/utils';
+import MainHeader from './MainHeader.vue';
 
 export default {
 	name: 'Payable-Items',
 	components: {
 		Paging,
+		MainHeader
 	},
 	data() {
 		return {
@@ -145,16 +130,17 @@ export default {
 		}
 	},
 	methods: {
-		async loadPayableItems() {
+		//load all payable items list
+		async loadPayableItems(key) {
 			try {
 				this.isLoading = true;
 				const params = {
 					userName: this.user.userName
 				};
-				if(!(this.keyword)) {
+				if(!(this.keyword || key)) {
 					params['itemId'] = this.idPrefix;
 				} else {
-					params['keyword'] = this.keyword;
+					params['keyword'] = this.keyword || key;
 				}
 				const response = await getAllPayableItems(params);
 				if (response.data) {
@@ -167,6 +153,7 @@ export default {
 				this.isLoading = false;
 			}
 		},
+		//used to add items to short list
 		async addToShortList() {
 			try {
 				if(this.itemIds && this.itemIds.length) {
@@ -197,6 +184,7 @@ export default {
 			var i = filename.lastIndexOf('.');
 			return (i < 0) ? '' : filename.substr(i);
 		},
+		//pagination handler
 		onPageChange(page) {
 			this.idPrefix = page;
 			this.loadPayableItems();
@@ -266,6 +254,9 @@ td{
   text-align: -webkit-left;
   border-left: 1px solid #ececec;
 }
+.el-table td{
+	text-align: -webkit-right !important;
+}
 
 .page-select{
 	width: 23% !important;
@@ -277,9 +268,6 @@ td{
     font-size: 10px;
 }
 
-.description-width{
-	text-align: right;
-}
 
 .item-decoration{
 	text-decoration: none;

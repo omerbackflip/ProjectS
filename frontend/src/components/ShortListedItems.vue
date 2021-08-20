@@ -1,35 +1,16 @@
 <template>
 <div class="main-container">
-	<div class="row">
-		<div class="col">
-			<h2>Short Listed Items</h2>
-		</div>
-	</div>
 	<template >
-		<div class="search-wrapper d-flex">
-			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-3" type="text" placeholder="חפש מילים מסויימיות..." style="width:15%">
-			<button @click="loadShortListedItems" class="btn btn-primary btn-sm mt-2 mb-2 ml-2">
-				Search
-			</button>
-		</div>
-
-		<el-container v-if="(shortListedItems.length)" style="height: 600px; border: 1px solid #eee">
+		<el-container v-if="(shortListedItems.length)" style="height: 1000px; border: 1px solid #eee">
 			<el-aside width="200px">
 				<el-menu>
 				<el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" 
 				:index="String(index)+1">
-					<template #title><i class="el-icon-box"></i>{{page.itemId}}</template>
+					<template  #title>
+						<span @click="()=>onPageChange(page.itemId)">{{page.itemId+" "+page.description}}</span>
+					</template>
 
 				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
-					<el-menu-item
-						index="0"
-						v-show="index === 0"
-						:key="element+Math.floor(Math.random() * 2579) + index"
-						@click="()=>onPageChange(page.itemId)"
-						>
-						{{page.itemId}}
-						</el-menu-item>
-
 						<el-menu-item
 						:index="String(index)"
 						v-bind:class="{'bg-yellow':  element.length === 5 }" 
@@ -44,8 +25,13 @@
 			</el-aside>
 
 			<el-container>
-			    <el-header>
-					<p>Short Listed Items List</p>
+		    	<el-header>
+					<main-header
+						title="Short Listed Items"
+						:shortList="true"
+						@loadList="loadShortListedItems"
+					>
+					</main-header>
 				</el-header>
 				<el-main>
 
@@ -179,14 +165,15 @@ import {
 	downloadAttachedFile,
 	getImageById
 } from '../api';
-import Paging from './Paging.vue';
 import {getUser} from '../data/utils';
+import MainHeader from './MainHeader.vue';
 
 export default {
 	name: 'Short-Listed-Items',
 	components: {
-		Paging,
+		MainHeader	
 	},
+	//main data state used in component level
 	data() {
 		return {
 			shortListedItems: [],
@@ -204,16 +191,17 @@ export default {
 		}
 	},
 	methods: {
-		async loadShortListedItems() {
+		//basic load list function for short list
+		async loadShortListedItems(key) {
 			try {
 				this.isLoading = true;
 				const params = {
 					userName: this.user.userName,
 				};
-				if(!(this.keyword)) {
+				if(!(this.keyword || key)) {
 					params['itemId'] = this.idPrefix;
 				} else {
-					params['keyword'] = this.keyword;
+					params['keyword'] = this.keyword || key;
 				}
 				const response = await getAllShortListedItems(params);
 				if (response.data) {
@@ -255,6 +243,7 @@ export default {
 				this.isLoading = false;
 			}
 		},
+		//export excel list
 		async exportExcel(){
 			try {
 				window.open(`${exportData}?userName=${this.user.userName}`);	
@@ -262,6 +251,7 @@ export default {
 				console.log(error);
 			}
 		},
+		//file handler
 		onFileSelect(event) {
 			event.preventDefault();
 			if (event && event.target && event.target.files[0]) {
@@ -277,6 +267,7 @@ export default {
 				this.file = event.target.files[0];
 			}
 		},
+		//api call to import short list file
 		async shortListItems() {
 			try {
 				if(this.file) {
@@ -293,6 +284,7 @@ export default {
 				this.showMessage("Couln't upload the shortlist file",'danger');
 			}
 		},
+		//used to update remark or amount for short list item
 		async updateItem(e,itemId, key) {
 			try {
 				const body = {};
@@ -307,6 +299,7 @@ export default {
 				this.showMessage("Couln't upload the shortlist file",'danger');
 			}
 		},
+		//used to delete any short listed item
 		async deleteItem(itemId, key) {
 			try {
 				await deleteShortListItem(itemId,this.user.userName);
@@ -316,6 +309,7 @@ export default {
 				this.showMessage("Couln't upload the shortlist file",'danger');
 			}
 		},
+		//used to add file to a short list item
 		async addFile(event, itemId) {
 			try {
 				event.preventDefault();
@@ -329,6 +323,7 @@ export default {
 				this.showMessage("Couln't upload the file",'danger');
 			}
 		},
+		//used to download file for a short list item
 		async downloadFile(attachedFile) {
 			try {
 				if(attachedFile && attachedFile.path){

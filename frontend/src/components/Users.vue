@@ -1,14 +1,9 @@
 <template>
-<div class="container">
-	<h2>Users</h2>
+<div class="main-container">
 	<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert mt-4 mb-4" v-if="message">
 		{{message}}
 	</div>
-	<div v-if="user.rootUser">
-		<button @click="openForm = !openForm" class="btn btn-success mt-2 mb-2">
-			Create User
-		</button>
-	</div>
+
 
 	<form @submit="createUser($event)" v-if="openForm" class="form mt-3 mb-3 user-form">
 		<div class="form-group">
@@ -33,49 +28,86 @@
 			{{editMode ? 'Update' : 'Submit'}}
 		</button>
 	</form>
+	<el-container>
+		<el-aside width="200px" style="height:600px">
+			<el-menu>
+    		  <el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
+				<template #title>
+					<span @click="onPageChange(page.itemId)">{{page.itemId+' '+page.description}} </span>
+				</template>
+				
+				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
+					<el-menu-item
+					 :index="String(index)"
+					 v-bind:class="{'bg-yellow':  element.itemId.length === 5 }" 
+					 @click="()=>onPageChange(element.itemId)"
+					 >
+	 				{{element.itemId}}
+					</el-menu-item>					
+				</el-menu-item-group>
 
-	  <md-table v-model="users" md-sort="name" md-sort-order="asc" md-card>
-		<md-table-row>
-			<md-table-head>Username</md-table-head>
-			<md-table-head>First Name</md-table-head>
-			<md-table-head>Last Name</md-table-head>
-			<md-table-head>Root User</md-table-head>
-			<md-table-head>Date Created</md-table-head>
-			<md-table-head v-if="user.rootUser">Controls</md-table-head>
-		</md-table-row>
+			</el-submenu>
+			</el-menu>
+		</el-aside>
 
-		<md-table-row slot="md-table-row" :key="userData.userName" v-for="userData of users">
-			<md-table-cell>{{userData.userName}}</md-table-cell>
-			<md-table-cell>{{userData.firstName}}</md-table-cell>
-			<md-table-cell>{{userData.lastName}}</md-table-cell>
-			<md-table-cell>{{userData.rootUser ? 'Yes' : 'No'}}</md-table-cell>
-			<md-table-cell>{{userData.createdAt | formatDate}}</md-table-cell>
-			<md-table-cell v-if="user.rootUser">
+	  <el-container>
+		<el-header>
+			<main-header
+				title="Users"
+				:userProp="true"
+				@create="openForm = !openForm"
+			></main-header>
+		</el-header>
+	  <el-main>
+
+	 <el-table :data="users">
+        <el-table-column prop="userName" label="Username" width="140">
+        </el-table-column>
+        <el-table-column prop="firstName" label="First Name" width="120">
+        </el-table-column>
+        <el-table-column prop="lastName" label="Last Name">
+        </el-table-column>
+		<el-table-column prop="rootUser" label="Root User">
+			<template slot-scope="scope">
+				{{scope.row.rootUser ? 'Yes' : 'No'}}			
+			</template>
+        </el-table-column>
+		<el-table-column prop="createdAt" label="Date Created">
+			<template slot-scope="scope">
+				{{scope.row.createdAt | formatDate}}			
+			</template>
+        </el-table-column>
+		<el-table-column prop="" label="Controls">
+			<template slot-scope="scope">
 				<div class="row">
-					<div class="col" @click="()=> deleteUser(userData._id)">
+					<div class="col" @click="()=> deleteUser(scope.row._id)">
 						<md-icon class="control-icon">
 							delete
 						</md-icon>
 					</div>
-					<div class="col" @click="() => editUser(userData)">
+					<div class="col" @click="() => editUser(scope.row)">
 						<md-icon  class="control-icon">
 							edit
 						</md-icon>
 					</div>
 				</div>
-			</md-table-cell>
-		</md-table-row>
+			</template>
+        </el-table-column>
+      </el-table>
+	</el-main>
+	</el-container>
 
-    </md-table>
+	</el-container>
 
 </div>
 </template>
 
 <script>
-import { getAllUsers,createUser , updateUserById , deleteUserById } from '../api';
+import { getAllUsers,createUser , updateUserById , deleteUserById, getAllPayableItems } from '../api';
 import {getUser} from '../data/utils';
 import Vue from 'vue';
 import moment from 'moment';
+import MainHeader from './MainHeader.vue';
 
 Vue.filter('formatDate', function(value) {
     if (value) {
@@ -85,9 +117,13 @@ Vue.filter('formatDate', function(value) {
 
 export default {
 	name: 'Users',
+	components: {
+		MainHeader
+	},
 	data() {
 		return {
 			users: [],
+			idPrefixes: [],
 			user : {},
 			openForm : false,
 			newUser : {
@@ -104,6 +140,7 @@ export default {
 		}
 	},
 	methods: {
+		//get all users to show in the list
 		async getUsers() {
 			try {
 				const response = await getAllUsers();
@@ -114,6 +151,7 @@ export default {
 				console.log(error);
 			}
 		},
+		//used to create a user
 		async createUser(e) {
 			try {
 				e.preventDefault();
@@ -154,11 +192,30 @@ export default {
 				console.log(error);
 			}
 		},
+		onPageChange() {
+			this.$router.push('/payable-items-list');
+		},
+		async getPrefixes() {
+			try {
+				this.isLoading = true;
+				const params = {
+					userName: this.user.userName
+				};
+				const response = await getAllPayableItems(params);
+				if (response.data) {
+					this.idPrefixes = response.data.idPrefixes;
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		},
+		//edit user form open
 		editUser(user) {
 			this.openForm = true;
 			this.newUser = user;
 			this.editMode = true;
 		},
+		//used to delete a user from the DB
 		async deleteUser(id){
 			if(window.confirm("Are you sure you want to delete this user?")){
 				const response = await deleteUserById(id);
@@ -175,6 +232,7 @@ export default {
 	},
 	created(){
 		this.getUsers();
+		this.getPrefixes();
 		this.user = JSON.parse(getUser());
 	}
 }

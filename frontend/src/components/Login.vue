@@ -41,6 +41,8 @@ export default {
 		}
 	},
 	methods: {
+
+		//Login function to call login API
 		async login(e) {
 			try{
 				e.preventDefault();
