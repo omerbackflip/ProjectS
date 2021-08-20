@@ -13,17 +13,18 @@
 			</button>
 		</div>
 
-		<el-container v-if="(shortListedItems.length)" style="height: 400px; border: 1px solid #eee">
+		<el-container v-if="(shortListedItems.length)" style="height: 600px; border: 1px solid #eee">
 			<el-aside width="200px">
 				<el-menu>
-				<el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
+				<el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" 
+				:index="String(index)+1">
 					<template #title><i class="el-icon-box"></i>{{page.itemId}}</template>
 
--					<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
+				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
 					<el-menu-item
-						index="1-1"
+						index="0"
 						v-show="index === 0"
-						:key="element.itemId+Math.floor(Math.random() * 2579) + index"
+						:key="element+Math.floor(Math.random() * 2579) + index"
 						@click="()=>onPageChange(page.itemId)"
 						>
 						{{page.itemId}}
@@ -31,10 +32,10 @@
 
 						<el-menu-item
 						:index="String(index)"
-						v-bind:class="{'bg-yellow':  element.itemId.length === 5 }" 
-						@click="()=>onPageChange(element.itemId)"
+						v-bind:class="{'bg-yellow':  element.length === 5 }" 
+						@click="()=>onPageChange(element)"
 						>
-						{{element.itemId}}
+						{{element}}
 						</el-menu-item>					
 					</el-menu-item-group>
 
@@ -138,9 +139,9 @@
 
 				<el-footer>
 					<p class="font-weight-bold ml-1">Summary</p>
-					<div v-if="summary && summary.length" class="ml-2">
+					<div class="ml-2">
 						<div class="row justify-content-space-around">
-							<div class="col">
+							<div v-if="summary && summary.length" class="col">
 								{{`${summary[0].itemId}-${summary[0].total }-${summary[0].description} `}}
 							</div>
 							<div class="col">
@@ -155,113 +156,6 @@
 		</el-container>
 
 	</template>
-
-			<!-- <div  :key="page.itemId+Math.floor(Math.random() * 5870)" v-for="(page) of idPrefixes" class="text-center accordion mt-1" id="myAccordion">
-				<div class="card">
-					<div class="card-header" id="headingOne">
-						<h2 class="mb-0">
-							<button type="button" class="btn bg-primary text-white" data-toggle="collapse" :data-target="'#data'+page.itemId">
-								{{page.itemId}}	
-							</button>
-						</h2>
-					</div>
-					<div class="col description-box">
-						<span>{{page.description}}</span>
-					</div>
-					<div :id="'data'+page.itemId" class="collapse" aria-labelledby="headingOne" data-parent="#myAccordion">
-						<div class="card-body">
-							<template  v-for="(element,index) of page.subItems">
-								<button
-									class="item-decoration btn btn-link bg-blue"
-									v-show="index === 0"
-									:key="element.itemId+Math.floor(Math.random() * 1670) + page.itemId"
-									@click="()=>onPageChange(page.itemId)"
-								>
-								{{page.itemId}}
-								</button>
-								<div :key="element.itemId+Math.floor(Math.random() * 6897) + page.itemId" class="list-item">
-									<button
-										class="item-decoration btn btn-link "
-										@click="()=>onPageChange(element.itemId)"
-									>
-										{{element.itemId}}
-									</button>
-								</div>
-							</template>
-						</div>
-					</div>
-				</div>
-			</div> -->
-
-
-			<!-- <div v-if="!isLoading && shortListedItems" class="table-responsive">
-			<md-table v-model="shortListedItems" md-sort="ID" md-sort-order="asc" md-card>
-				<md-table-row>
-					<md-table-head>ID</md-table-head>
-					<md-table-head>Description</md-table-head>
-					<md-table-head>Unit</md-table-head>
-					<md-table-head>Price</md-table-head>
-					<md-table-head style="width:11%">Amount</md-table-head>
-					<md-table-head>Total</md-table-head>
-					<md-table-head>Remarks</md-table-head>
-					<md-table-head>Controls</md-table-head>
-				</md-table-row>
-
-				<md-table-row :key="item.itemId" v-for="item of shortListedItems">
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.itemId}}</md-table-cell>
-					<md-table-cell class="description-width" v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.description}}</md-table-cell>
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.unit}}</md-table-cell>
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.price}}</md-table-cell>
-					<md-table-cell  v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						<input class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
-					</md-table-cell>
-					<md-table-cell v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						{{item.amount * item.price}}</md-table-cell>
-					<md-table-cell class="remarks-width" v-if="item && item.itemId" v-bind:class="{'area-wrapper': item.itemId.length === 2 , 'sub-area-wrapper':  item.itemId.length === 5 }">
-						<textarea @change="updateItem($event, item.itemId, 'remarks')"
-						class="form-control form-control-sm" type="text" :value="item.remarks"></textarea>	
-					</md-table-cell>
-
-					<md-table-cell class="controls-" v-if="item && item.itemId">
-					<div class="row">
-						<div class="col">
-							<div  v-if="!(item.attachedFile)" class="image-upload">
-								<input
-									style="display: 'none'"
-									id="raised-button-file"
-									ref="attachFile"  @input="addFile($event, item.itemId)"
-									type="file"
-								/>
-								<label htmlFor="raised-button-file">
-								<div @click="openFilePicker()">
-									<md-icon class="icon-clickable" variant="raised" component="span" >
-										upload
-									</md-icon>
-								</div>
-								</label> 
-							</div>
-							<div v-if="(item.attachedFile)" class="image-upload ">
-								<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
-									<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
-								</template>
-								<template v-else>
-									<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
-								</template>
-							</div>
-						</div>
-						<div class="col">
-							<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
-						</div>
-					</div>
-					</md-table-cell>
-
-				</md-table-row>
-
-			</md-table>  -->
 
 		<div v-if="!(shortListedItems.length)" class="mt-3 mb-4 text-center alert alert-warning container">
 			No Data has been short listed!
@@ -335,7 +229,7 @@ export default {
 						}
 					}));
 					this.idPrefixes = response.data.idPrefixes.map(prefix=>{
-						return   {
+						const preData = {
 							...prefix,
 							subItems: prefix.subItems.map(el=>{
 								if(el.itemId?.length === 10){
@@ -347,8 +241,8 @@ export default {
 									return el;
 								}
 							})
-						}				
-
+						}			
+						return {...preData , subItems: [...new Set(preData.subItems.map(id => id.itemId))]};
 					});
 					this.grandTotal = response.data?.summaries?.grandTotal;
 					this.summary = response.data?.summaries?.summary.filter(item =>{
