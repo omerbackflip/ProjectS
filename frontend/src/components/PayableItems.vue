@@ -9,13 +9,13 @@
 			<el-menu>
     		  <el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
 				<template #title>
-					<span @click="onPageChange(page.itemId)">{{page.itemId+' '+page.description}} </span>
+					<span @click="onPageChange(page.itemId)">{{page.itemId+'-'+page.description}} </span>
 				</template>
 				
 				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
 					<el-menu-item
 					 :index="String(index)"
-					 v-bind:class="{'bg-yellow':  element.itemId.length === 5 }" 
+					 v-bind:class="{'bg-blue':  element.itemId.length === 5 }" 
 					 @click="()=>onPageChange(element.itemId)"
 					 >
 	 				{{element.itemId}}
@@ -25,8 +25,8 @@
 			</el-submenu>
 			</el-menu>
 		</el-aside>
-			  <el-container>
-			    <el-header>
+		<el-container>
+			<el-header>
 					<main-header
 						title="Payable Items List"
 						:payable="true"
@@ -34,40 +34,38 @@
 						:itemIds="itemIds"
 						@addList="addToShortList"
 					></main-header>
-				</el-header>
-				<el-main>
+			</el-header>
+			<el-main>
 
-					<el-table 
-						v-if="!isLoading && payableItems" 
-						:data="payableItems"
-						border
-					>
+					<el-table v-if="!isLoading && payableItems" :data="payableItems" border>
 						
-						<el-table-column prop="itemId" label="ID" >
-							<span slot-scope="scope" v-bind:class="{'bg-green': scope.row.added ,'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
+						<el-table-column prop="itemId" label="ID" width="100">
+							<span slot-scope="scope" v-bind:class="{'bg-green': scope.row.added,'area-wrapper': scope.row.itemId.length === 2, 
+									'sub-area-wrapper':  scope.row.itemId.length === 5 }">
 								{{scope.row.itemId}}
 							</span>
 						</el-table-column>
 
-						<el-table-column class="description-width" width="600" prop="description" label="Description" >
-							<span class="description-width" slot-scope="scope" v-bind:class="{'bg-green': scope.row.added ,'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
+						<el-table-column class="description-width" width="1250" prop="description" label="Description" align="right">
+							<span class="description-width" slot-scope="scope" v-bind:class="{'bg-green': scope.row.added,'area-wrapper': scope.row.itemId.length === 2, 
+									'sub-area-wrapper':  scope.row.itemId.length === 5 }">
 								{{scope.row.description}}
 							</span>
 						</el-table-column>
 
-						<el-table-column prop="unit" label="Unit" >
+						<el-table-column prop="unit" label="Unit" width="70" align="right">
 							<span slot-scope="scope">
 								{{scope.row.unit}}
 							</span>
 						</el-table-column>
 						
-						<el-table-column prop="price" label="Price" >
+						<el-table-column prop="price" label="Price" width="60">
 							<span slot-scope="scope">
 								{{scope.row.price}}
 							</span>					
 						</el-table-column>
 						
-						<el-table-column prop="" label="Add to short list" >
+						<el-table-column prop="" label="Add to Paka" width="105" align="center">
 						
 							<span slot-scope="scope" v-if="!(scope.row.added) && !(scope.row.unit === 'הערה')">
 								<el-checkbox size="small"
@@ -87,7 +85,7 @@
 						
 						</el-table-column>
 					</el-table>
-				</el-main>
+			</el-main>
 		</el-container>
 	</el-container>
 	</template>

@@ -1,3 +1,5 @@
+root : npm install
+
 open front end command line
 just type "npm run serve"
 

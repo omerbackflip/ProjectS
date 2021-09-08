@@ -1,26 +1,19 @@
 <template>
 <div class="main-container">
 	<template >
-		<el-container v-if="(shortListedItems.length)" style="height: 1000px; border: 1px solid #eee">
+		<el-container v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
 			<el-aside width="200px">
 				<el-menu>
-				<el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" 
-				:index="String(index)+1">
-					<template  #title>
-						<span @click="()=>onPageChange(page.itemId)">{{page.itemId+" "+page.description}}</span>
-					</template>
-
-				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
-						<el-menu-item
-						:index="String(index)"
-						v-bind:class="{'bg-yellow':  element.length === 5 }" 
-						@click="()=>onPageChange(element)"
-						>
-						{{element}}
-						</el-menu-item>					
-					</el-menu-item-group>
-
-				</el-submenu>
+					<el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes"	:index="String(index)+1">
+						<template  #title>
+							<span @click="()=>onPageChange(page.itemId)">{{page.itemId+" "+page.description}}</span>
+						</template>
+						<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
+							<el-menu-item :index="String(index)" v-bind:class="{'bg-blue':  element.length === 5 }" @click="()=>onPageChange(element)">
+								{{element}}
+							</el-menu-item>					
+						</el-menu-item-group>
+					</el-submenu>
 				</el-menu>
 			</el-aside>
 
@@ -33,6 +26,7 @@
 					>
 					</main-header>
 				</el-header>
+
 				<el-main>
 
 					<el-table 
@@ -41,50 +35,50 @@
 						border
 					>
 
-						<el-table-column prop="itemId" label="ID" >
+						<el-table-column prop="itemId" label="ID" width="100">
 							<span slot-scope="scope" v-bind:class="{'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
 								{{scope.row.itemId}}
 							</span>
 						</el-table-column>
 
-						<el-table-column width="600" prop="description" label="Description" >
+						<el-table-column width="800" prop="description" label="Description" align="right">
 							<span class="description-width" slot-scope="scope" v-bind:class="{'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
 								{{scope.row.description}}
 							</span>
 						</el-table-column>
 
-						<el-table-column prop="unit" label="Unit" >
+						<el-table-column prop="unit" label="Unit" width="70" align="right">
 							<span slot-scope="scope">
 								{{scope.row.unit}}
 							</span>
 						</el-table-column>
 						
-						<el-table-column prop="price" label="Price" >
+						<el-table-column prop="price" label="Price" width="60">
 							<span slot-scope="scope">
 								{{scope.row.price}}
 							</span>					
 						</el-table-column>
 
-						<el-table-column prop="amount" label="Amount" >
+						<el-table-column prop="amount" label="Amount" width="100">
 							<span slot-scope="scope">
 								<input class="amount-width" @change="updateItem($event, scope.row.itemId, 'amount')" :value="scope.row.amount" />	
 							</span>					
 						</el-table-column>
 						
-						<el-table-column prop="total" label="Total" >
+						<el-table-column prop="total" label="Total" width="100">
 							<span slot-scope="scope">
 								{{scope.row.amount * scope.row.price}}							
 							</span>					
 						</el-table-column>
 
-						<el-table-column prop="remarks" label="Remarks" >
+						<el-table-column prop="remarks" label="Remarks" width="250">
 							<span slot-scope="scope">
 								<textarea @change="updateItem($event, scope.row.itemId, 'remarks')"
 								class="form-control form-control-sm" type="text" :value="scope.row.remarks"></textarea>
 							</span>					
 						</el-table-column>
 
-						<el-table-column prop="remarks" label="Remarks" >
+						<el-table-column prop="IMG" label="IMG" >
 							<span slot-scope="scope">
 								<div class="row">
 									<div class="col">
@@ -113,22 +107,23 @@
 										</div>
 									</div>
 									<div class="col">
-										<button class="icon-button" @click="deleteItem(scope.row.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
 									</div>
 								</div>
 							</span>					
 						</el-table-column>
 
-
+						<el-table-column prop="DEL" label="DEL" >
+							<button class="icon-button" @click="deleteItem(scope.row.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
+						</el-table-column>
 					</el-table>
 				</el-main>
 
 				<el-footer>
 					<p class="font-weight-bold ml-1">Summary</p>
 					<div class="ml-2">
-						<div class="row justify-content-space-around">
+						<div class="row justify-content-space-around font-weight-bold" >
 							<div v-if="summary && summary.length" class="col">
-								{{`${summary[0].itemId}-${summary[0].total }-${summary[0].description} `}}
+								{{`  ${summary[0].description}  -  	${summary[0].itemId} 		 ${summary[0].total } 	`}}
 							</div>
 							<div class="col">
 								{{`Grand Total= ${grandTotal} `}}
@@ -137,7 +132,7 @@
 					</div>
 
 				</el-footer>
-		</el-container>
+			</el-container>
 
 		</el-container>
 
@@ -150,7 +145,7 @@
 			<md-progress-spinner></md-progress-spinner>
 		</template>
 
-	</div>
+</div>
 
 </template>
 
@@ -257,7 +252,7 @@ export default {
 			if (event && event.target && event.target.files[0]) {
 				const {name , size} = event.target.files[0];
 				const type = this.getExtension(name);
-				if (!(['.xls','.xlsx'].includes(type))) {
+				if (!(['.xls','.xlsx','.docx'].includes(type))) {
 					this.showMessage(`Sorry! ${type} is not supported!` , 'danger');
 					return;
 				} else if ((size / 1024 / 1024) > 1) {
@@ -426,8 +421,8 @@ export default {
 .amount-width{
 	width: 56% !important;
 }
-.remarks-width{
-	width: 20% !important;
+.IMG-width{
+	width: 10% !important;
 }
 
 .controls-width{
