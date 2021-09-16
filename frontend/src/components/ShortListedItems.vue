@@ -1,8 +1,8 @@
 <template>
 <div class="main-container">
 	<template >
-		<el-container v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
-			<el-aside width="200px">
+		<template v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
+			<!-- <el-aside width="200px">
 				<el-menu>
 					<el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes"	:index="String(index)+1">
 						<template  #title>
@@ -15,78 +15,68 @@
 						</el-menu-item-group>
 					</el-submenu>
 				</el-menu>
-			</el-aside>
+			</el-aside> -->
 
-			<el-container>
-		    	<el-header>
+		    	<!-- <el-header>
 					<main-header
 						title="Short Listed Items"
 						:shortList="true"
 						@loadList="loadShortListedItems"
 					>
 					</main-header>
-				</el-header>
+				</el-header> -->
 
-				<el-main>
+					<template  v-if="!isLoading && shortListedItems">
+						<v-simple-table class="mt-2" border dense>
+							<template v-slot:default>
+							<thead>
+								<tr>
+									<th class="text-left"> ID </th>
+									<th class="text-left"> Description</th>
+									<th class="text-left"> Unit </th>
+									<th class="text-left"> Price </th>
+									<th class="text-left"> Amount </th>
+									<th class="text-left"> Total </th>
+									<th class="text-left"> Remarks </th>
+									<th class="text-left"> IMG </th>
+									<th class="text-left"> DEL </th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr
+								v-for="item in shortListedItems"
+								:key="item.itemId"
+								>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{ item.itemId }}
+									</td>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{ item.description }}
+									</td>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{ item.unit }}
+									</td>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{ item.price }}
+									</td>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										<input class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
+									</td>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{item.amount * item.price}}
+									</td>
+							
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										<textarea @change="updateItem($event, item.itemId, 'remarks')"
+										class="form-control form-control-sm" type="text" :value="item.remarks"></textarea>
+									</td>
 
-					<el-table 
-						v-if="!isLoading && shortListedItems" 
-						:data="shortListedItems"
-						border
-					>
-
-						<el-table-column prop="itemId" label="ID" width="100">
-							<span slot-scope="scope" v-bind:class="{'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
-								{{scope.row.itemId}}
-							</span>
-						</el-table-column>
-
-						<el-table-column width="800" prop="description" label="Description" align="right">
-							<span class="description-width" slot-scope="scope" v-bind:class="{'area-wrapper': scope.row.itemId.length === 2 , 'sub-area-wrapper':  scope.row.itemId.length === 5 }">
-								{{scope.row.description}}
-							</span>
-						</el-table-column>
-
-						<el-table-column prop="unit" label="Unit" width="70" align="right">
-							<span slot-scope="scope">
-								{{scope.row.unit}}
-							</span>
-						</el-table-column>
-						
-						<el-table-column prop="price" label="Price" width="60">
-							<span slot-scope="scope">
-								{{scope.row.price}}
-							</span>					
-						</el-table-column>
-
-						<el-table-column prop="amount" label="Amount" width="100">
-							<span slot-scope="scope">
-								<input class="amount-width" @change="updateItem($event, scope.row.itemId, 'amount')" :value="scope.row.amount" />	
-							</span>					
-						</el-table-column>
-						
-						<el-table-column prop="total" label="Total" width="100">
-							<span slot-scope="scope">
-								{{scope.row.amount * scope.row.price}}							
-							</span>					
-						</el-table-column>
-
-						<el-table-column prop="remarks" label="Remarks" width="250">
-							<span slot-scope="scope">
-								<textarea @change="updateItem($event, scope.row.itemId, 'remarks')"
-								class="form-control form-control-sm" type="text" :value="scope.row.remarks"></textarea>
-							</span>					
-						</el-table-column>
-
-						<el-table-column prop="IMG" label="IMG" >
-							<span slot-scope="scope">
-								<div class="row">
-									<div class="col">
-										<div  v-if="!(scope.row.attachedFile)" class="image-upload">
+									<td >
+										<span  v-if="!(item.attachedFile)" class="image-upload">
 											<input
 												style="display: 'none'"
 												id="raised-button-file"
-												ref="attachFile"  @input="addFile($event, scope.row.itemId)"
+												ref="attachFile"  @input="addFile($event, item.itemId)"
 												type="file"
 											/>
 											<label htmlFor="raised-button-file">
@@ -96,29 +86,28 @@
 												</md-icon>
 											</div>
 											</label> 
-										</div>
-										<div v-if="(scope.row.attachedFile)" class="image-upload ">
-											<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(scope.row.attachedFile.mimetype) && scope.row.imageSrc && scope.row.imageSrc.data">
-												<img @click="downloadFile(scope.row.attachedFile)" :src="`data:image/png;base64,${scope.row.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
+										</span>
+										<div v-if="(item.attachedFile)" class="image-upload ">
+											<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
+												<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
 											</template>
 											<template v-else>
-												<button class="icon-button" @click="downloadFile(scope.row.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+												<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
 											</template>
 										</div>
-									</div>
-									<div class="col">
-									</div>
-								</div>
-							</span>					
-						</el-table-column>
+									</td>
 
-						<el-table-column prop="DEL" label="DEL" >
-							<button class="icon-button" @click="deleteItem(scope.row.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
-						</el-table-column>
-					</el-table>
-				</el-main>
+									<td >
+										<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
+									</td>
+									
+								</tr>
+							</tbody>
+							</template>
+						</v-simple-table>
+						</template>
 
-				<el-footer>
+
 					<p class="font-weight-bold ml-1">Summary</p>
 					<div class="ml-2">
 						<div class="row justify-content-space-around font-weight-bold" >
@@ -131,10 +120,7 @@
 						</div>
 					</div>
 
-				</el-footer>
-			</el-container>
-
-		</el-container>
+		</template>
 
 	</template>
 

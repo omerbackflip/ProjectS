@@ -18,8 +18,14 @@ import 'vue-material/dist/theme/default.css'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+
 Vue.use(VueMaterial)
 Vue.use(Element)
+
+Vue.use(Vuetify)
 
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue)
@@ -30,5 +36,9 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  vuetify: new Vuetify(),
+    icons: {
+    iconfont: 'mdi', // default - only for display purposes
+  },
   render: h => h(App)
 }).$mount('#app')

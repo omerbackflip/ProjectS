@@ -3,8 +3,11 @@
       <div class="page-container">
         <md-app class="full-height">
           <md-app-content>
-            <router-view/>
+              <main-header
+              title="Dashboard"
+            ></main-header>
           </md-app-content>
+
         </md-app>
       </div>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -14,13 +17,19 @@
 
 <script>
 import {isLoggedIn} from './data/utils';
+import MainHeader from './components/MainHeader.vue';
 
 export default {
 	name: 'Dashboard',
 	data: () => ({
 		isDataImported: false,
 		isLoggedIn: isLoggedIn() ? true : false,
+    drawer: false,
+    group:null,
 	}),
+  components: {
+		MainHeader
+	},
 	methods:{
 	}
 }

@@ -4,8 +4,7 @@
         {{message}}
     </div>
 	<template >
-	<el-container style="height: 1000px; border: 1px solid #eee">
-		<el-aside width="200px">
+		<!-- <el-aside width="200px">
 			<el-menu>
     		  <el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
 				<template #title>
@@ -24,9 +23,9 @@
 
 			</el-submenu>
 			</el-menu>
-		</el-aside>
-		<el-container>
-			<el-header>
+		</el-aside> -->
+
+			<!-- <el-header>
 					<main-header
 						title="Payable Items List"
 						:payable="true"
@@ -34,60 +33,60 @@
 						:itemIds="itemIds"
 						@addList="addToShortList"
 					></main-header>
-			</el-header>
-			<el-main>
+			</el-header> -->
 
-					<el-table v-if="!isLoading && payableItems" :data="payableItems" border>
-						
-						<el-table-column prop="itemId" label="ID" width="100">
-							<span slot-scope="scope" v-bind:class="{'bg-green': scope.row.added,'area-wrapper': scope.row.itemId.length === 2, 
-									'sub-area-wrapper':  scope.row.itemId.length === 5 }">
-								{{scope.row.itemId}}
-							</span>
-						</el-table-column>
+					<template  v-if="!isLoading && payableItems">
+						<v-simple-table class="mt-2" border dense>
+							<template v-slot:default>
+							<thead>
+								<tr>
+									<th class="text-left"> ID </th>
+									<th class="text-left"> Description</th>
+									<th class="text-left"> Unit </th>
+									<th class="text-left"> Price </th>
+									<th class="text-left"> Add to Paka </th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr
+								v-for="item in payableItems"
+								:key="item.itemId"
+								>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{ item.itemId }}
+									</td>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{ item.description }}
+									</td>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{ item.unit }}
+									</td>
+									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+										{{ item.price }}
+									</td>
 
-						<el-table-column class="description-width" width="1250" prop="description" label="Description" align="right">
-							<span class="description-width" slot-scope="scope" v-bind:class="{'bg-green': scope.row.added,'area-wrapper': scope.row.itemId.length === 2, 
-									'sub-area-wrapper':  scope.row.itemId.length === 5 }">
-								{{scope.row.description}}
-							</span>
-						</el-table-column>
+									<td  v-if="!(item.added) && !(item.unit === 'הערה')">
+										<el-checkbox size="small"
+										:checked="itemIds.includes(item.itemId)" v-if="item.itemId.length === 10" @change="addToList(item.itemId)" type="checkbox" 
+											style="text-align:center"
+											controls-position="right">
+										</el-checkbox>
+									</td>
 
-						<el-table-column prop="unit" label="Unit" width="70" align="right">
-							<span slot-scope="scope">
-								{{scope.row.unit}}
-							</span>
-						</el-table-column>
-						
-						<el-table-column prop="price" label="Price" width="60">
-							<span slot-scope="scope">
-								{{scope.row.price}}
-							</span>					
-						</el-table-column>
-						
-						<el-table-column prop="" label="Add to Paka" width="105" align="center">
-						
-							<span slot-scope="scope" v-if="!(scope.row.added) && !(scope.row.unit === 'הערה')">
-								<el-checkbox size="small"
-								:checked="itemIds.includes(scope.row.itemId)" v-if="scope.row.itemId.length === 10" @change="addToList(scope.row.itemId)" type="checkbox" 
-									style="text-align:center"
-									controls-position="right">
-								</el-checkbox>
-							</span>
-							
-							<span slot-scope="scope"  v-else-if="(scope.row.added)">
-								<p v-if="scope.row.itemId.length === 10">{{scope.row.amount}}</p>
-							</span>				
-						
-							<span slot-scope="scope" v-else-if="scope.row.unit === 'הערה' && !(scope.row.added)">
-								<p v-if="scope.row.itemId.length === 10"></p>
-							</span>	
-						
-						</el-table-column>
-					</el-table>
-			</el-main>
-		</el-container>
-	</el-container>
+									<span class="bg-green" v-else-if="(item.added)">
+										<p v-if="item.itemId.length === 10">{{item.amount}}</p>
+									</span>				
+								
+									<span class="bg-green" v-else-if="item.unit === 'הערה' && !(item.added)">
+										<p v-if="item.itemId.length === 10"></p>
+									</span>	
+									
+								</tr>
+							</tbody>
+							</template>
+						</v-simple-table>
+						</template>
+
 	</template>
 
 	<div v-if="!(payableItems.length) && !isLoading" class="mt-3 mb-4 text-center alert alert-warning container">
@@ -283,5 +282,6 @@ td{
 .bg-green{
 	background-color: lightgreen !important;
 }
+
 
 </style>
