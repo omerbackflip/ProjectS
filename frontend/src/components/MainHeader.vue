@@ -2,8 +2,8 @@
 <template>
 	<span>
 	<v-card
-		class="mx-auto overflow-hidden"
-		height="800"
+		class="mx-auto"
+		height="900"
 		v-if="isLoggedIn"
 	>
 		<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
@@ -84,19 +84,33 @@
                     v-model="group"
                     active-class="deep-purple--text text--accent-4"
                   >
-                    <v-list-item>
-                      <v-list-item-icon>
-                        <md-icon>home</md-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>Home</v-list-item-title>
-                    </v-list-item>
 
-                    <v-list-item>
-                      <v-list-item-icon>
-                        <md-icon>person</md-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>Account</v-list-item-title>
-                    </v-list-item>
+					<v-expansion-panels>
+						<v-expansion-panel
+							@click="onPageChange(page.itemId)" 
+							:key="page.itemId+Math.floor(Math.random() * 1548) + index"
+							v-for="(page,index) of idPrefixes"
+						>
+						<v-expansion-panel-header>
+							{{page.itemId+'-'+page.description}}
+						</v-expansion-panel-header>
+
+						<v-expansion-panel-content>
+							<v-list-item 
+								@click="()=>onPageChange(element.itemId || element)" 
+								v-bind:class="{'bg-blue':  element && element.itemId && element.itemId.length === 5, }"  
+								:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
+								v-for="(element,index) of page.subItems"
+						>
+							<v-list-item-title  >
+								{{element.itemId || element}}
+							</v-list-item-title>
+							</v-list-item>
+						</v-expansion-panel-content>
+
+						</v-expansion-panel>
+					</v-expansion-panels>
+
                   </v-list-item-group>
                 </v-list>
               </v-navigation-drawer>
@@ -197,7 +211,10 @@
 				</div>
 				</md-dialog>
 			</div>
-            <router-view/>
+            <router-view 
+				@getData="getAreas"
+				ref="payableItems"
+			/>
 			</template>    		
           </v-card>
 		  <template v-if="!isLoggedIn">
@@ -247,16 +264,19 @@ export default {
 		importShortlist: false,
 		shortListFile: '',
 		user : {},
+		changedRoute:false,
 		copyUser: false,
 		file: '',
 		message: '',
 		messageType: 'danger',
 		users: [],
+		idPrefix: '01',
 		selectedUsers: [],
 		messageType : 'danger',
 		disableFileUpload : false,
 		drawer: false,
 	    group:null,
+		idPrefixes: [],
 	}),
 	methods:{
 		//logout API
@@ -270,6 +290,7 @@ export default {
 		},
 		//Navigation or popups features as in the drop down
     navigateTo(child) {
+	  this.changedRoute = true;
       if(child.path) {
         this.redirect(child.path);
       } else {
@@ -295,6 +316,12 @@ export default {
 			}	
 		}
     },
+	getAreas(data) {
+		if(!(this.idPrefixes && this.idPrefixes.length) || this.changedRoute ) {
+			this.changedRoute = false;
+			this.idPrefixes = data;
+		} 
+	},
 	//used to delete all payable items
 		async deletePayableItems() {
 			if(window.confirm("Are you sure you want to delete all payable items? This will also delete referenced short listed items!")){
@@ -425,6 +452,15 @@ export default {
 				console.log(error);
 			}
 		},
+		//pagination handler
+		onPageChange(page) {
+			this.idPrefix = page;
+			if(this.$refs.payableItems.loadPayableItems){
+				this.$refs.payableItems.loadPayableItems(page)
+			} else if(this.$refs.payableItems.loadShortListedItems) {
+				this.$refs.payableItems.loadShortListedItems(page)
+			}
+		},
 		//import short excel api call
 		async shortListItems() {
 			try {
@@ -463,7 +499,7 @@ export default {
 		},
 	},
   created(){
-    this.isLoggedIn = isLoggedIn() ? true : false;
+    	this.isLoggedIn = isLoggedIn() ? true : false;
 		const user = JSON.parse(getUser());
 		this.user = user;
 		this.getUsers();
@@ -538,6 +574,14 @@ td{
 .app-bar{
 	background: #1867c0 !important;
 	color: white !important;
+}
+
+.bg-yellow{
+	color: yellow !important;
+}
+
+.bg-blue{
+	color: blue !important;
 }
 
   @media only screen and (max-width: 768px) {

@@ -1,18 +1,13 @@
 import "reflect-metadata";
 import { Service, Inject } from "typedi";
 import { DatabaseService } from '../../common/services/database-service';
-import * as HttpStatus from 'http-status-codes';
 import appUtilities from "../utils/app-utils";
 import { CustomErrorModel } from '../../common/models/custom-error-model';
 import { CustomInject } from '../../common/injector/custom-injector';
-import { PayableItemsResponseModel } from "../models/payable-items-response-model";
-import { ResponseModel } from "../../common/models/response-model";
-import { ShortListService } from "./short-list-service";
 
-const appConstants = require('../constants/constant');
-const appResponses = require('../../common/constants/app-responses');
 const payableItemsModel = require('../models/mongoose/payable-items');
 const shortListModel = require('../models/mongoose/short-list');
+const areaModel = require('../models/mongoose/area-keys');
 
 @Service()
 export class PayableItemsService {
@@ -58,9 +53,7 @@ export class PayableItemsService {
                     return data;
                 }
             }));
-
-            const idPrefixes = await this.getIdPrefixes(payableItemsModel);
-
+            const idPrefixes = await this._databaseService.getManyItems(areaModel,{});
             if (allData) {
                 return {
                     result:allData,
@@ -116,6 +109,8 @@ export class PayableItemsService {
                 if(filteredData && filteredData.length) {
                     await this.deletePayableItems();
                     await this._databaseService.addManyItems(payableItemsModel , this.getPayableItems(filteredData));
+                    const idPrefixes: any = await this.getIdPrefixes(payableItemsModel);
+                    await this._databaseService.addManyItems(areaModel , idPrefixes);
                     return {
                         hasErrors: false,
                         message: "Data successfully Imported"
@@ -206,6 +201,7 @@ export class PayableItemsService {
 
     public async deletePayableItems() {
         await shortListModel.remove({});
+        await areaModel.remove({});
         return await payableItemsModel.remove({});
     }
     

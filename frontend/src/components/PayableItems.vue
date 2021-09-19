@@ -89,7 +89,7 @@
 
 	</template>
 
-	<div v-if="!(payableItems.length) && !isLoading" class="mt-3 mb-4 text-center alert alert-warning container">
+	<div style="position:static" v-if="!(payableItems.length) && !isLoading" class="mt-3 mb-4 text-center alert alert-warning container">
 		No Data has been imported!
 	</div>
 
@@ -115,8 +115,6 @@ export default {
 	data() {
 		return {
 			payableItems : [],
-			idPrefixes: [],
-			idPrefix: '01',
 			keyword:'',
 			isLoading : false,
 			file: '',
@@ -128,21 +126,23 @@ export default {
 	},
 	methods: {
 		//load all payable items list
-		async loadPayableItems(key) {
+		async loadPayableItems(page,keyword) {
 			try {
 				this.isLoading = true;
 				const params = {
 					userName: this.user.userName
 				};
-				if(!(this.keyword || key)) {
-					params['itemId'] = this.idPrefix;
+				if(page) {
+					params['itemId'] = page;
+				} else if(keyword){
+					params['keyword'] = this.keyword;
 				} else {
-					params['keyword'] = this.keyword || key;
+					params['itemId'] = "01";
 				}
 				const response = await getAllPayableItems(params);
 				if (response.data) {
 					this.payableItems = response.data.result;
-					this.idPrefixes = response.data.idPrefixes;
+					this.$emit('getData', response.data.idPrefixes);
 				}
 				this.isLoading = false;
 			} catch (error) {
@@ -180,11 +180,6 @@ export default {
 		getExtension(filename) {
 			var i = filename.lastIndexOf('.');
 			return (i < 0) ? '' : filename.substr(i);
-		},
-		//pagination handler
-		onPageChange(page) {
-			this.idPrefix = page;
-			this.loadPayableItems();
 		},
 		changeSize(e){
 			this.size = e.target.value;

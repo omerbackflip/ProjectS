@@ -2,29 +2,6 @@
 <div class="main-container">
 	<template >
 		<template v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
-			<!-- <el-aside width="200px">
-				<el-menu>
-					<el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes"	:index="String(index)+1">
-						<template  #title>
-							<span @click="()=>onPageChange(page.itemId)">{{page.itemId+" "+page.description}}</span>
-						</template>
-						<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
-							<el-menu-item :index="String(index)" v-bind:class="{'bg-blue':  element.length === 5 }" @click="()=>onPageChange(element)">
-								{{element}}
-							</el-menu-item>					
-						</el-menu-item-group>
-					</el-submenu>
-				</el-menu>
-			</el-aside> -->
-
-		    	<!-- <el-header>
-					<main-header
-						title="Short Listed Items"
-						:shortList="true"
-						@loadList="loadShortListedItems"
-					>
-					</main-header>
-				</el-header> -->
 
 					<template  v-if="!isLoading && shortListedItems">
 						<v-simple-table class="mt-2" border dense>
@@ -124,9 +101,10 @@
 
 	</template>
 
-		<div v-if="!(shortListedItems.length)" class="mt-3 mb-4 text-center alert alert-warning container">
+		<div style="position:static" v-if="!(shortListedItems.length)" class="mt-3 mb-4 text-center alert alert-warning container">
 			No Data has been short listed!
 		</div>
+		
 		<template v-if="isLoading">
 			<md-progress-spinner></md-progress-spinner>
 		</template>
@@ -173,16 +151,18 @@ export default {
 	},
 	methods: {
 		//basic load list function for short list
-		async loadShortListedItems(key) {
+		async loadShortListedItems(page,keyword) {
 			try {
 				this.isLoading = true;
 				const params = {
 					userName: this.user.userName,
 				};
-				if(!(this.keyword || key)) {
-					params['itemId'] = this.idPrefix;
-				} else {
-					params['keyword'] = this.keyword || key;
+				if(page) {
+					params['itemId'] = page;
+				} else if(keyword){
+					params['keyword'] = this.keyword;
+				}else {
+					params['itemId'] = "01";
 				}
 				const response = await getAllShortListedItems(params);
 				if (response.data) {
@@ -197,7 +177,7 @@ export default {
 							return item;
 						}
 					}));
-					this.idPrefixes = response.data.idPrefixes.map(prefix=>{
+					this.$emit('getData', response.data.idPrefixes.map(prefix=>{
 						const preData = {
 							...prefix,
 							subItems: prefix.subItems.map(el=>{
@@ -212,7 +192,8 @@ export default {
 							})
 						}			
 						return {...preData , subItems: [...new Set(preData.subItems.map(id => id.itemId))]};
-					});
+					}));
+
 					this.grandTotal = response.data?.summaries?.grandTotal;
 					this.summary = response.data?.summaries?.summary.filter(item =>{
 						return this.idPrefix === item.itemId
@@ -335,7 +316,7 @@ export default {
 		},
 		onPageChange(page) {
 			this.idPrefix = page;
-			this.loadShortListedItems();
+			this.loadShortListedItems(page);
 		},
 	},
 	created(){
