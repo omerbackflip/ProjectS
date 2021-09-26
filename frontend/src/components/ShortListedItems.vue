@@ -2,7 +2,12 @@
 <div class="main-container">
 	<template >
 		<template v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
-
+		<div v-if="showSearch" class="search-wrapper d-flex mr-3">
+			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
+			<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
+				Search
+			</button>
+		</div>
 					<template  v-if="!isLoading && shortListedItems">
 						<v-simple-table class="mt-2" border dense>
 							<template v-slot:default>
@@ -142,6 +147,7 @@ export default {
 			file: '',
 			keyword: '',
 			grandTotal:0,
+			showSearch: false,
 			summary: [],
 			user : {},
 			message : '',
@@ -229,6 +235,9 @@ export default {
 				this.file = event.target.files[0];
 			}
 		},
+		toggleSearch(){
+			this.showSearch = !this.showSearch;
+		},
 		//api call to import short list file
 		async shortListItems() {
 			try {
@@ -264,8 +273,10 @@ export default {
 		//used to delete any short listed item
 		async deleteItem(itemId, key) {
 			try {
-				await deleteShortListItem(itemId,this.user.userName);
-				this.loadShortListedItems();
+				if(window.confirm('Are you sure you want to delete this item?')){
+					await deleteShortListItem(itemId,this.user.userName);
+					this.loadShortListedItems();
+				}
 			} catch (error) {
 				console.log(error);
 				this.showMessage("Couln't upload the shortlist file",'danger');
@@ -295,6 +306,9 @@ export default {
 				console.log(error);
 				this.showMessage("Couln't download the file",'danger');
 			}
+		},
+		loadListItems(){
+			this.loadShortListedItems(0,this.keyword);
 		},
 		showMessage(message,type){
 			this.message = message;

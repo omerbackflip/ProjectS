@@ -209,6 +209,9 @@ export default {
 				console.log(error);
 			}
 		},
+		toggleCreateUser() {
+			this.openForm = !this.openForm;
+		},
 		onPageChange() {
 			this.$router.push('/payable-items-list');
 		},

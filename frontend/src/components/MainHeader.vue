@@ -42,29 +42,54 @@
 				</div>
 				<template >
 					<div v-if="payable || shortList || userProp" class="row">
-						<div v-if="payable || shortList" class="search-wrapper d-flex mr-3">
-							<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
-							<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
-								Search
-							</button>
-						</div>
 						<div v-if="user.rootUser && userProp">
 							<button @click="openForm" class="btn btn-success mt-2 ml-4 mb-3">
 								Create User
 							</button>
 						</div>
-						<div v-if="payable" class="col align-button col mr-1 mt-2">
-							<button @click="addToShortList()" class="btn btn-success float-right mb-2" :disabled="!(itemIds.length)" >
-								Add Items
-							</button>
-						</div>
 					</div>
 				</template>
+
 				<div class="row no-display">
-					<div v-if="isLoggedIn" @click="logoutApp()">
+					<div :class="(itemIds.length || showSearch || showCreateUser) ? 'margin-top-log' : ''" v-if="isLoggedIn" @click="logoutApp()">
 						<md-icon class="cursor-pointer ml-5 text-white" >logout</md-icon>
 					</div>
 					<div class="ml-auto mr-2">
+						<!-- Create User button -->
+						<v-btn
+							v-if="showCreateUser"
+							@click="createUser"
+							class=mx-2 plus-button
+							fab
+							>
+							<md-icon class="plus-icon">
+								person_add
+							</md-icon>
+						</v-btn>
+
+						<!-- Add Short List Items button -->
+						<v-btn
+							v-show="itemIds.length"
+							@click="addToShortList"
+							class=mx-2 plus-button
+							fab
+							>
+							<span class="plus-icon">
+								+
+							</span>
+						</v-btn>
+
+						<!-- Toggle search button -->
+						<v-btn
+							v-show="showSearch"
+							@click="loadListItems"
+							class=mx-2 plus-button
+							fab
+							>
+							<md-icon class="plus-icon">
+								search
+							</md-icon>
+						</v-btn>
 						<md-icon class="text-white">person</md-icon>
 						{{user.userName}}
 					</div>
@@ -213,6 +238,7 @@
 			</div>
             <router-view 
 				@getData="getAreas"
+				@getCheckedItems="getCheckedValues"
 				ref="payableItems"
 			/>
 			</template>    		
@@ -249,7 +275,6 @@ export default {
 	props: {
         title : String,
 		payable: Boolean,
-		itemIds: [],
 		shortList: Boolean,
 		userProp: Boolean,
     },	
@@ -266,7 +291,10 @@ export default {
 		user : {},
 		changedRoute:false,
 		copyUser: false,
+		itemIds: [],
 		file: '',
+		showSearch: false,
+		showCreateUser: false,
 		message: '',
 		messageType: 'danger',
 		users: [],
@@ -322,6 +350,9 @@ export default {
 			this.idPrefixes = data;
 		} 
 	},
+	getCheckedValues(data) {
+		this.itemIds = data;
+	},
 	//used to delete all payable items
 		async deletePayableItems() {
 			if(window.confirm("Are you sure you want to delete all payable items? This will also delete referenced short listed items!")){
@@ -339,14 +370,17 @@ export default {
 		//used to emit parent add to short list
 		addToShortList() {
 			try {
-				this.$emit("addList");
+				this.$refs.payableItems.addToShortList();
+				this.itemIds = [];				
 			} catch (error) {
 				console.log(error);
 			}		
 		},
 		//used to emit parent load list
 		loadListItems() {
-			this.$emit("loadList", this.keyword)
+			if(this.$refs.payableItems && this.$refs.payableItems.toggleSearch){
+				this.$refs.payableItems.toggleSearch();
+			}
 		},
 		//used to emit user create form
 		openForm() {
@@ -453,12 +487,12 @@ export default {
 			}
 		},
 		//pagination handler
-		onPageChange(page) {
+		onPageChange(page,keyword='') {
 			this.idPrefix = page;
 			if(this.$refs.payableItems.loadPayableItems){
-				this.$refs.payableItems.loadPayableItems(page)
+				this.$refs.payableItems.loadPayableItems(page,keyword);
 			} else if(this.$refs.payableItems.loadShortListedItems) {
-				this.$refs.payableItems.loadShortListedItems(page)
+				this.$refs.payableItems.loadShortListedItems(page,keyword);
 			}
 		},
 		//import short excel api call
@@ -497,13 +531,26 @@ export default {
 				this.showMessage("Couln't copy",'danger');
 			}
 		},
+		createUser() {
+			if(this.$refs.payableItems && this.$refs.payableItems.toggleCreateUser){
+				this.$refs.payableItems.toggleCreateUser();
+			}
+		},
 	},
   created(){
     	this.isLoggedIn = isLoggedIn() ? true : false;
 		const user = JSON.parse(getUser());
 		this.user = user;
 		this.getUsers();
+		this.showSearch = !(this.$route.name === 'Summary' || this.$route.name === 'Users');
+		this.showCreateUser = this.$route.name === 'Users';
   },
+    watch: {
+		'$route': function(to, from) {
+			this.showSearch = !(this.$route.name === 'Summary' || this.$route.name === 'Users');
+			this.showCreateUser = this.$route.name === 'Users';
+		}
+	}
 }
 </script>
 
@@ -591,6 +638,21 @@ td{
 	  .overflow-scroll{
 		  overflow-x:scroll;
 	  }
+  }
+
+  .plus-icon{
+	  font-size: 30px;
+	  color: #000;
+  }
+
+  .plus-button{
+	  background: transparent !important;
+	  height: 50px !important;
+	  width: 50px !important;
+  }
+
+  .margin-top-log{
+	  margin-top: 15px;
   }
 
 @import'~bootstrap/dist/css/bootstrap.css'

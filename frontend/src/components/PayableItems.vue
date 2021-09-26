@@ -4,89 +4,63 @@
         {{message}}
     </div>
 	<template >
-		<!-- <el-aside width="200px">
-			<el-menu>
-    		  <el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
-				<template #title>
-					<span @click="onPageChange(page.itemId)">{{page.itemId+'-'+page.description}} </span>
+		<div v-if="showSearch" class="search-wrapper d-flex mr-3">
+			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
+			<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
+				Search
+			</button>
+		</div>
+		<template  v-if="!isLoading && payableItems">
+			<v-simple-table class="mt-2" border dense>
+				<template v-slot:default>
+					<thead>
+						<tr>
+							<th class="text-left"> ID </th>
+							<th class="text-left"> Description</th>
+							<th class="text-left"> Unit </th>
+							<th class="text-left"> Price </th>
+							<th class="text-left"> Add to Paka </th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+						v-for="item in payableItems"
+						:key="item.itemId"
+						>
+							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+								{{ item.itemId }}
+							</td>
+							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+								{{ item.description }}
+							</td>
+							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+								{{ item.unit }}
+							</td>
+							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+								{{ item.price }}
+							</td>
+
+							<td  v-if="!(item.added) && !(item.unit === 'הערה')">
+								<el-checkbox size="small"
+								:checked="itemIds.includes(item.itemId)" v-if="item.itemId.length === 10" @change="addToList(item.itemId)" type="checkbox" 
+									style="text-align:center"
+									controls-position="right">
+								</el-checkbox>
+							</td>
+
+							<span class="bg-green" v-else-if="(item.added)">
+								<p v-if="item.itemId.length === 10">{{item.amount}}</p>
+							</span>				
+						
+							<span class="bg-green" v-else-if="item.unit === 'הערה' && !(item.added)">
+								<p v-if="item.itemId.length === 10"></p>
+							</span>	
+							
+						</tr>
+					</tbody>
 				</template>
-				
-				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
-					<el-menu-item
-					 :index="String(index)"
-					 v-bind:class="{'bg-blue':  element.itemId.length === 5 }" 
-					 @click="()=>onPageChange(element.itemId)"
-					 >
-	 				{{element.itemId}}
-					</el-menu-item>					
-				</el-menu-item-group>
-
-			</el-submenu>
-			</el-menu>
-		</el-aside> -->
-
-			<!-- <el-header>
-					<main-header
-						title="Payable Items List"
-						:payable="true"
-						@loadList="loadPayableItems"
-						:itemIds="itemIds"
-						@addList="addToShortList"
-					></main-header>
-			</el-header> -->
-
-					<template  v-if="!isLoading && payableItems">
-						<v-simple-table class="mt-2" border dense>
-							<template v-slot:default>
-							<thead>
-								<tr>
-									<th class="text-left"> ID </th>
-									<th class="text-left"> Description</th>
-									<th class="text-left"> Unit </th>
-									<th class="text-left"> Price </th>
-									<th class="text-left"> Add to Paka </th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr
-								v-for="item in payableItems"
-								:key="item.itemId"
-								>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{ item.itemId }}
-									</td>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{ item.description }}
-									</td>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{ item.unit }}
-									</td>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{ item.price }}
-									</td>
-
-									<td  v-if="!(item.added) && !(item.unit === 'הערה')">
-										<el-checkbox size="small"
-										:checked="itemIds.includes(item.itemId)" v-if="item.itemId.length === 10" @change="addToList(item.itemId)" type="checkbox" 
-											style="text-align:center"
-											controls-position="right">
-										</el-checkbox>
-									</td>
-
-									<span class="bg-green" v-else-if="(item.added)">
-										<p v-if="item.itemId.length === 10">{{item.amount}}</p>
-									</span>				
-								
-									<span class="bg-green" v-else-if="item.unit === 'הערה' && !(item.added)">
-										<p v-if="item.itemId.length === 10"></p>
-									</span>	
-									
-								</tr>
-							</tbody>
-							</template>
-						</v-simple-table>
-						</template>
-
+			</v-simple-table>
+		</template>
 	</template>
 
 	<div style="position:static" v-if="!(payableItems.length) && !isLoading" class="mt-3 mb-4 text-center alert alert-warning container">
@@ -96,8 +70,8 @@
 	<template v-if="isLoading">
 		<md-progress-spinner></md-progress-spinner>
 	</template>
-
 </div>
+
 </template>
 
 <script>
@@ -118,6 +92,7 @@ export default {
 			keyword:'',
 			isLoading : false,
 			file: '',
+			showSearch: false,
 			message: '',
 			messageType: 'danger',
 			itemIds: [],
@@ -169,6 +144,12 @@ export default {
 				console.log(error);
 			}
 		},		
+		toggleSearch(){
+			this.showSearch = !this.showSearch;
+		},
+		loadListItems(){
+			this.loadPayableItems(0,this.keyword);
+		},
 		addToList(id){
 			const index = this.itemIds.indexOf(id);
 			if(index < 0) {
@@ -176,6 +157,7 @@ export default {
 			} else {
 				this.itemIds.splice(index,1);
 			}
+			this.$emit('getCheckedItems',this.itemIds)
 		},
 		getExtension(filename) {
 			var i = filename.lastIndexOf('.');
