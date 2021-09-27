@@ -19,7 +19,8 @@
     "test:coverage": "npm test -- --coverage",
     "test:coverage:unit": "npm run test:unit -- --coverage",
     "test:coverage:integration": "npm run test:integration -- --coverage",
-    "start": "npx ts-node ./src/server.ts "
+    "start": "concurrently \"npx ts-node ./src/server.ts\" \"cd ../frontend && npm run serve\""
+    
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -46,6 +47,7 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "class-validator-jsonschema": "^2.0.2",
+    "concurrently": "^6.2.1",
     "convict": "^6.0.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",

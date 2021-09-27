@@ -26,7 +26,7 @@
 							</thead>
 							<tbody>
 								<tr
-								v-for="item in shortListedItems"
+								v-for="item of shortListedItems"
 								:key="item.itemId"
 								>
 									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
@@ -58,11 +58,11 @@
 											<input
 												style="display: 'none'"
 												id="raised-button-file"
-												ref="attachFile"  @input="addFile($event, item.itemId)"
+												ref="attachFile"  @input="($event) => addFile($event)"
 												type="file"
 											/>
 											<label htmlFor="raised-button-file">
-											<div @click="openFilePicker()">
+											<div @click="openFilePicker(item.itemId)">
 												<md-icon class="icon-clickable" variant="raised" component="span" >
 													upload
 												</md-icon>
@@ -146,6 +146,7 @@ export default {
 			isLoading : false,
 			file: '',
 			keyword: '',
+			selectedItemId: '',
 			grandTotal:0,
 			showSearch: false,
 			summary: [],
@@ -283,11 +284,11 @@ export default {
 			}
 		},
 		//used to add file to a short list item
-		async addFile(event, itemId) {
+		async addFile(event) {
 			try {
 				event.preventDefault();
 				if (event && event.target && event.target.files[0]) {
-					await addFileToItem(event.target.files[0],this.user.userName,itemId);
+					await addFileToItem(event.target.files[0],this.user.userName,this.selectedItemId);
 					this.showMessage("File Uploaded Successfully!",'success');
 					this.loadShortListedItems();
 				}
@@ -300,7 +301,7 @@ export default {
 		async downloadFile(attachedFile) {
 			try {
 				if(attachedFile && attachedFile.path){
-					downloadAttachedFile({destination: attachedFile.path});
+					downloadAttachedFile({destination: attachedFile.filename});
 				}
 			} catch (error) {
 				console.log(error);
@@ -325,7 +326,8 @@ export default {
 			var i = filename.lastIndexOf('.');
 			return (i < 0) ? '' : filename.substr(i);
 		},
-		openFilePicker() {
+		openFilePicker(id) {
+			this.selectedItemId = id;
 			document.getElementById("raised-button-file").click();
 		},
 		onPageChange(page) {

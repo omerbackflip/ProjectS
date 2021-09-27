@@ -14,7 +14,7 @@ var upload = multer({ dest: 'short-listed/' })
 
 var storage = multer.diskStorage({
 	destination: function (req: any, file: any, cb: any) {
-	  cb(null, 'attached-files/')
+	  cb(null, './src/app/controllers/attached-files/')
 	},
 	filename: function (req: any, file: any, cb: any) {
 	  cb(null, file.originalname) //Appending .jpg
@@ -165,8 +165,7 @@ export class ShortListController {
 		@QueryParams() query: any
 	): Promise<any> {
 		try {
-			const directory = ((__dirname.split('/')).slice(0,7)).join('/'); 
-			const url = `${directory}/${query.destination}`;
+			const url = `${__dirname}/attached-files/${query.destination}`;
 			await promisify<string, void>(res.download.bind(res))(url)
 			return res; 
 		} catch (error) {
@@ -222,7 +221,7 @@ export class ShortListController {
 						description:`Grand Total:  ${summary.grandTotal}`
 					})
 				}
-				
+
                 worksheet.addRows([
 					...rows,
 				]);
