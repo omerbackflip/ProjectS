@@ -20,7 +20,6 @@
     "test:coverage:unit": "npm run test:unit -- --coverage",
     "test:coverage:integration": "npm run test:integration -- --coverage",
     "start": "concurrently \"npx ts-node ./src/server.ts\" \"cd ../frontend && npm run serve\""
-    
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -31,7 +30,6 @@
     "@types/express-bunyan-logger": "^1.3.2",
     "@types/hapi__joi": "^17.1.4",
     "@types/helmet": "^0.0.45",
-    "@types/mongoose": "^5.7.31",
     "@types/node": "^13.13.2",
     "@types/passport": "^1.0.4",
     "@types/supertest": "^2.0.8",
@@ -82,6 +80,7 @@
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
+    "@types/mongoose": "^4.7.56",
     "@types/supertest": "2.0.10",
     "copyfiles": "^2.3.0",
     "jest": "26.1.0",

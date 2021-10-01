@@ -53,6 +53,7 @@ export async function downloadAttachedFile(params) {
     window.open(`${baseUrl}/short-list-items/get-file?destination=${params.destination}`)
 }
 
+//this function add file/image to a short list item
 export async function addFileToItem(file,userName,itemId) {
     const formData = new FormData();	
     if(file){

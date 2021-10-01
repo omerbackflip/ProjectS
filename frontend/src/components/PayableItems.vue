@@ -41,11 +41,14 @@
 							</td>
 
 							<td  v-if="!(item.added) && !(item.unit === 'הערה')">
-								<el-checkbox size="small"
-								:checked="itemIds.includes(item.itemId)" v-if="item.itemId.length === 10" @change="addToList(item.itemId)" type="checkbox" 
+								<input
+									:checked="itemIds.includes(item.itemId)" 
+									v-if="item.itemId.length === 10" 
+									@change="addToList(item.itemId)" 
 									style="text-align:center"
-									controls-position="right">
-								</el-checkbox>
+									type="checkbox"
+									class="cursor-pointer"
+								>
 							</td>
 
 							<span class="bg-green" v-else-if="(item.added)">
@@ -76,14 +79,12 @@
 
 <script>
 import { getAllPayableItems,addShortListItems } from '../api';
-import Paging from './Paging.vue';
 import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
 
 export default {
 	name: 'Payable-Items',
 	components: {
-		Paging,
 		MainHeader
 	},
 	data() {

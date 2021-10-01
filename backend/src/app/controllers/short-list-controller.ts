@@ -26,6 +26,7 @@ var uploadFile = multer({ storage: storage });
 const XLSX = require('xlsx');
 var excel = require('exceljs');
 
+
 const constants = require('../constants/constant');
 
 @JsonController(constants.appRoutingPrefix)
@@ -195,6 +196,7 @@ export class ShortListController {
             ]
             let rows: any[] = [];
             const data = await this._databaseService.getManyItems(shortListModel , query);
+			
             if(data) {
 
                 data.forEach((item: any,index: number)=>{
@@ -225,7 +227,7 @@ export class ShortListController {
                 worksheet.addRows([
 					...rows,
 				]);
-
+				
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 res.setHeader("Content-Disposition", "attachment; filename=" + 'exported-shortlists.xlsx');
             

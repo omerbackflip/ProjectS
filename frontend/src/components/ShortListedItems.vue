@@ -176,7 +176,7 @@ export default {
 					this.shortListedItems = await Promise.all(response.data.result.map(async (item) => {
 						try {
 							if(item.attachedFile) {
-								item.imageSrc = await getImageById({destination: item.attachedFile.urlImage});
+								item.imageSrc = await getImageById({destination: item.attachedFile.path});
 							}
 							return item;							
 						} catch (error) {
