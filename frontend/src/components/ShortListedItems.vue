@@ -93,8 +93,8 @@
 					<p class="font-weight-bold ml-1">Summary</p>
 					<div class="ml-2">
 						<div class="row justify-content-space-around font-weight-bold" >
-							<div v-if="summary && summary.length" class="col">
-								{{`  ${summary[0].description}  -  	${summary[0].itemId} 		 ${summary[0].total } 	`}}
+							<div v-if="summary && summary.length" class="col" dir='rtl'>
+								{{` ${summary[0].total }  = ${summary[0].description} - ${summary[0].itemId}	`}}
 							</div>
 							<div class="col">
 								{{`Grand Total= ${grandTotal} `}}

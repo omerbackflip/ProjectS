@@ -11,7 +11,7 @@
 			</button>
 		</div>
 		<template  v-if="!isLoading && payableItems">
-			<v-simple-table class="mt-2" border dense>
+			<!-- <v-simple-table class="mt-2" border dense>
 				<template v-slot:default>
 					<thead>
 						<tr>
@@ -30,7 +30,7 @@
 							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
 								{{ item.itemId }}
 							</td>
-							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
+							<td style="text-align:right" dir="rtl" v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
 								{{ item.description }}
 							</td>
 							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
@@ -62,7 +62,14 @@
 						</tr>
 					</tbody>
 				</template>
-			</v-simple-table>
+			</v-simple-table> -->
+			<v-data-table 
+				:headers="headers"
+				:items="payableItems"
+				disable-pagination
+			>
+
+			</v-data-table>
 		</template>
 	</template>
 
@@ -83,6 +90,7 @@ import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
 
 export default {
+	rtl: 'true',
 	name: 'Payable-Items',
 	components: {
 		MainHeader
@@ -98,6 +106,13 @@ export default {
 			messageType: 'danger',
 			itemIds: [],
 			user: {},
+			headers:[
+				{text:'ID', 			value:'itemId'},
+				{text:'DESCRIPTION', 	value:'description', align:'right'},
+				{text:'UNIT',			value:'unit'},
+				{text:'PRICE',			value:'price'},
+				{text:'ADD_TO_PAKA',	value:'add_to_paka'},
+			],
 		}
 	},
 	methods: {

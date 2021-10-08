@@ -40,5 +40,6 @@ new Vue({
     icons: {
     iconfont: 'mdi', // default - only for display purposes
   },
+  rtl: true,
   render: h => h(App)
 }).$mount('#app')
