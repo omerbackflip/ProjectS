@@ -11,63 +11,43 @@
 			</button>
 		</div>
 		<template  v-if="!isLoading && payableItems">
-			<!-- <v-simple-table class="mt-2" border dense>
-				<template v-slot:default>
-					<thead>
-						<tr>
-							<th class="text-left"> ID </th>
-							<th class="text-left"> Description</th>
-							<th class="text-left"> Unit </th>
-							<th class="text-left"> Price </th>
-							<th class="text-left"> Add to Paka </th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr
-						v-for="item in payableItems"
-						:key="item.itemId"
-						>
-							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-								{{ item.itemId }}
-							</td>
-							<td style="text-align:right" dir="rtl" v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-								{{ item.description }}
-							</td>
-							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-								{{ item.unit }}
-							</td>
-							<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-								{{ item.price }}
-							</td>
-
-							<td  v-if="!(item.added) && !(item.unit === 'הערה')">
-								<input
-									:checked="itemIds.includes(item.itemId)" 
-									v-if="item.itemId.length === 10" 
-									@change="addToList(item.itemId)" 
-									style="text-align:center"
-									type="checkbox"
-									class="cursor-pointer"
-								>
-							</td>
-
-							<span class="bg-green" v-else-if="(item.added)">
-								<p v-if="item.itemId.length === 10">{{item.amount}}</p>
-							</span>				
-						
-							<span class="bg-green" v-else-if="item.unit === 'הערה' && !(item.added)">
-								<p v-if="item.itemId.length === 10"></p>
-							</span>	
-							
-						</tr>
-					</tbody>
-				</template>
-			</v-simple-table> -->
 			<v-data-table 
 				:headers="headers"
 				:items="payableItems"
 				disable-pagination
+				disable-sort
+				bordered
+				height="91vh"
+				fixed-header
+				hide-default-footer
+				:item-class="itemRowBackground"
 			>
+
+				<template class="dir-rtl text-right" v-slot:[`item.description`]="{ item }">
+					{{item.description}}
+				</template>
+
+				<template v-slot:[`item.add_to_paka`]="{ item }">
+					<td  v-if="!(item.added) && !(item.unit === 'הערה')">
+						<input
+							:checked="itemIds.includes(item.itemId)" 
+							v-if="item.itemId.length === 10" 
+							@change="addToList(item.itemId)" 
+							style="text-align:center"
+							type="checkbox"
+							class="cursor-pointer"
+						>
+					</td>
+
+					<td v-else-if="(item.added)">
+						<p v-if="item.itemId.length === 10">{{item.amount}}</p>
+					</td>				
+				
+					<td v-else-if="item.unit === 'הערה' && !(item.added)">
+						<p v-if="item.itemId.length === 10"></p>
+					</td>	
+				</template>
+
 
 			</v-data-table>
 		</template>
@@ -90,7 +70,6 @@ import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
 
 export default {
-	rtl: 'true',
 	name: 'Payable-Items',
 	components: {
 		MainHeader
@@ -108,7 +87,7 @@ export default {
 			user: {},
 			headers:[
 				{text:'ID', 			value:'itemId'},
-				{text:'DESCRIPTION', 	value:'description', align:'right'},
+				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true},
 				{text:'UNIT',			value:'unit'},
 				{text:'PRICE',			value:'price'},
 				{text:'ADD_TO_PAKA',	value:'add_to_paka'},
@@ -160,17 +139,28 @@ export default {
 				console.log(error);
 			}
 		},		
+
+		//Background of row if added, area or sub area
+		itemRowBackground(item) {
+			return item.added ? 'bg-green' : item.itemId.length === 2 ? 'area-wrapper' : item.itemId.length === 5 ? 'sub-area-wrapper' : '';
+		},	
+		//Toggle main top search button function
 		toggleSearch(){
 			this.showSearch = !this.showSearch;
 		},
+		//to load this function when search keyword is entered
 		loadListItems(){
 			this.loadPayableItems(0,this.keyword);
 		},
+		//add to short list function
 		addToList(id){
+			//getting index if the item is already pushed in itemIds
 			const index = this.itemIds.indexOf(id);
+			//if not pushed, push it
 			if(index < 0) {
 				this.itemIds.push(id);
 			} else {
+				//else remove it
 				this.itemIds.splice(index,1);
 			}
 			this.$emit('getCheckedItems',this.itemIds)
@@ -192,15 +182,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .area-wrapper{
     border: 1px solid yellow;
-    background: yellow;
+    background: yellow !important;
 }
 
 .sub-area-wrapper{
     border: 1px solid blue;
-    background: blue;
+    background: blue !important;
     color: #FFF;
 }
 
@@ -242,11 +232,8 @@ export default {
 
 td{
   text-align: -webkit-left;
-  border-left: 1px solid #ececec;
 }
-.el-table td{
-	text-align: -webkit-right !important;
-}
+
 
 .page-select{
 	width: 23% !important;
@@ -276,5 +263,16 @@ td{
 	background-color: lightgreen !important;
 }
 
+ tr :nth-child(1) {
+	direction: rtl !important;
+}
+
+.v-data-table__wrapper{
+	overflow-x: hidden !important;
+}
+
+.text-right{
+	direction: rtl !important;
+}
 
 </style>

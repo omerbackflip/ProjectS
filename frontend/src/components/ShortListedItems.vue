@@ -9,84 +9,63 @@
 			</button>
 		</div>
 					<template  v-if="!isLoading && shortListedItems">
-						<v-simple-table class="mt-2" border dense>
-							<template v-slot:default>
-							<thead>
-								<tr>
-									<th class="text-left"> ID </th>
-									<th class="text-left"> Description</th>
-									<th class="text-left"> Unit </th>
-									<th class="text-left"> Price </th>
-									<th class="text-left"> Amount </th>
-									<th class="text-left"> Total </th>
-									<th class="text-left"> Remarks </th>
-									<th class="text-left"> IMG </th>
-									<th class="text-left"> DEL </th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr
-								v-for="item of shortListedItems"
-								:key="item.itemId"
-								>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{ item.itemId }}
-									</td>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{ item.description }}
-									</td>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{ item.unit }}
-									</td>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{ item.price }}
-									</td>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										<input class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
-									</td>
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										{{item.amount * item.price}}
-									</td>
-							
-									<td v-bind:class="{'bg-green': item.added,'area-wrapper': item.itemId.length === 2, 'sub-area-wrapper':  item.itemId.length === 5 }">
-										<textarea @change="updateItem($event, item.itemId, 'remarks')"
-										class="form-control form-control-sm" type="text" :value="item.remarks"></textarea>
-									</td>
 
-									<td >
-										<span  v-if="!(item.attachedFile)" class="image-upload">
-											<input
-												style="display: 'none'"
-												id="raised-button-file"
-												ref="attachFile"  @input="($event) => addFile($event)"
-												type="file"
-											/>
-											<label htmlFor="raised-button-file">
-											<div @click="openFilePicker(item.itemId)">
-												<md-icon class="icon-clickable" variant="raised" component="span" >
-													upload
-												</md-icon>
-											</div>
-											</label> 
-										</span>
-										<div v-if="(item.attachedFile)" class="image-upload ">
-											<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
-												<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
-											</template>
-											<template v-else>
-												<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
-											</template>
-										</div>
-									</td>
+						<v-data-table 
+							:headers="headers"
+							:items="shortListedItems"
+							disable-pagination
+							disable-sort
+							bordered
+							height="90vh"
+							fixed-header
+							hide-default-footer
+						>
 
-									<td >
-										<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
-									</td>
-									
-								</tr>
-							</tbody>
+							<template v-slot:[`item.amount`]="{ item }">
+								<input class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
 							</template>
-						</v-simple-table>
+
+							<template v-slot:[`item.total`]="{ item }">
+								{{item.amount * item.price}}
+							</template>
+
+							<template v-slot:[`item.remarks`]="{ item }">
+								<textarea @change="updateItem($event, item.itemId, 'remarks')"
+								class="form-control form-control-sm mt-2" type="text" :value="item.remarks"></textarea>
+							</template>
+
+							<template v-slot:[`item.IMG`]="{ item }">
+								<span  v-if="!(item.attachedFile)" class="image-upload">
+									<input
+										style="display: 'none'"
+										id="raised-button-file"
+										ref="attachFile"  @input="($event) => addFile($event)"
+										type="file"
+									/>
+									<label htmlFor="raised-button-file">
+									<div @click="openFilePicker(item.itemId)">
+										<md-icon class="icon-clickable" variant="raised" component="span" >
+											upload
+										</md-icon>
+									</div>
+									</label> 
+								</span>
+								<div v-if="(item.attachedFile)" class="image-upload ">
+									<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
+										<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
+									</template>
+									<template v-else>
+										<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+									</template>
+								</div>
+							</template>
+
+							<template v-slot:[`item.DEL`]="{ item }">
+								<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
+							</template>							
+
+						</v-data-table>
+
 						</template>
 
 
@@ -152,6 +131,17 @@ export default {
 			summary: [],
 			user : {},
 			message : '',
+			headers:[
+				{text:'ID', 			value:'itemId'},
+				{text:'DESCRIPTION', 	value:'description', align:'right'},
+				{text:'UNIT',			value:'unit'},
+				{text:'PRICE',			value:'price'},
+				{text:'AMOUNT',			value:'amount'},
+				{text:'TOTAL',			value:'total'},
+				{text:'REMARKS',		value:'remarks'},
+				{text:'IMG',			value:'IMG'},
+				{text:'DEL',			value:'DEL'},
+			],
 			messageType : 'danger',
 			disableFileUpload : false,
 		}
@@ -280,7 +270,7 @@ export default {
 				}
 			} catch (error) {
 				console.log(error);
-				this.showMessage("Couln't upload the shortlist file",'danger');
+				this.showMessage("Couln't delete the shortlist file",'danger');
 			}
 		},
 		//used to add file to a short list item
@@ -403,6 +393,8 @@ export default {
 }
 .amount-width{
 	width: 56% !important;
+	border-radius: 5px;
+	border: 1px solid #ececec;
 }
 .IMG-width{
 	width: 10% !important;

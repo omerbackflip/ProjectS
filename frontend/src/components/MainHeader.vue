@@ -11,86 +11,93 @@
 			</div>
 
 			<template v-if="isLoggedIn" class="row ml-4 navigation text-center">
-				<v-app-bar class="app-bar overflow-scroll">
+				<v-app-bar  class="app-bar overflow-scroll">
 					<span @click="drawer = true">
 						<md-icon class="cursor-pointer text-white mr-3">menu</md-icon>
 					</span>
-					<v-toolbar-title>Dashboard</v-toolbar-title>
-					<div class="mr-3 ml-2" :key="route.id" v-for="route of routes">
-						<template v-if="!(route.children.length)">
-							<div class="cursor-pointer col font-weight-bold text-decoration-underline ml-5 mr-2 text-white" @click="redirect(route.path)">
-								<md-icon class="text-white">{{route.icon}}</md-icon>
-								<span class="div-text">{{route.title}}</span>
-							</div>
-						</template>
-						<template v-if="route.children.length">
-							<div class="dropdown col">
-								<button class="btn text-white font-weight-bold dropdown-toggle " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<v-toolbar-title class="title-dashboard">Dashboard</v-toolbar-title>
+
+					<v-toolbar-items class="hidden-sm-and-down ml-4">
+						<template v-for="route of routes">
+							<template  v-if="!(route.children.length)">
+								<v-btn :key="route.id" text @click="redirect(route.path)">
 									<md-icon class="text-white">{{route.icon}}</md-icon>
-									{{route.title}}
-								</button>
-								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-									<template v-for="child of route.children">
-										<span @click="navigateTo(child)" :key="child.title" class="dropdown-item cursor-pointer">{{child.title}}</span>
+									<span class="div-text text-white font-weight-bold">{{route.title}}</span>
+								</v-btn>
+							</template>
+
+							<template v-if="route.children.length">
+								<v-menu :key="route.id" data-app :rounded="true" open-on-hover offset-y transition="slide-x-transition" bottom right>
+									<template v-slot:activator="{ on, attrs }">
+										<v-btn text v-bind="attrs" v-on="on">
+											<md-icon class="text-white">{{route.icon}}</md-icon>
+											<span class="div-text text-white font-weight-bold">{{route.title}}</span>
+										</v-btn>
 									</template>
-								</div>
-							</div>
+									<v-list dense>
+										<v-list-item v-for="(child, index) of route.children" :key="index" router @click="navigateTo(child)">
+										<v-list-item-action>
+												<v-list-item-title>{{ child.title }}</v-list-item-title>
+											</v-list-item-action>
+										</v-list-item>
+									</v-list>
+								</v-menu>
+							</template>
 						</template>
-					</div>
-					<template >
-						<div v-if="payable || shortList || userProp" class="row">
-							<div v-if="user.rootUser && userProp">
-								<button @click="openForm" class="btn btn-success mt-2 ml-4 mb-3">
-									Create User
-								</button>
-							</div>
-						</div>
-					</template>
+					</v-toolbar-items>
 
-					<div class="row no-display">
-						<div :class="(itemIds.length || showSearch || showCreateUser) ? 'margin-top-log' : ''" v-if="isLoggedIn" @click="logoutApp()">
-							<md-icon class="cursor-pointer ml-5 text-white" >logout</md-icon>
-						</div>
-						<div class="ml-auto mr-2">
-							<!-- Create User button -->
-							<v-btn
-								v-if="showCreateUser"
-								@click="createUser"
-								class=mx-2 plus-button
-								fab
-								>
-								<md-icon class="plus-icon">
-									person_add
-								</md-icon>
-							</v-btn>
 
-							<!-- Add Short List Items button -->
-							<v-btn
-								v-show="itemIds.length"
-								@click="addToShortList"
-								class=mx-2 plus-button
-								fab
-								>
-								<span class="plus-icon">
-									+
-								</span>
-							</v-btn>
+					<div class="flex-grow-1"></div>
 
-							<!-- Toggle search button -->
-							<v-btn
-								v-show="showSearch"
-								@click="loadListItems"
-								class=mx-2 plus-button
-								fab
-								>
-								<md-icon class="plus-icon">
-									search
-								</md-icon>
-							</v-btn>
+					<v-toolbar-items>
+
+					<!-- Add Short List Items button -->
+						<v-btn
+							v-show="itemIds.length"
+							@click="addToShortList"
+							class=mx-2 plus-button
+							text
+							>
+							<span class="text-white plus-icon">
+								+
+							</span>
+						</v-btn>
+
+						<!-- Toggle search button -->
+						<v-btn
+							text
+							v-show="showSearch"
+							@click="loadListItems"
+							>
+							<md-icon>
+								search
+							</md-icon>
+						</v-btn>
+
+						<!-- Create User button -->
+						<v-btn
+							v-if="showCreateUser"
+							@click="createUser"
+							class=mx-2 plus-button
+							text
+							>
+							<md-icon>
+								person_add
+							</md-icon>
+						</v-btn>
+						
+						<v-btn class="user-icon" text v-if="isLoggedIn">
 							<md-icon class="text-white">person</md-icon>
-							{{user.userName}}
-						</div>
-					</div>
+							<span class="text-white">
+								{{user.userName}}
+							</span>
+						</v-btn>
+						
+						<v-btn text v-if="isLoggedIn" @click="logoutApp()">
+							<md-icon class="cursor-pointer ml-5 text-white" >logout</md-icon>
+						</v-btn>
+					</v-toolbar-items>
+										
 				</v-app-bar>
 
 				<v-navigation-drawer
@@ -138,101 +145,128 @@
 				</v-navigation-drawer>
 
 				<!-- import payable items -->
-				<div>
-					<md-dialog :md-active.sync="importPayable">
-					<md-dialog-title>Import payable items</md-dialog-title>
-					<div class="container">
+
+				<v-dialog
+						transition="dialog-top-transition"
+						max-width="600"
+						max-height="400"
+						v-model="importPayable"
+				>
+						<template>
+							<v-card>
 							<div :class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
-									{{message}}
+								{{message}}
 							</div>
-							<div class="import-wrapper">
-									<h2>Import Payable Items Sheet</h2>
-									<div class="mt-3 import-file-wrapper">
-											<div class="row">
-													<div class="col">
-															Please select the document to import
-													</div>
-													<div class="col">
-															<input 
-																	@change="onFileSelect($event)" 
-																	id="fileSelect" 
-																	ref="fileInput"
-																	type="file" 
-																	:disabled="disableFileUpload"
-																	accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
-															/>  
-													</div>
+								<v-toolbar
+								color="primary"
+								>Import payable items</v-toolbar>
+								<v-card-text>
+									<div class="row mt-4">
+											<div class="col">
+													Please select the document to import
+											</div>
+											<div class="col">
+													<input 
+															@change="onFileSelect($event)" 
+															id="fileSelect" 
+															ref="fileInput"
+															type="file" 
+															:disabled="disableFileUpload"
+															accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
+													/>  
 											</div>
 									</div>
-									<div class="mt-3 mb-3">
-											<button :disabled="disableFileUpload || !file" @click = "importData()" class="btn btn-success">
-													Import Data
-											</button>
-									</div>
-							</div>
-					</div>
-					</md-dialog>
-				</div>
+								</v-card-text>
+								<v-card-actions class="justify-end">
+								<v-btn
+									text
+									class="mt-2 mb-2 btn btn-success text-white"
+									:disabled="disableFileUpload || !file" @click = "importPayableItemsData()" 
+								>Import Data</v-btn>
+								</v-card-actions>
+							</v-card>
+						</template>
+					</v-dialog>
+
+
 
 				<!-- Import short listed items -->
-				<div>
-					<md-dialog :md-active.sync="importShortlist">
-					<md-dialog-title>Import Short List items</md-dialog-title>
-					<div class="container p-4">
-						<div :class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
-							{{message}}
-						</div>
-						<div class="row">
-							<div class="float-right">
+
+				<v-dialog
+						transition="dialog-top-transition"
+						max-width="600"
+						max-height="400"
+						v-model="importShortlist"
+				>
+						<template>
+							<v-card>
+								<div :class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
+									{{message}}
+								</div>
+								<v-toolbar
+								color="primary"
+								>Import Short List items</v-toolbar>
+								<v-card-text>
 								<input 
 									@change="onShortListFileSelect($event)" 
 									id="fileSelect" 
+									class="mt-4"
 									ref="fileInput"
 									type="file" 
 									accept=".xlsx, application/vnd.openxmlformds-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
 								/>
-							<button @click = "shortListItems()" class="mt-2 mb-2 btn btn-success">
-								Short List
-							</button>
-
-							</div>
-						</div>
-					</div>
-					</md-dialog>
-				</div>
+								</v-card-text>
+								<v-card-actions class="justify-end">
+								<v-btn
+									text
+									class="mt-2 mb-2 btn btn-success text-white"
+									@click = "shortListItems()"
+								>Short List</v-btn>
+								</v-card-actions>
+							</v-card>
+						</template>
+					</v-dialog>
 
 				<!-- Copy short list items -->
-				<div>
-					<md-dialog :md-active.sync="copyUser">
-					<md-dialog-title>Copy Items</md-dialog-title>
-					<div class="container">
-							<div :class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
+
+				  <v-dialog
+						transition="dialog-top-transition"
+						max-width="600"
+						max-height="600"
+						v-model="copyUser"
+				>
+						<template>
+							<v-card>
+								<div :class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
 									{{message}}
-							</div>
-							<div class="import-wrapper">
-									<div class="mt-3 import-file-wrapper">
-										<template>
-												<div class="md-layout md-gutter user-copy-wrapper">
-													<div class="md-layout-item">
-														<md-field>
-															<label for="movies">Users</label>
-															<md-select  v-model="selectedUsers" name="movies" id="movies" multiple>
-																<md-option :key="data._id" v-for="data of users" :value="data.userName">{{`${data.firstName} ${data.lastName}`}}</md-option>
-															</md-select>
-														</md-field>
-													</div>
-												</div>
-											</template>
-									</div>
-									<div class="mt-3 mb-3">
-											<button :disabled="!(selectedUsers.length)" @click = "copyShortList()" class="btn btn-success">
-													Submit
-											</button>
-									</div>
-							</div>
-					</div>
-					</md-dialog>
-				</div>
+								</div>
+								<v-toolbar
+								color="primary"
+								>Copy Items</v-toolbar>
+								<v-card-text>
+									<v-select
+										v-model="selectedUsers"
+										:items="getUsersToShow()"
+										chips
+										class="mt-4 mb-4"
+										label="Chips"
+										multiple
+										outlined
+									></v-select>
+								</v-card-text>
+								<v-card-actions class="justify-end">
+								<v-btn
+									text
+									class="dialog-button-height"
+									footer
+									bottom
+									:disabled="!(selectedUsers.length)" @click = "copyShortList()"
+								>Submit</v-btn>
+								</v-card-actions>
+							</v-card>
+						</template>
+					</v-dialog>
+
 				<router-view 
 					@getData="getAreas"
 					@getCheckedItems="getCheckedValues"
@@ -427,8 +461,8 @@ export default {
 				this.file = event.target.files[0];
 			}
 		},
-		//used to import short list file
-		async importData(){
+		//used to import for payable items
+		async importPayableItemsData(){
 			try {
 				if(this.file){
 					const response = await importDataFile(this.file);
@@ -513,7 +547,7 @@ export default {
 		//copy short list api call
 		async copyShortList() {
 			try {
-				if(this.selectedUsers) {
+				if(this.selectedUsers && this.selectedUsers.length) {
 					const response = await copyShortListUser(this.selectedUsers,this.user.userName);
 					if (response.data && !(response.data.hasErrors)) {
 						this.showMessage(response.data.message,'success');
@@ -533,6 +567,9 @@ export default {
 				this.$refs.payableItems.toggleCreateUser();
 			}
 		},
+		getUsersToShow(){
+			return this.users.map(user => `${user.userName}`)
+		}
 	},
   created(){
     	this.isLoggedIn = isLoggedIn() ? true : false;
@@ -638,8 +675,11 @@ td{
   }
 
   .plus-icon{
-	  font-size: 30px;
-	  color: #000;
+	font-size: 30px;
+    color: #000;
+    border: 1px solid;
+    border-radius: 100%;
+    padding: 4px 12px 4px 12px;
   }
 
   .plus-button{
@@ -650,6 +690,35 @@ td{
 
   .margin-top-log{
 	  margin-top: 15px;
+  }
+  
+  .user-icon{
+	  text-transform: inherit;
+  }
+
+  @media screen and (max-width: 968px) {
+	  button{
+		  font-size: 8px !important;
+	  }
+	  .title-dashboard{
+		  display: none;
+	  }
+  }
+
+  .user-icon:hover{
+	  background: #1867c0 !important;
+  }
+
+  .v-dialog > .v-card {
+	  height: 400px;
+  }
+
+  .dialog-button-height{
+	position: relative;
+    bottom: 0;
+    top: 260px;
+	color:#FFF !important;
+	background: #1867c0 !important;
   }
 
 @import'~bootstrap/dist/css/bootstrap.css'

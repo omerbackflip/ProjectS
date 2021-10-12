@@ -28,96 +28,36 @@
 		</button>
 	</form>
 
-		<!-- <el-aside width="200px" style="height:600px">
-			<el-menu>
-    		  <el-submenu :key="page.itemId+Math.floor(Math.random() * 1548) + index" v-for="(page,index) of idPrefixes" :index="String(index)">
-				<template #title>
-					<span @click="onPageChange(page.itemId)">{{page.itemId+' '+page.description}} </span>
-				</template>
-				
-				<el-menu-item-group :key="page.itemId+index+Math.floor(Math.random() * 1228)" v-for="(element,index) of page.subItems">
-					<el-menu-item
-					 :index="String(index)"
-					 v-bind:class="{'bg-yellow':  element.itemId.length === 5 }" 
-					 @click="()=>onPageChange(element.itemId)"
-					 >
-	 				{{element.itemId}}
-					</el-menu-item>					
-				</el-menu-item-group>
+	<v-data-table 
+		:headers="headers"
+		:items="users"
+		disable-pagination
+		disable-sort
+		bordered
+		height="91vh"
+		fixed-header
+		hide-default-footer
 
-			</el-submenu>
-			</el-menu>
-		</el-aside> -->
+	>
+		<template v-slot:[`item.edit`]="{ item }">
+			<span @click="() => editUser(item)">
+				<md-icon  class="control-icon">
+					edit
+				</md-icon>
+			</span>				
+		</template>		
+		
+		<template v-slot:[`item.delete`]="{ item }">
+			<span @click="()=> deleteUser(item._id)">
+				<md-icon class="control-icon">
+					delete
+				</md-icon>
+			</span>
+		</template>		
 
-
-		<!-- <el-header>
-			<main-header
-				title="Users"
-				:userProp="true"
-				@create="openForm = !openForm"
-			></main-header>
-		</el-header> -->
-
-			<template>
-			<v-simple-table dense>
-				<template v-slot:default>
-				<thead>
-					<tr>
-						<th class="text-left">
-							Username
-						</th>
-						<th class="text-left">
-							First Name
-						</th>
-						<th class="text-left">
-							Last Name
-						</th>
-						<th class="text-left">
-							Root User
-						</th>
-
-						<th class="text-left">
-							Date Created
-						</th>
-
-						<th class="text-left">
-							Controls
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-					v-for="item in users"
-					:key="item.userName"
-					>
-					<td>{{ item.userName }}</td>
-					<td>{{ item.firstName }}</td>
-					<td>{{ item.lastName }}</td>
-					<td>{{ item.rootUser }}</td>
-					<td>{{ item.createdAt }}</td>
-					<td>
-						<template slot-scope="scope">
-							<div class="row">
-								<div class="col" @click="()=> deleteUser(scope.row._id)">
-									<md-icon class="control-icon">
-										delete
-									</md-icon>
-								</div>
-								<div class="col" @click="() => editUser(scope.row)">
-									<md-icon  class="control-icon">
-										edit
-									</md-icon>
-								</div>
-							</div>
-						</template>
-					</td>
-					</tr>
-				</tbody>
-				</template>
-			</v-simple-table>
-			</template>
-
+	</v-data-table>
 </div>
+
 </template>
 
 <script>
@@ -143,6 +83,15 @@ export default {
 			users: [],
 			user : {},
 			openForm : false,
+			headers:[
+				{text:'Username', 		value:'userName'},
+				{text:'First Name', 	value:'firstName'},
+				{text:'Last Name',		value:'lastName'},
+				{text:'Root User',		value:'rootUser'},
+				{text:'Date Created',	value:'createdAt'},
+				{text:'EDIT',			value:'edit'},
+				{text:'DEL',			value:'delete'},
+			],
 			newUser : {
 				userName: '',
 				firstName: '',
@@ -211,9 +160,6 @@ export default {
 		},
 		toggleCreateUser() {
 			this.openForm = !this.openForm;
-		},
-		onPageChange() {
-			this.$router.push('/payable-items-list');
 		},
 		//edit user form open
 		editUser(user) {

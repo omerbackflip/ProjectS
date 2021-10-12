@@ -57,7 +57,7 @@ export class ShortListService {
                 delete params.userName
                 if (allData) {
                     return {
-                        result:allData,
+                        result:this.sortObject(allData),
                         idPrefixes,
                         summaries: await this.getSummaries({
                             userName: query.userName
@@ -306,6 +306,10 @@ export class ShortListService {
         } else {
             return await shortListModel.remove({});
         }
+    }
+
+    public sortObject(obj: any) {
+       return obj.sort((a: any,b: any) => (a.itemId > b.itemId) ? 1 : ((b.itemId > a.itemId) ? -1 : 0))
     }
 
 }
