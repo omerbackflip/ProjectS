@@ -522,8 +522,8 @@ export default {
 			this.idPrefix = page;
 			if(this.$refs.payableItems.loadPayableItems){
 				this.$refs.payableItems.loadPayableItems(page,keyword);
-			} else if(this.$refs.payableItems.loadShortListedItems) {
-				this.$refs.payableItems.loadShortListedItems(page,keyword);
+			} else if(this.$refs.payableItems.scrollToItem) {
+				this.$refs.payableItems.scrollToItem(page);
 			}
 		},
 		//import short excel api call

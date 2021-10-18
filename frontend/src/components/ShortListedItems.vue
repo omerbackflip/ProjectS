@@ -16,13 +16,13 @@
 							disable-pagination
 							disable-sort
 							bordered
-							height="90vh"
+							height="75vh"
 							fixed-header
 							hide-default-footer
 						>
 
 							<template v-slot:[`item.amount`]="{ item }">
-								<input class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
+								<input :id="item.itemId.slice(0,2)" class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
 							</template>
 
 							<template v-slot:[`item.total`]="{ item }">
@@ -72,12 +72,21 @@
 					<p class="font-weight-bold ml-1">Summary</p>
 					<div class="ml-2">
 						<div class="row justify-content-space-around font-weight-bold" >
-							<div v-if="summary && summary.length" class="col" dir='rtl'>
-								{{` ${summary[0].total }  = ${summary[0].description} - ${summary[0].itemId}	`}}
-							</div>
-							<div class="col">
-								{{`Grand Total= ${grandTotal} `}}
-							</div>
+							<template v-if="summary && summary.length && !itemClicked">
+								<div v-for="data of summary" :key="data.itemId" class="summary-wrapper">
+									<div class="col" dir='rtl'>
+										{{` ${data.total }  - ${data.description} - ${data.itemId}	`}}
+									</div>
+									<div class="col">
+										{{`Grand Total= ${grandTotal} `}}
+									</div>
+								</div>
+							</template>
+							<template v-if="itemClicked">
+								<div class="col" dir='rtl'>
+									{{` ${itemClicked.total }  - ${itemClicked.description} - ${itemClicked.itemId}	`}}
+								</div>
+							</template>
 						</div>
 					</div>
 
@@ -124,6 +133,7 @@ export default {
 			idPrefix: '01',
 			isLoading : false,
 			file: '',
+			itemClicked: undefined,
 			keyword: '',
 			selectedItemId: '',
 			grandTotal:0,
@@ -170,7 +180,6 @@ export default {
 							}
 							return item;							
 						} catch (error) {
-							console.log(error);
 							return item;
 						}
 					}));
@@ -192,9 +201,7 @@ export default {
 					}));
 
 					this.grandTotal = response.data?.summaries?.grandTotal;
-					this.summary = response.data?.summaries?.summary.filter(item =>{
-						return this.idPrefix === item.itemId
-					});
+					this.summary = response.data?.summaries?.summary;
 					this.isLoading = false;
 				}
 			} catch (error) {
@@ -301,6 +308,13 @@ export default {
 		loadListItems(){
 			this.loadShortListedItems(0,this.keyword);
 		},
+		scrollToItem(itemId) {
+			const el = document.getElementById(itemId.slice(0,2));
+			if(el) {
+			    el.scrollIntoView({behavior: "smooth"});
+				this.itemClicked = this.summary.filter(item => item.itemId === itemId)[0];
+			}
+		},
 		showMessage(message,type){
 			this.message = message;
 			this.messageType = type;
@@ -319,10 +333,6 @@ export default {
 		openFilePicker(id) {
 			this.selectedItemId = id;
 			document.getElementById("raised-button-file").click();
-		},
-		onPageChange(page) {
-			this.idPrefix = page;
-			this.loadShortListedItems(page);
 		},
 	},
 	created(){

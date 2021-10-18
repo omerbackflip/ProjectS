@@ -1,11 +1,9 @@
 import "reflect-metadata";
 import { Service, Inject } from "typedi";
 import { DatabaseService } from '../../common/services/database-service';
-import * as HttpStatus from 'http-status-codes';
 import appUtilities from "../utils/app-utils";
 import { CustomErrorModel } from '../../common/models/custom-error-model';
 import { CustomInject } from '../../common/injector/custom-injector';
-import { ResponseModel } from "../../common/models/response-model";
 import { PayableItemsService } from "./payable-items-service";
 const shortListModel = require('../models/mongoose/short-list');
 const payableItemsModel = require('../models/mongoose/payable-items');
@@ -31,9 +29,6 @@ export class ShortListService {
             if(query.userName){
                 const params: any = {
                     userName: query.userName,
-                }
-                if(query.itemId) {
-                    params["itemId"] = { "$regex": "^" + query.itemId};
                 }
                 if(query.keyword){
                     params["description"] = { "$regex": query.keyword , "$options": "i"};
