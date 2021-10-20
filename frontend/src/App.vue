@@ -1,7 +1,7 @@
 <template>
   <div id="app" data-app>
       <div class="page-container">
-        <md-app class="full-height">
+        <md-app class="">
           <md-app-content>
               <main-header
               title="Dashboard"
@@ -89,5 +89,8 @@ export default {
 	padding: 0 !important;
 
 }
+    .v-data-table{
+	  margin-top: 49px !important;
+  }
 @import'~bootstrap/dist/css/bootstrap.css'
 </style>

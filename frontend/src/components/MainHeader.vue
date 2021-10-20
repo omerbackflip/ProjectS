@@ -113,8 +113,21 @@
 						v-model="group"
 						active-class="deep-purple--text text--accent-4"
 					>
+						<template v-if="!isExpansion">
+							<v-list-item 
+									@click="()=>onPageChange(page.itemId || page)" 
+									v-bind:class="{'bg-blue':  page && page.itemId && page.itemId.length === 5, }"  
+									:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
+									v-for="(page,index) of idPrefixes"
+							>
+								<v-list-item-title  >
+									{{page.itemId+'-'+page.description}}
+								</v-list-item-title>
+								</v-list-item>
+						</template>
 
-						<v-expansion-panels>
+
+						<v-expansion-panels v-if="isExpansion">
 							<v-expansion-panel
 								@click="onPageChange(page.itemId)" 
 								:key="page.itemId+Math.floor(Math.random() * 1548) + index"
@@ -267,16 +280,17 @@
 						</template>
 					</v-dialog>
 
+			</template>    		
+					<template>
 				<router-view 
 					@getData="getAreas"
 					@getCheckedItems="getCheckedValues"
 					ref="payableItems"
 				/>
-			</template>    		
-		</v-card>
-		<template v-if="!isLoggedIn">
-		<router-view/>
 		</template>
+		</v-card>
+		
+
 	</span>
 </template>
 
@@ -323,6 +337,7 @@ export default {
 		changedRoute:false,
 		copyUser: false,
 		itemIds: [],
+		isExpansion:false,
 		file: '',
 		showSearch: false,
 		showCreateUser: false,
@@ -376,6 +391,7 @@ export default {
 		}
     },
 	getAreas(data) {
+		this.isExpansion = data[0]._id;
 		if(!(this.idPrefixes && this.idPrefixes.length) || this.changedRoute ) {
 			this.changedRoute = false;
 			this.idPrefixes = data;
@@ -719,6 +735,12 @@ td{
     top: 260px;
 	color:#FFF !important;
 	background: #1867c0 !important;
+  }
+
+  header{
+	  position: fixed;
+	  top: 0 !important;
+	  background: #1867c0;
   }
 
 @import'~bootstrap/dist/css/bootstrap.css'

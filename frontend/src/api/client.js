@@ -33,7 +33,7 @@ export function parseClientError(error) {
     return parsed;
 }
 
-async function request(method, url, data = {}, params = {}) {
+async function request(method, url, data = {}, params = {},headers = {}) {
     try {
         return await client({
             method: method,
@@ -41,7 +41,8 @@ async function request(method, url, data = {}, params = {}) {
             data: data,
             params: params,
             headers:{
-                Authorization : `Bearer ${getSession()}`
+                Authorization : `Bearer ${getSession()}`,
+                ...headers
             }
         });
     } catch (e) {
@@ -53,8 +54,8 @@ export async function post(url, data = {}) {
     return await request('post', url, data);
 }
 
-export async function get(url, data = {}, params = {}) {
-    return await request('get', url, data, params);
+export async function get(url, data = {}, params = {},headers = {}) {
+    return await request('get', url, data, params,headers);
 }
 
 export async function put(url, data = {}, params = {}) {

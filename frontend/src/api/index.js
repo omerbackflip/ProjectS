@@ -1,5 +1,6 @@
 import { post, get, put,deleteItem , baseUrl } from './client.js';
-
+import { getSession } from '../data/utils.js';
+const download = require("downloadjs");
 
 // ****** LOGIN ******** //
 export async function authLogin(username,password) {
@@ -49,8 +50,16 @@ export async function updateShortListItem(payload) {
 }
 
 export async function downloadAttachedFile(params) {
-    // return await get('/short-list-items/get-file', {}, params);
-    window.open(`${baseUrl}/short-list-items/get-file?destination=${params.destination}`)
+    fetch(`${baseUrl}/short-list-items/get-file?destination=${params.destination}`, {
+        headers: {
+        Authorization : `Bearer ${getSession()}`
+        }
+    }).then(res => res.blob()).then((blob) => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = params.destination;
+        link.click();
+    });
 }
 
 //this function add file/image to a short list item

@@ -168,7 +168,7 @@ export class ShortListController {
 		try {
 			const url = `${__dirname}/attached-files/${query.destination}`;
 			await promisify<string, void>(res.download.bind(res))(url)
-			return res; 
+			return res;
 		} catch (error) {
 			console.log(error)
 		}

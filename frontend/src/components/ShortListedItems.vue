@@ -1,4 +1,5 @@
 <template>
+<div>
 <div class="main-container">
 	<template >
 		<template v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
@@ -16,7 +17,7 @@
 							disable-pagination
 							disable-sort
 							bordered
-							height="75vh"
+							height="85vh"
 							fixed-header
 							hide-default-footer
 						>
@@ -69,26 +70,6 @@
 						</template>
 
 
-					<p class="font-weight-bold ml-1">Summary</p>
-					<div class="ml-2">
-						<div class="row justify-content-space-around font-weight-bold" >
-							<template v-if="summary && summary.length && !itemClicked">
-								<div v-for="data of summary" :key="data.itemId" class="summary-wrapper">
-									<div class="col" dir='rtl'>
-										{{` ${data.total }  - ${data.description} - ${data.itemId}	`}}
-									</div>
-									<div class="col">
-										{{`Grand Total= ${grandTotal} `}}
-									</div>
-								</div>
-							</template>
-							<template v-if="itemClicked">
-								<div class="col" dir='rtl'>
-									{{` ${itemClicked.total }  - ${itemClicked.description} - ${itemClicked.itemId}	`}}
-								</div>
-							</template>
-						</div>
-					</div>
 
 		</template>
 
@@ -103,6 +84,28 @@
 		</template>
 
 </div>
+
+				<div class="summary-parent">
+					<p class="font-weight-bold ml-1">Summary</p>
+					<div class="ml-2">
+						<div class="row justify-content-space-around font-weight-bold" >
+							<template v-if="summary && summary.length && !itemClicked">
+								<div class="col">
+									{{`Grand Total= ${grandTotal} `}}
+								</div>
+							</template>
+							<template v-if="itemClicked">
+								<div class="col-md-2" dir='rtl'>
+									{{` ${itemClicked.total }  - ${itemClicked.description} - ${itemClicked.itemId}	`}}
+								</div>
+								<div class="col-md-2">
+									{{`Grand Total= ${grandTotal} `}}
+								</div>
+							</template>
+						</div>
+					</div>
+				</div>
+	</div>
 
 </template>
 
@@ -186,18 +189,8 @@ export default {
 					this.$emit('getData', response.data.idPrefixes.map(prefix=>{
 						const preData = {
 							...prefix,
-							subItems: prefix.subItems.map(el=>{
-								if(el.itemId?.length === 10){
-									return {
-										...el,
-										itemId:el.itemId.slice(0,5)
-									};
-								} else {
-									return el;
-								}
-							})
 						}			
-						return {...preData , subItems: [...new Set(preData.subItems.map(id => id.itemId))]};
+						return preData;
 					}));
 
 					this.grandTotal = response.data?.summaries?.grandTotal;
