@@ -10,24 +10,27 @@
 			</button>
 		</div>
 					<template  v-if="!isLoading && shortListedItems">
-
 						<v-data-table 
 							:headers="headers"
 							:items="shortListedItems"
 							disable-pagination
-							disable-sort
 							bordered
 							height="85vh"
 							fixed-header
 							hide-default-footer
+							dense
 						>
+
+							<template v-slot:[`item.price`]="{ item }">
+								{{item.price.toLocaleString()}}
+							</template>
 
 							<template v-slot:[`item.amount`]="{ item }">
 								<input :id="item.itemId.slice(0,2)" class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
 							</template>
 
 							<template v-slot:[`item.total`]="{ item }">
-								{{item.amount * item.price}}
+								{{(item.amount * item.price).toLocaleString()}}
 							</template>
 
 							<template v-slot:[`item.remarks`]="{ item }">
@@ -86,20 +89,20 @@
 </div>
 
 				<div class="summary-parent">
-					<p class="font-weight-bold ml-1">Summary</p>
-					<div class="ml-2">
+					<!-- <p class="font-weight-bold ml-1">Summary</p> -->
+					<div class="ml-2" >
 						<div class="row justify-content-space-around font-weight-bold" >
 							<template v-if="summary && summary.length && !itemClicked">
 								<div class="col">
-									{{`Grand Total= ${grandTotal} `}}
+									{{`Grand Total = ${grandTotal.toLocaleString()} `}}
 								</div>
 							</template>
 							<template v-if="itemClicked">
 								<div class="col-md-2" dir='rtl'>
-									{{` ${itemClicked.total }  - ${itemClicked.description} - ${itemClicked.itemId}	`}}
+									{{` ${itemClicked.total.toLocaleString() }  - ${itemClicked.description} - ${itemClicked.itemId}`}}
 								</div>
 								<div class="col-md-2">
-									{{`Grand Total= ${grandTotal} `}}
+									{{`Grand Total = ${grandTotal.toLocaleString()} `}}
 								</div>
 							</template>
 						</div>
@@ -186,13 +189,33 @@ export default {
 							return item;
 						}
 					}));
+					// this.$emit('getData', response.data.idPrefixes.map(prefix=>{
+					// 	const preData = {
+					// 		...prefix,
+					// 	}			
+					// 	return preData;
+					// }));
+
+					// This get's areas and subareas in sideBar
 					this.$emit('getData', response.data.idPrefixes.map(prefix=>{
 						const preData = {
 							...prefix,
+							subItems: prefix.subItems.map(el=>{
+								if(el.itemId?.length === 10){
+									return {
+										...el,
+										itemId:el.itemId.slice(0,5)
+									};
+								} else {
+									return {
+										itemId: el.itemId,
+										description: el.description
+									};
+								}
+							})
 						}			
-						return preData;
+						return {...preData , subItems: [...new Set(preData.subItems)]};
 					}));
-
 					this.grandTotal = response.data?.summaries?.grandTotal;
 					this.summary = response.data?.summaries?.summary;
 					this.isLoading = false;

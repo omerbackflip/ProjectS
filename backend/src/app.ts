@@ -58,7 +58,7 @@ export class App {
         this.expressApplication.use(cors())
 
         this.expressApplication.use((req: any, res: any, next: any) => {
-            req.logger = this.logger;
+            //req.logger = this.logger;
             next();
         });
     }

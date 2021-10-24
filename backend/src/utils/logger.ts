@@ -30,15 +30,15 @@ export class Logger {
     }
     public async logInfo(_info: any, ...params: any[]) {
         try {
-            if (_info) {
-                const lMessage = this.transformLogMessage(_info, Bunyan.nameFromLevel[Bunyan.INFO]);
-                if (this.getBunyanLevel(config.application.logging.level) == Bunyan.DEBUG) {
-                    this._logger.debug(lMessage, {...params});
-                }
-                else {
-                    this._logger.info(lMessage);
-                }
-            }            
+            // if (_info) {
+            //     const lMessage = this.transformLogMessage(_info, Bunyan.nameFromLevel[Bunyan.INFO]);
+            //     if (this.getBunyanLevel(config.application.logging.level) == Bunyan.DEBUG) {
+            //         this._logger.debug(lMessage, {...params});
+            //     }
+            //     else {
+            //         this._logger.info(lMessage);
+            //     }
+            // }            
         } catch (error) {
             
         }
@@ -46,13 +46,13 @@ export class Logger {
 
     public async logError(_error: any, ...params: any[]) {
         try {
-            let data:any = {};
+            // let data:any = {};
 
-            this._logger.error(this.transformLogMessage(
-                _error, 
-                Bunyan.nameFromLevel[Bunyan.ERROR]), 
-                {...params}
-            );
+            // this._logger.error(this.transformLogMessage(
+            //     _error, 
+            //     Bunyan.nameFromLevel[Bunyan.ERROR]), 
+            //     {...params}
+            // );
                         
         } catch (error) {
             

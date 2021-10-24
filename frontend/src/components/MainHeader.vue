@@ -113,43 +113,32 @@
 						v-model="group"
 						active-class="deep-purple--text text--accent-4"
 					>
-						<template v-if="!isExpansion">
-							<v-list-item 
-									@click="()=>onPageChange(page.itemId || page)" 
-									v-bind:class="{'bg-blue':  page && page.itemId && page.itemId.length === 5, }"  
-									:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
-									v-for="(page,index) of idPrefixes"
-							>
-								<v-list-item-title  >
-									{{page.itemId+'-'+page.description}}
-								</v-list-item-title>
-								</v-list-item>
-						</template>
-
-
-						<v-expansion-panels v-if="isExpansion">
+					<v-list-item-title align='center'> פרק </v-list-item-title>
+						<v-expansion-panels>
 							<v-expansion-panel
 								@click="onPageChange(page.itemId)" 
 								:key="page.itemId+Math.floor(Math.random() * 1548) + index"
 								v-for="(page,index) of idPrefixes"
+								
 							>
 							<v-expansion-panel-header>
-								{{page.itemId+'-'+page.description}}
+								{{page.itemId+'-'+page.description}}  <!-- page is relative to area contain itemID and description-->
 							</v-expansion-panel-header>
 
-							<v-expansion-panel-content>
+							<v-expansion-panel-content > <!-- elemnet is relative to sub-area -->
 								<v-list-item 
 									@click="()=>onPageChange(element.itemId || element)" 
 									v-bind:class="{'bg-blue':  element && element.itemId && element.itemId.length === 5, }"  
 									:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
-									v-for="(element,index) of page.subItems"
-							>
-								<v-list-item-title  >
-									{{element.itemId || element}}
+									v-for="(element,index) of page.subItems" 
+								>
+								<v-list-item-title>
+									<!-- {{(isShortList ? element.itemId.substr(3,2) : element.itemId) + (' - '+element.description || element)}} -->
+									{{(element.itemId.substr(3,2) || element)}}
 								</v-list-item-title>
 								</v-list-item>
 							</v-expansion-panel-content>
-
+							
 							</v-expansion-panel>
 						</v-expansion-panels>
 
@@ -158,7 +147,6 @@
 				</v-navigation-drawer>
 
 				<!-- import payable items -->
-
 				<v-dialog
 						transition="dialog-top-transition"
 						max-width="600"
@@ -199,12 +187,9 @@
 								</v-card-actions>
 							</v-card>
 						</template>
-					</v-dialog>
-
-
+				</v-dialog>
 
 				<!-- Import short listed items -->
-
 				<v-dialog
 						transition="dialog-top-transition"
 						max-width="600"
@@ -238,11 +223,10 @@
 								</v-card-actions>
 							</v-card>
 						</template>
-					</v-dialog>
+				</v-dialog>
 
 				<!-- Copy short list items -->
-
-				  <v-dialog
+				<v-dialog
 						transition="dialog-top-transition"
 						max-width="600"
 						max-height="600"
@@ -278,19 +262,18 @@
 								</v-card-actions>
 							</v-card>
 						</template>
-					</v-dialog>
+				</v-dialog>
 
-			</template>    		
-					<template>
 				<router-view 
 					@getData="getAreas"
 					@getCheckedItems="getCheckedValues"
 					ref="payableItems"
 				/>
-		</template>
+			</template>    		
 		</v-card>
-		
-
+		<template v-if="!isLoggedIn">
+		<router-view/>
+		</template>
 	</span>
 </template>
 
@@ -323,6 +306,7 @@ export default {
 		shortList: Boolean,
 		userProp: Boolean,
     },	
+
 	//data used in the main header component level
 	data: () => ({
 		menuVisible: false,
@@ -337,7 +321,6 @@ export default {
 		changedRoute:false,
 		copyUser: false,
 		itemIds: [],
-		isExpansion:false,
 		file: '',
 		showSearch: false,
 		showCreateUser: false,
@@ -345,6 +328,7 @@ export default {
 		messageType: 'danger',
 		users: [],
 		idPrefix: '01',
+		isShortList: false,
 		selectedUsers: [],
 		messageType : 'danger',
 		disableFileUpload : false,
@@ -352,6 +336,7 @@ export default {
 	    group:null,
 		idPrefixes: [],
 	}),
+	
 	methods:{
 		//logout API
 		logoutApp(){
@@ -362,45 +347,50 @@ export default {
 		redirect(path){
 			this.$router.push(path);
 		},
+
 		//Navigation or popups features as in the drop down
-    navigateTo(child) {
-	  this.changedRoute = true;
-      if(child.path) {
-        this.redirect(child.path);
-      } else {
-			switch(child.action) {
-				case 'import payable items':
-					this.importPayable = true;
-					break;
-				case 'delete payable items':
-					this.deletePayableItems();
-					break;
-				case 'import short listed items':
-					this.importShortlist = true;
-					break;
-				case 'delete short listed items':
-					this.deleteShortLists();
-					break;
-				case 'export short listed items':
-					this.exportExcel();
-					break;
-				case 'copy short listed items':
-					this.copyUser = true;
-					break;
-			}	
-		}
-    },
-	getAreas(data) {
-		this.isExpansion = data[0]._id;
-		if(!(this.idPrefixes && this.idPrefixes.length) || this.changedRoute ) {
-			this.changedRoute = false;
-			this.idPrefixes = data;
-		} 
-	},
-	getCheckedValues(data) {
-		this.itemIds = data;
-	},
-	//used to delete all payable items
+		navigateTo(child) {
+		this.changedRoute = true;
+		if(child.path) {
+			this.redirect(child.path);
+		} else {
+				switch(child.action) {
+					case 'import payable items':
+						this.importPayable = true;
+						break;
+					case 'delete payable items':
+						this.deletePayableItems();
+						break;
+					case 'import short listed items':
+						this.importShortlist = true;
+						break;
+					case 'delete short listed items':
+						this.deleteShortLists();
+						break;
+					case 'export short listed items':
+						this.exportExcel();
+						break;
+					case 'copy short listed items':
+						this.copyUser = true;
+						break;
+				}	
+			}
+		},
+
+		getAreas(data) {
+			console.log(data);
+			this.isShortList = data[0]._id;
+			if(!(this.idPrefixes && this.idPrefixes.length) || this.changedRoute ) {
+				this.changedRoute = false;
+				this.idPrefixes = data;
+			} 
+		},
+
+		getCheckedValues(data) {
+			this.itemIds = data;
+		},
+
+		//used to delete all payable items
 		async deletePayableItems() {
 			if(window.confirm("Are you sure you want to delete all payable items? This will also delete referenced short listed items!")){
 				const response = await deletePayableItems();
@@ -414,6 +404,7 @@ export default {
 				}
 			}
 		},
+
 		//used to emit parent add to short list
 		addToShortList() {
 			try {
@@ -423,16 +414,19 @@ export default {
 				console.log(error);
 			}		
 		},
+
 		//used to emit parent load list
 		loadListItems() {
 			if(this.$refs.payableItems && this.$refs.payableItems.toggleSearch){
 				this.$refs.payableItems.toggleSearch();
 			}
 		},
+
 		//used to emit user create form
 		openForm() {
 			this.$emit("create");
 		},
+
 		//used to delete all short lists
 		async deleteShortLists() {
 			if(window.confirm("Are you sure you want to delete all short listed items?")){
@@ -447,6 +441,7 @@ export default {
 				}
 			}
 		},
+
 		//used to export short list excel
 		async exportExcel(){
 			try {
@@ -455,6 +450,7 @@ export default {
 				console.log(error);
 			}
 		},
+
 		//file handler
 		onFileSelect(event) {
 			event.preventDefault();
@@ -477,6 +473,7 @@ export default {
 				this.file = event.target.files[0];
 			}
 		},
+
 		//used to import for payable items
 		async importPayableItemsData(){
 			try {
@@ -496,11 +493,13 @@ export default {
 				console.log(error);
 			}
 		}, 
+
 		showMessage(message,type){
 			this.message = message;
 			this.messageType = type;
 			setTimeout(() => this.message = '', 4000);	
 		},
+
 		//short list file handler
 		onShortListFileSelect(event) {
 			event.preventDefault();
@@ -517,11 +516,13 @@ export default {
 				this.shortListFile = event.target.files[0];
 			}
 		},
+
 		//used to check file extention for validity of excel
 		getExtension(filename) {
 			var i = filename.lastIndexOf('.');
 			return (i < 0) ? '' : filename.substr(i);
 		},
+
 		//used to get all users for the copy short list feature
 		async getUsers() {
 			try {
@@ -533,6 +534,7 @@ export default {
 				console.log(error);
 			}
 		},
+
 		//pagination handler
 		onPageChange(page,keyword='') {
 			this.idPrefix = page;
@@ -542,6 +544,7 @@ export default {
 				this.$refs.payableItems.scrollToItem(page);
 			}
 		},
+
 		//import short excel api call
 		async shortListItems() {
 			try {
@@ -560,6 +563,7 @@ export default {
 				this.showMessage("Couln't upload the shortlist file",'danger');
 			}
 		},
+
 		//copy short list api call
 		async copyShortList() {
 			try {
@@ -578,23 +582,27 @@ export default {
 				this.showMessage("Couln't copy",'danger');
 			}
 		},
+
 		createUser() {
 			if(this.$refs.payableItems && this.$refs.payableItems.toggleCreateUser){
 				this.$refs.payableItems.toggleCreateUser();
 			}
 		},
+
 		getUsersToShow(){
 			return this.users.map(user => `${user.userName}`)
 		}
 	},
-  created(){
-    	this.isLoggedIn = isLoggedIn() ? true : false;
-		const user = JSON.parse(getUser());
-		this.user = user;
-		this.getUsers();
-		this.showSearch = !(this.$route.name === 'Summary' || this.$route.name === 'Users');
-		this.showCreateUser = this.$route.name === 'Users';
-  },
+
+	created(){
+			this.isLoggedIn = isLoggedIn() ? true : false;
+			const user = JSON.parse(getUser());
+			this.user = user;
+			this.getUsers();
+			this.showSearch = !(this.$route.name === 'Summary' || this.$route.name === 'Users');
+			this.showCreateUser = this.$route.name === 'Users';
+	},
+
     watch: {
 		'$route': function(to, from) {
 			this.showSearch = !(this.$route.name === 'Summary' || this.$route.name === 'Users');
@@ -737,11 +745,10 @@ td{
 	background: #1867c0 !important;
   }
 
-  header{
-	  position: fixed;
-	  top: 0 !important;
-	  background: #1867c0;
+  v-list-item-title {
+	  align-content: center;
+	  background: #1867c0 !important;
+	  font-size: 8px !important;
   }
-
 @import'~bootstrap/dist/css/bootstrap.css'
 </style>

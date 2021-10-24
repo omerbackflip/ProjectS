@@ -30,7 +30,7 @@ var excel = require('exceljs');
 const constants = require('../constants/constant');
 
 @JsonController(constants.appRoutingPrefix)
-@UseBefore(PassportAuthMiddleware)
+// @UseBefore(PassportAuthMiddleware)
 export class ShortListController {
 
 	@Inject()
@@ -204,9 +204,9 @@ export class ShortListController {
                         itemId: item.itemId,
                         description: item.description,
                         unit: item.unit,
-                        price: item.price,
-                        amount: item.amount,
-						total: item.amount * item.price,
+                        price: this.shortListService.numberWithCommas(item.price),
+                        amount: this.shortListService.numberWithCommas(item.amount),
+						total: this.shortListService.numberWithCommas((item.amount * item.price)),
                         remarks: item.remarks,
                     });
                 });
@@ -233,11 +233,14 @@ export class ShortListController {
             
                 await workbook.xlsx.write(res); 
 				res.end();
+
+
 			}
 		} catch (error) {
 			res.send(error);			
 		}
 	}
+	
 
 	@Put("/short-list-items/get-summary")
 	public async getSummary(

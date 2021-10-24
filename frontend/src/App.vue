@@ -73,10 +73,10 @@ export default {
 #nav a.router-link-exact-active {
   color: #42b983;
 }
-
+/* 
 #app > div > div > main > div.md-app-scroller.md-layout-column.md-flex.md-theme-default.md-scrollbar > div{
   padding-right: 20px !important;
-}
+} */
 
 .md-toolbar{
   font-weight: 600 !important;
@@ -90,7 +90,11 @@ export default {
 
 }
     .v-data-table{
-	  margin-top: 49px !important;
+	  margin-top: 0px !important;
+  }
+  .md-app-content{
+    padding: 0 !important;
+    padding-right: 0px !important;
   }
 @import'~bootstrap/dist/css/bootstrap.css'
 </style>

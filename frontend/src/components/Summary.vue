@@ -9,13 +9,13 @@
 				<thead>
 					<tr>
 						<th class="text-left">
-							ID
+							Total
 						</th>
 						<th class="text-left">
 							Description
 						</th>
 						<th class="text-left">
-							Total
+							ID
 						</th>
 					</tr>
 				</thead>
@@ -24,9 +24,9 @@
 					v-for="item in summary"
 					:key="item.itemId"
 					>
-						<td>{{ item.itemId }}</td>
-						<td>{{ item.description }}</td>
-						<td>{{ item.total }}</td>
+						<td class="text-right">{{ item.total.toLocaleString() }}</td>
+						<td class="text-right">{{ item.description }}</td>
+						<td>{{ item.itemId  }}</td>
 					</tr>
 				</tbody>
 				</template>
@@ -35,7 +35,7 @@
 
 	</div>
 			<div class="grand-total mt-3 ml-3">
-				<strong>Grand Total = {{grandTotal}}</strong>
+				<strong>Grand Total = {{grandTotal.toLocaleString()}}</strong>
 			</div>
 </div>
 </template>

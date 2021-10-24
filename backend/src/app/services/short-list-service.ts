@@ -307,4 +307,8 @@ export class ShortListService {
        return obj.sort((a: any,b: any) => (a.itemId > b.itemId) ? 1 : ((b.itemId > a.itemId) ? -1 : 0))
     }
 
+    public numberWithCommas(x : any) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
 }

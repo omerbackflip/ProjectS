@@ -23,6 +23,10 @@
 				:item-class="itemRowBackground"
 			>
 
+				<template v-slot:[`item.price`]="{ item }">
+					{{item.price ? item.price.toLocaleString() : "-" }}
+				</template>
+
 				<template class="dir-rtl text-right" v-slot:[`item.description`]="{ item }">
 					{{item.description}}
 				</template>
@@ -87,7 +91,7 @@ export default {
 			user: {},
 			headers:[
 				{text:'ID', 			value:'itemId'},
-				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true},
+				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'success title'},
 				{text:'UNIT',			value:'unit'},
 				{text:'PRICE',			value:'price'},
 				{text:'ADD_TO_PAKA',	value:'add_to_paka'},
@@ -111,6 +115,7 @@ export default {
 				}
 				const response = await getAllPayableItems(params);
 				if (response.data) {
+					console.log (response.data)
 					this.payableItems = response.data.result;
 					this.$emit('getData', response.data.idPrefixes);
 				}
