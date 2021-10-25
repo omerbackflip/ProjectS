@@ -62,6 +62,19 @@ export async function downloadAttachedFile(params) {
     });
 }
 
+export async function exportExcelFile(params) {
+    fetch(`${baseUrl}/short-list-items/export-excel?userName=${params.userName}`, {
+        headers: {
+            Authorization : `Bearer ${getSession()}`
+        }
+    }).then(res => res.blob()).then((blob) => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = params.destination;
+        link.click();
+    });
+}
+
 //this function add file/image to a short list item
 export async function addFileToItem(file,userName,itemId) {
     const formData = new FormData();	
@@ -80,8 +93,6 @@ export async function deleteShortListItem(id,userName) {
 export async function addShortListItems(body) {
     return await put(`/short-list-items/add`, body);
 }
-
-export const exportData = `${baseUrl}/short-list-items/export-excel`;
 
 export async function importShortListDataFile(file ,userName) {
     const formData = new FormData();	

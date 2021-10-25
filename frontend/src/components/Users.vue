@@ -99,6 +99,7 @@ export default {
 				password: '',
 				rootUser: false,
 			},
+			currentUsername: '',
 			updatedPassword: '',
 			editMode: false,
 			message : '',
@@ -129,7 +130,7 @@ export default {
 						if(this.updatedPassword) {
 							this.newUser.password = this.updatedPassword;
 						}
-						response = await updateUserById(this.newUser);
+						response = await updateUserById({...this.newUser,currentUsername: this.currentUsername});
 					} else {
 						response = await createUser(this.newUser);
 					}
@@ -164,6 +165,7 @@ export default {
 		//edit user form open
 		editUser(user) {
 			this.openForm = true;
+			this.currentUsername = user.userName,
 			this.newUser = user;
 			this.editMode = true;
 		},

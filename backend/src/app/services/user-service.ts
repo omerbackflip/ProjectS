@@ -8,6 +8,7 @@ import { CustomInject } from '../../common/injector/custom-injector';
 import { UserResponseModel } from "../models/users-response-model";
 import { ResponseModel } from "../../common/models/response-model";
 import { AuthService } from "./auth-service";
+const shortListModel = require('../models/mongoose/short-list');
 const userModel = require('../models/mongoose/user');
 
 @Service()
@@ -55,6 +56,18 @@ export class UserService {
                 if(payload.password) {
                     const hash: any = await this.authService.hashPassword(10,payload.password);
                     payload.password = hash;
+                }
+                if(payload.userName !== payload.currentUsername) {
+
+                    await shortListModel.updateMany(
+                        {
+                            userName: payload.currentUsername,
+                        },
+                        {
+                            userName: payload.userName
+                        },
+                        {multi: true}
+                    )
                 }
                 const response = await this._databaseService.updateItem(
                     userModel,

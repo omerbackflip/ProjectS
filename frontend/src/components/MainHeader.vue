@@ -284,9 +284,9 @@ import {
 	logout,
 	deletePayableItems,
 	deleteShortListedItems,
-	exportData,
 	importDataFile,
 	importShortListDataFile,
+	exportExcelFile,
 	getAllUsers,
 	copyShortListUser
 } from '../api/index.js';
@@ -378,7 +378,6 @@ export default {
 		},
 
 		getAreas(data) {
-			console.log(data);
 			this.isShortList = data[0]._id;
 			if(!(this.idPrefixes && this.idPrefixes.length) || this.changedRoute ) {
 				this.changedRoute = false;
@@ -445,7 +444,7 @@ export default {
 		//used to export short list excel
 		async exportExcel(){
 			try {
-				window.open(`${exportData}?userName=${this.user.userName}`);	
+				exportExcelFile({userName: this.user.userName});
 			} catch (error) {
 				console.log(error);
 			}
