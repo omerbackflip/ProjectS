@@ -53,7 +53,7 @@ export class ShortListService {
                 if (allData) {
                     return {
                         result:this.sortObject(allData),
-                        idPrefixes,
+                        idPrefixes: this.sortObject(idPrefixes),
                         summaries: await this.getSummaries({
                             userName: query.userName
                         })

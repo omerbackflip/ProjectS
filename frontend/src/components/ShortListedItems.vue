@@ -214,7 +214,8 @@ export default {
 								}
 							})
 						}			
-						return {...preData , subItems: [...new Set(preData.subItems)]};
+						// return {...preData , subItems: [...new Set(preData.subItems)]};
+						return preData
 					}));
 					this.grandTotal = response.data?.summaries?.grandTotal;
 					this.summary = response.data?.summaries?.summary;
