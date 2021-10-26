@@ -20,7 +20,7 @@
 					<v-toolbar-items class="hidden-sm-and-down ml-4">
 						<template v-for="route of routes">
 							<template  v-if="!(route.children.length)">
-								<v-btn :key="route.id" text @click="redirect(route.path)">
+								<v-btn :class="$route.name === (route.title) || ((route.children && route.children.includes(route.title)))  ? 'bg-active' : ''" :key="route.id" text @click="redirect(route.path)">
 									<md-icon class="text-white">{{route.icon}}</md-icon>
 									<span class="div-text text-white font-weight-bold">{{route.title}}</span>
 								</v-btn>
@@ -660,6 +660,10 @@ td{
 
 .md-toolbar{
   font-weight: 600 !important;
+}
+
+.bg-active{
+	background: red;
 }
 
 .md-title{

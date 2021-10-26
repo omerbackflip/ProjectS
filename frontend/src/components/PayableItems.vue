@@ -188,6 +188,7 @@ export default {
 </script>
 
 <style>
+
 .area-wrapper{
     border: 1px solid yellow;
     background: yellow !important;
