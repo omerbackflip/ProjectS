@@ -87,6 +87,7 @@ export default {
 			showSearch: false,
 			message: '',
 			messageType: 'danger',
+			currentPage: 0,
 			itemIds: [],
 			user: {},
 			headers:[
@@ -108,6 +109,7 @@ export default {
 				};
 				if(page) {
 					params['itemId'] = page;
+					this.currentPage = page; // Save current page in order to stay in the current page
 				} else if(keyword){
 					params['keyword'] = this.keyword;
 				} else {
@@ -137,6 +139,7 @@ export default {
 					if (response.data && !(response.data.hasErrors)) {
 						this.message = response.data.message;
 						this.messageType = 'success';
+						this.loadPayableItems(this.currentPage);
 						setTimeout(() => this.message = '', 4000);	
 					}	
 				}
