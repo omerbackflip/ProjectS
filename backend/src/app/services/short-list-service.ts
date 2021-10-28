@@ -53,7 +53,7 @@ export class ShortListService {
                 if (allData) {
                     return {
                         result:this.sortObject(allData),
-                        idPrefixes,
+                        idPrefixes: this.sortObject(idPrefixes),
                         summaries: await this.getSummaries({
                             userName: query.userName
                         })
@@ -89,7 +89,7 @@ export class ShortListService {
                             total: sum,
                         }    
                     } else {
-                        return `${priceId} - ${priceItem.description} - ${sum}`
+                        return `${priceId} - ${priceItem.description} - ${sum.toFixed(2)}`
                     }
                 }));
                 let total = 0;

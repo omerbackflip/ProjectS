@@ -29,7 +29,7 @@
 								<input :id="item.itemId.slice(0,2)" class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
 							</template>
 
-							<template v-slot:[`item.total`]="{ item }">
+							<template :id="item.itemId" v-slot:[`item.total`]="{ item }">
 								{{(item.amount * item.price).toLocaleString()}}
 							</template>
 
@@ -325,7 +325,7 @@ export default {
 			this.loadShortListedItems(0,this.keyword);
 		},
 		scrollToItem(itemId) {
-			const el = document.getElementById(itemId.slice(0,2));
+			const el = document.getElementById(itemId);
 			if(el) {
 			    el.scrollIntoView({behavior: "smooth"});
 				this.itemClicked = this.summary.filter(item => item.itemId === itemId)[0];

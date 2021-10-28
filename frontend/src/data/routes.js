@@ -3,7 +3,7 @@ export const routes = [
         title: 'Payable Items',
         icon: 'payment',
         children: [{
-            title: "List",
+            title: "Lists",
             path: '/payable-items-list',
             action: null
         },{

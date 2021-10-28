@@ -206,21 +206,22 @@ export class ShortListController {
                         unit: item.unit,
                         price: this.shortListService.numberWithCommas(item.price),
                         amount: this.shortListService.numberWithCommas(item.amount),
-						total: this.shortListService.numberWithCommas((item.amount * item.price)),
+						total: this.shortListService.numberWithCommas((item.amount * item.price).toFixed(2)),
                         remarks: item.remarks,
                     });
                 });
 				const summary = await this.shortListService.getSummaries(query,true);
 				if(summary && summary?.summary.length) {
-					rows.push({});
-					rows.push({});
+					rows.push({}); // empty row
+					rows.push({}); // empty row
+					rows.push({}); // empty row
 					summary.summary.forEach((sum: any) => {
 						rows.push({
 							description: sum
 						})
 					})
 					rows.push({
-						description:`Grand Total:  ${summary.grandTotal}`
+						description:`Grand Total:  ${summary.grandTotal.toFixed(2)}`
 					})
 				}
 

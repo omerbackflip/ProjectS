@@ -20,7 +20,7 @@
 					<v-toolbar-items class="hidden-sm-and-down ml-4">
 						<template v-for="route of routes">
 							<template  v-if="!(route.children.length)">
-								<v-btn :key="route.id" text @click="redirect(route.path)">
+								<v-btn :class="isActive(route) ? 'bg-active' : ''" :key="route.id" text @click="redirect(route.path)">
 									<md-icon class="text-white">{{route.icon}}</md-icon>
 									<span class="div-text text-white font-weight-bold">{{route.title}}</span>
 								</v-btn>
@@ -29,7 +29,7 @@
 							<template v-if="route.children.length">
 								<v-menu :key="route.id" data-app :rounded="true" open-on-hover offset-y transition="slide-x-transition" bottom right>
 									<template v-slot:activator="{ on, attrs }">
-										<v-btn text v-bind="attrs" v-on="on">
+										<v-btn :class="isActive(route) && (toggleActive) ? 'bg-active' : ''" text v-bind="attrs" v-on="on">
 											<md-icon class="text-white">{{route.icon}}</md-icon>
 											<span class="div-text text-white font-weight-bold">{{route.title}}</span>
 										</v-btn>
@@ -127,14 +127,14 @@
 
 							<v-expansion-panel-content > <!-- elemnet is relative to sub-area -->
 								<v-list-item 
-									@click="()=>onPageChange(element.itemId || element)" 
+									@click="()=>onPageChange(isShortList ? element.itemId.substr(9,2) : element.itemId)" 
 									v-bind:class="{'bg-blue':  element && element.itemId && element.itemId.length === 5, }"  
 									:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
 									v-for="(element,index) of page.subItems" 
 								>
 								<v-list-item-title>
-									<!-- {{(isShortList ? element.itemId.substr(3,2) : element.itemId) + (' - '+element.description || element)}} -->
-									{{(element.itemId.substr(3,2) || element)}}
+									{{(isShortList ? element.itemId.substr(9,2) : element.itemId) + (' - '+element.description)}}
+									<!-- {{(element.itemId.substr(3,2) + '-'+ element.description)}} -->
 								</v-list-item-title>
 								</v-list-item>
 							</v-expansion-panel-content>
@@ -322,6 +322,7 @@ export default {
 		copyUser: false,
 		itemIds: [],
 		file: '',
+		toggleActive: false,
 		showSearch: false,
 		showCreateUser: false,
 		message: '',
@@ -332,6 +333,7 @@ export default {
 		selectedUsers: [],
 		messageType : 'danger',
 		disableFileUpload : false,
+		currentChild:'',
 		drawer: false,
 	    group:null,
 		idPrefixes: [],
@@ -351,6 +353,7 @@ export default {
 		//Navigation or popups features as in the drop down
 		navigateTo(child) {
 		this.changedRoute = true;
+		this.currentChild = child.title;
 		if(child.path) {
 			this.redirect(child.path);
 		} else {
@@ -562,7 +565,22 @@ export default {
 				this.showMessage("Couln't upload the shortlist file",'danger');
 			}
 		},
-
+		isActive(route) {
+			if(this.$route.name === route.title) {
+				this.toggleActive = true;
+				return true;
+			} 
+			// route.children && (route.children.filter(child => child.title === currentChild)).length
+			const children = JSON.parse(JSON.stringify(route.children));
+			if(children.length){
+				const index = children.findIndex(child => child.title === this.currentChild);
+				if(index>=0) {
+					this.toggleActive = false;
+					return true;
+				}
+			}
+			return false;
+		},
 		//copy short list api call
 		async copyShortList() {
 			try {
@@ -660,6 +678,10 @@ td{
 
 .md-toolbar{
   font-weight: 600 !important;
+}
+
+.bg-active{
+	background: red;
 }
 
 .md-title{

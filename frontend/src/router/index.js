@@ -27,17 +27,17 @@ const routes = [
   },
   {
     path: '/payable-items-list',
-    name:'Payable-Items',
+    name:'Payable Items',
     component: PayableItems,  
   },
   {
     path: '/short-listed-items',
-    name:'ShortListedItems',
+    name:'Short Listed Items',
     component: ShortListedItems,  
   },
   {
     path: '/summary',
-    name:'Summary',
+    name:'סיכום',
     component: Summary,  
   }
 ]

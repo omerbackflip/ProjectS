@@ -87,6 +87,7 @@ export default {
 			showSearch: false,
 			message: '',
 			messageType: 'danger',
+			currentPage: 0,
 			itemIds: [],
 			user: {},
 			headers:[
@@ -108,6 +109,7 @@ export default {
 				};
 				if(page) {
 					params['itemId'] = page;
+					this.currentPage = page; // Save current page in order to stay in the current page
 				} else if(keyword){
 					params['keyword'] = this.keyword;
 				} else {
@@ -115,7 +117,6 @@ export default {
 				}
 				const response = await getAllPayableItems(params);
 				if (response.data) {
-					console.log (response.data)
 					this.payableItems = response.data.result;
 					this.$emit('getData', response.data.idPrefixes);
 				}
@@ -137,6 +138,7 @@ export default {
 					if (response.data && !(response.data.hasErrors)) {
 						this.message = response.data.message;
 						this.messageType = 'success';
+						this.loadPayableItems(this.currentPage);
 						setTimeout(() => this.message = '', 4000);	
 					}	
 				}
@@ -188,6 +190,7 @@ export default {
 </script>
 
 <style>
+
 .area-wrapper{
     border: 1px solid yellow;
     background: yellow !important;
