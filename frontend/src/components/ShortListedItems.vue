@@ -25,6 +25,10 @@
 								{{item.price.toLocaleString()}}
 							</template>
 
+							<template v-slot:[`item.description`]="{ item }">
+								{{item.description.substr(12,300)}}
+							</template>
+							
 							<template v-slot:[`item.amount`]="{ item }">
 								<input :id="item.itemId.slice(0,2)" class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
 							</template>

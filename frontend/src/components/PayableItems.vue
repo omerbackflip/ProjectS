@@ -24,11 +24,11 @@
 			>
 
 				<template v-slot:[`item.price`]="{ item }">
-					{{item.price ? item.price.toLocaleString() : "-" }}
+					{{item.price ? item.price.toLocaleString() : "" }}
 				</template>
 
 				<template class="dir-rtl text-right" v-slot:[`item.description`]="{ item }">
-					{{item.description}}
+					{{item.description.substr(12,300)}}
 				</template>
 
 				<template v-slot:[`item.add_to_paka`]="{ item }">

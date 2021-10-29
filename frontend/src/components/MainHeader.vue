@@ -51,7 +51,7 @@
 
 					<v-toolbar-items>
 
-					<!-- Add Short List Items button -->
+						<!-- Add Short List Items button -->
 						<v-btn
 							v-show="itemIds.length"
 							@click="addToShortList"
@@ -133,8 +133,7 @@
 									v-for="(element,index) of page.subItems" 
 								>
 								<v-list-item-title>
-									{{(isShortList ? element.itemId.substr(9,2) : element.itemId) + (' - '+element.description)}}
-									<!-- {{(element.itemId.substr(3,2) + '-'+ element.description)}} -->
+									{{(isShortList ? element.itemId.substr(9,2) : element.itemId.substr(3,2)) + (' - '+element.description)}}								
 								</v-list-item-title>
 								</v-list-item>
 							</v-expansion-panel-content>

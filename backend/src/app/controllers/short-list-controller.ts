@@ -186,13 +186,13 @@ export class ShortListController {
             var workbook = new Excel.Workbook();
             var worksheet = workbook.addWorksheet('exported-shorlists-items');
             worksheet.columns = [
-                { header: 'ID', key: 'itemId', width: 20 },
+                { header: 'ID', key: 'itemId', width: 12 },
                 { header: 'Description', key: 'description', width: 75 },
-                { header: 'Unit', key: 'unit', width: 20 },
-                { header: 'Price', key: 'price', width: 20 },
-                { header: 'Amount', key: 'amount', width: 20 },
-				{ header: 'Total', key: 'total', width: 20 },
-                { header: 'Remarks', key: 'remarks', width: 50 },
+                { header: 'Unit', key: 'unit', width: 10 },
+                { header: 'Price', key: 'price', width: 12 },
+                { header: 'Amount', key: 'amount', width: 12 },
+				{ header: 'Total', key: 'total', width: 12 },
+                { header: 'Remarks', key: 'remarks', width: 75 },
             ]
             let rows: any[] = [];
             const data = await this._databaseService.getManyItems(shortListModel , query);
@@ -202,7 +202,7 @@ export class ShortListController {
                 data.forEach((item: any,index: number)=>{
                     rows.push({
                         itemId: item.itemId,
-                        description: item.description,
+                        description: item.description.substr(12,300),
                         unit: item.unit,
                         price: this.shortListService.numberWithCommas(item.price),
                         amount: this.shortListService.numberWithCommas(item.amount),
