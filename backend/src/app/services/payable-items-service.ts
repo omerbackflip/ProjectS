@@ -88,7 +88,7 @@ export class PayableItemsService {
                         itemId: id,
                         description: (await this.getItemById({id}))?.description ,
                         subItems: userName ?
-                            data.filter((el: any) => el.itemId?.slice(0,2) === id)  
+                            await this.getSubItems(id,data)  
                             : data.filter((el: any) => el.itemId?.slice(0,2) === id && el.itemId.length !== 2 && el.itemId.length !== 10 ),
                     }
                 }));
@@ -97,6 +97,19 @@ export class PayableItemsService {
             console.log(error);
             return {hasErrors: false, error};
         }
+    }
+
+    public async getSubItems(id: any, data: any) {
+        const subArea = [...new Set(data.map((item: any) => {
+            if(item.itemId?.slice(0,2) === id) {
+                return item.itemId?.slice(0,5);
+            }
+        }))];
+        return await Promise.all(subArea.map( async (id: number) => {
+            if(id) {
+                return await payableItemsModel.findOne({itemId: id});
+            }
+        }));
     }
 
 

@@ -189,33 +189,7 @@ export default {
 							return item;
 						}
 					}));
-					this.$emit('getData', response.data.idPrefixes.map(prefix=>{
-						const preData = {
-							...prefix,
-						}			
-						return preData;
-					}));
-
-					// This get's areas and subareas in sideBar
-					// this.$emit('getData', response.data.idPrefixes.map(prefix=>{
-					// 	const preData = {
-					// 		...prefix,
-					// 		subItems: prefix.subItems.map(el=>{
-					// 			if(el.itemId?.length === 10){
-					// 				return {
-					// 					...el,
-					// 					itemId:el.itemId.slice(0,5)
-					// 				};
-					// 			} else {
-					// 				return {
-					// 					itemId: el.itemId,
-					// 					description: el.description
-					// 				};
-					// 			}
-					// 		})
-					// 	}			
-					// 	return {...preData , subItems: [...new Set(preData.subItems.map(item => item.itemId))]};
-					// }));
+					this.$emit('getData', response.data.idPrefixes);
 					this.grandTotal = response.data?.summaries?.grandTotal;
 					this.summary = response.data?.summaries?.summary;
 					this.isLoading = false;

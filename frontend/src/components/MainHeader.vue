@@ -20,7 +20,7 @@
 					<v-toolbar-items class="hidden-sm-and-down ml-4">
 						<template v-for="route of routes">
 							<template  v-if="!(route.children.length)">
-								<v-btn :class="isActive(route) ? 'bg-active' : ''" :key="route.id" text @click="redirect(route.path)">
+								<v-btn  :key="route.id" text @click="redirect(route.path)">
 									<md-icon class="text-white">{{route.icon}}</md-icon>
 									<span class="div-text text-white font-weight-bold">{{route.title}}</span>
 								</v-btn>
@@ -29,7 +29,7 @@
 							<template v-if="route.children.length">
 								<v-menu :key="route.id" data-app :rounded="true" open-on-hover offset-y transition="slide-x-transition" bottom right>
 									<template v-slot:activator="{ on, attrs }">
-										<v-btn :class="isActive(route) && (toggleActive) ? 'bg-active' : ''" text v-bind="attrs" v-on="on">
+										<v-btn text v-bind="attrs" v-on="on">
 											<md-icon class="text-white">{{route.icon}}</md-icon>
 											<span class="div-text text-white font-weight-bold">{{route.title}}</span>
 										</v-btn>
@@ -381,6 +381,9 @@ export default {
 		},
 
 		getAreas(data) {
+			data = data.map(item => {
+				return {...item, subItems: item.subItems.filter(n => n)};
+			})
 			this.isShortList = data[0]._id;
 			if(!(this.idPrefixes && this.idPrefixes.length) || this.changedRoute ) {
 				this.changedRoute = false;
