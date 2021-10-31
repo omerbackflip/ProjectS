@@ -28,7 +28,7 @@
 				</template>
 
 				<template class="dir-rtl text-right" v-slot:[`item.description`]="{ item }">
-					{{item.description.substr(12,300)}}
+					{{item.itemId.length === 10 ? item.description.substr(12,300) : item.description}}
 				</template>
 
 				<template v-slot:[`item.add_to_paka`]="{ item }">
