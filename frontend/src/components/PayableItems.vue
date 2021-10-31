@@ -7,20 +7,29 @@
 		<div v-if="showSearch" class="search-wrapper d-flex mr-3">
 			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
 			<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
-				Search
+				Search Global
 			</button>
 		</div>
 		<template  v-if="!isLoading && payableItems">
+			<v-card-title>
+				<v-text-field
+					v-model="search"
+					append-icon="mdi-magnify"
+					label="Search Local"
+					single-line
+					hide-details
+				></v-text-field>
+			</v-card-title>
 			<v-data-table 
 				:headers="headers"
 				:items="payableItems"
 				disable-pagination
-				disable-sort
 				bordered
 				height="91vh"
 				fixed-header
 				hide-default-footer
 				:item-class="itemRowBackground"
+				:search="search"
 			>
 
 				<template v-slot:[`item.price`]="{ item }">
@@ -97,6 +106,7 @@ export default {
 				{text:'PRICE',			value:'price'},
 				{text:'ADD_TO_PAKA',	value:'add_to_paka'},
 			],
+			search: '',
 		}
 	},
 	methods: {

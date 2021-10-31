@@ -24,7 +24,7 @@
 					v-for="item in summary"
 					:key="item.itemId"
 					>
-						<td class="text-right">{{ item.total.toLocaleString() }}</td>
+						<td class="text-right">{{ item.total.toFixed(0) }}</td>
 						<td class="text-right">{{ item.description }}</td>
 						<td>{{ item.itemId  }}</td>
 					</tr>
