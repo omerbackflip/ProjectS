@@ -221,7 +221,7 @@ export class ShortListController {
 						})
 					})
 					rows.push({
-						description:`Grand Total:  ${summary.grandTotal.toFixed(2)}`
+						description:`Grand Total:  ${summary.grandTotal.toFixed(0)}`
 					})
 				}
 

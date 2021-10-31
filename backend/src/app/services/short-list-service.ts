@@ -89,7 +89,7 @@ export class ShortListService {
                             total: sum,
                         }    
                     } else {
-                        return `${priceId} - ${priceItem.description} - ${sum.toFixed(2)}`
+                        return `${priceId} - ${sum.toFixed(0)} - ${priceItem.description.trim()}`
                     }
                 }));
                 let total = 0;
