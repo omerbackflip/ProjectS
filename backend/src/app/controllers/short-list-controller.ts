@@ -195,9 +195,11 @@ export class ShortListController {
                 { header: 'Remarks', key: 'remarks', width: 75 },
             ]
             let rows: any[] = [];
-            const data = await this._databaseService.getManyItems(shortListModel , query);
+            let data = await this._databaseService.getManyItems(shortListModel , query);
 			
             if(data) {
+
+				data = await this.shortListService.sortObject(data);
 
                 data.forEach((item: any,index: number)=>{
                     rows.push({

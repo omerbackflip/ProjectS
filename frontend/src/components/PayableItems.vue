@@ -100,18 +100,18 @@ export default {
 			itemIds: [],
 			user: {},
 			headers:[
-				{text:'ID', 			value:'itemId'},
-				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'success title'},
-				{text:'UNIT',			value:'unit'},
-				{text:'PRICE',			value:'price'},
-				{text:'ADD_TO_PAKA',	value:'add_to_paka'},
+				{text:'ID', 			value:'itemId', class: 'success--text hdr-styles title'},
+				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'success--text hdr-styles title'},
+				{text:'UNIT',			value:'unit', class: 'success--text hdr-styles title'},
+				{text:'PRICE',			value:'price', class: 'success--text hdr-styles title'},
+				{text:'ADD_TO_PAKA',	value:'add_to_paka', class: 'success--text hdr-styles title'},
 			],
 			search: '',
 		}
 	},
 	methods: {
 		//load all payable items list
-		async loadPayableItems(page,keyword) {
+		async loadPayableItems(page,keyword) { // page contain Area+subArea e.g "04.01"
 			try {
 				this.isLoading = true;
 				const params = {
@@ -210,6 +210,13 @@ export default {
     border: 1px solid blue;
     background: blue !important;
     color: #FFF;
+}
+
+.hdr-styles{
+	background-color: green !important;
+	font-size: 18px !important;
+	font-weight: 600;
+	color: #fff !important;
 }
 
 .md-cell {

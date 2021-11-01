@@ -107,7 +107,7 @@ export class ShortListService {
         }
     }
     
-
+    //This function is used to import excel file for short listed items
     public async saveShortListedItems(body: any, workbook: any) {
         try {
             var sheet_name_list = workbook.SheetNames;
@@ -126,6 +126,8 @@ export class ShortListService {
                             delete response.createdAt;
                             delete response._id;
                             response.amount = item.Amount;
+                            response.remarks = item.Remarks; // item MUST be the same name as in the Excel e.g "Remarks"
+                            response.paid = item.Paid;
                             response.userName = body.userName;
                             countImported++;
                             await this._databaseService.addItem(shortListModel , response);
@@ -134,7 +136,7 @@ export class ShortListService {
                     if(countImported > 0 && countImported <= filteredData.length) {
                         return {
                             hasErrors: false,
-                            message: "Data successfully Imported"
+                            message: `${countImported} out of ${filteredData.length} items are being imported successfully!`
                         }            
                     } else {
                         return {

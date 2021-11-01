@@ -10,6 +10,7 @@ const shortListModel = new Schema({
     unit: {type: String},
     amount: {type: Number },
     remarks: {type: String , default: '' },
+    paid: {type: Number , default: 0},
     createdAt: {type: Date, default:Date.now()},
     attachedFile: {},
 });

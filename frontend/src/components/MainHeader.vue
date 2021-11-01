@@ -105,10 +105,7 @@
 					absolute
 					temporary
 				>
-					<v-list
-					nav
-					dense
-					>
+					<v-list nav dense >
 					<v-list-item-group
 						v-model="group"
 						active-class="deep-purple--text text--accent-4"
@@ -119,15 +116,13 @@
 								@click="onPageChange(page.itemId)" 
 								:key="page.itemId+Math.floor(Math.random() * 1548) + index"
 								v-for="(page,index) of idPrefixes"
-								
 							>
 							<v-expansion-panel-header>
 								{{page.itemId+'-'+page.description}}  <!-- page is relative to area contain itemID and description-->
 							</v-expansion-panel-header>
-
 							<v-expansion-panel-content > <!-- elemnet is relative to sub-area -->
 								<v-list-item 
-									@click="()=>onPageChange(isShortList ? element.itemId.substr(9,2) : element.itemId)" 
+									@click="()=>onPageChange(element.itemId)" 
 									v-bind:class="{'bg-blue':  element && element.itemId && element.itemId.length === 5, }"  
 									:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
 									v-for="(element,index) of page.subItems" 
@@ -138,10 +133,8 @@
 								</v-list-item-title>
 								</v-list-item>
 							</v-expansion-panel-content>
-							
 							</v-expansion-panel>
 						</v-expansion-panels>
-
 					</v-list-item-group>
 					</v-list>
 				</v-navigation-drawer>
@@ -543,9 +536,9 @@ export default {
 		//pagination handler
 		onPageChange(page,keyword='') {
 			this.idPrefix = page;
-			if(this.$refs.payableItems.loadPayableItems){
+			if(this.$refs.payableItems.loadPayableItems){ //This is for payable items and the scrollToItem function is undefined here
 				this.$refs.payableItems.loadPayableItems(page,keyword);
-			} else if(this.$refs.payableItems.scrollToItem) {
+			} else if(this.$refs.payableItems.scrollToItem) {  //this is for short-list and the loadpayableitems function is undefined here
 				this.$refs.payableItems.scrollToItem(page);
 			}
 		},
