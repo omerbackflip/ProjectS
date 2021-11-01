@@ -30,6 +30,7 @@
 				hide-default-footer
 				:item-class="itemRowBackground"
 				:search="search"
+				dense
 			>
 
 				<template v-slot:[`item.price`]="{ item }">
@@ -104,7 +105,7 @@ export default {
 				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'success--text hdr-styles title'},
 				{text:'UNIT',			value:'unit', class: 'success--text hdr-styles title'},
 				{text:'PRICE',			value:'price', class: 'success--text hdr-styles title'},
-				{text:'ADD_TO_PAKA',	value:'add_to_paka', class: 'success--text hdr-styles title'},
+				{text:'ADD',	value:'add_to_paka', class: 'success--text hdr-styles title'},
 			],
 			search: '',
 		}
