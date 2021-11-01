@@ -1,14 +1,14 @@
 <template>
-<div>
-<div class="main-container">
-	<template >
-		<template v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
-		<div v-if="showSearch" class="search-wrapper d-flex mr-3">
-			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
-			<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
-				Search
-			</button>
-		</div>
+	<div>
+		<div class="main-container">
+			<template >
+				<template v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
+				<div v-if="showSearch" class="search-wrapper d-flex mr-3">
+					<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
+					<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
+						Search
+					</button>
+				</div>
 					<template  v-if="!isLoading && shortListedItems">
 						<v-data-table 
 							:headers="headers"
@@ -18,9 +18,7 @@
 							height="85vh"
 							fixed-header
 							hide-default-footer
-							dense
-						>
-
+							dense>
 							<template v-slot:[`item.price`]="{ item }">
 								{{item.price.toLocaleString()}}
 							</template>
@@ -71,49 +69,38 @@
 							<template v-slot:[`item.DEL`]="{ item }">
 								<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
 							</template>							
-
 						</v-data-table>
-
-						</template>
-
-
-
-		</template>
-
-	</template>
-
-		<div style="position:static" v-if="!(shortListedItems.length)" class="mt-3 mb-4 text-center alert alert-warning container">
-			No Data has been short listed!
+					</template>
+				</template>
+			</template>
+			<div style="position:static" v-if="!(shortListedItems.length)" class="mt-3 mb-4 text-center alert alert-warning container">
+				No Data has been short listed!
+			</div>
+			<template v-if="isLoading">
+				<md-progress-spinner></md-progress-spinner>
+			</template>
 		</div>
-		
-		<template v-if="isLoading">
-			<md-progress-spinner></md-progress-spinner>
-		</template>
-
-</div>
-
-				<div class="summary-parent">
-					<!-- <p class="font-weight-bold ml-1">Summary</p> -->
-					<div class="ml-2" >
-						<div class="row justify-content-space-around font-weight-bold" >
-							<template v-if="summary && summary.length && !itemClicked">
-								<div class="col">
-									{{`Grand Total = ${grandTotal.toLocaleString()} `}}
-								</div>
-							</template>
-							<template v-if="itemClicked">
-								<div class="col-md-2" dir='rtl'>
-									{{` ${itemClicked.total.toLocaleString() }  - ${itemClicked.description} - ${itemClicked.itemId}`}}
-								</div>
-								<div class="col-md-2">
-									{{`Grand Total = ${grandTotal.toLocaleString()} `}}
-								</div>
-							</template>
+		<div class="summary-parent">
+			<!-- <p class="font-weight-bold ml-1">Summary</p> -->
+			<div class="ml-2" >
+				<div class="row justify-content-space-around font-weight-bold" >
+					<template v-if="summary && summary.length && !itemClicked">
+						<div class="col">
+							{{`Grand Total = ${grandTotal.toLocaleString()} `}}
 						</div>
-					</div>
+					</template>
+					<template v-if="itemClicked">
+						<div class="col-md-2" dir='rtl'>
+							{{` ${itemClicked.total.toLocaleString() }  - ${itemClicked.description} - ${itemClicked.itemId}`}}
+						</div>
+						<div class="col-md-2">
+							{{`Grand Total = ${grandTotal.toLocaleString()} `}}
+						</div>
+					</template>
 				</div>
+			</div>
+		</div>
 	</div>
-
 </template>
 
 <script>

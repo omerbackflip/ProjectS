@@ -1,5 +1,5 @@
 export const routes = [
-    {   title: 'רשימה',
+    {   title: 'סעיפים',
         icon: 'list_alt',
         path: '/payable-items-list',
         children: []
@@ -59,12 +59,21 @@ export const routes = [
             },{
             title: "Delete Payable items",
             path: null,
-            action: 'delete payable items',}
+            action: 'delete payable items',
+            },{
+            title: "___________________",
+            path: null,
+            action: '',
+            },{
+            title: 'Users',
+            icon: 'person',
+            path: '/users'    
+            }
         ]
     },
-    {   title: 'Users',
-        icon: 'person',
-        path: '/users',
-        children: []
-    },
+    // {   title: 'Users',
+    //     icon: 'person',
+    //     path: '/users',
+    //     children: []
+    // },
 ]

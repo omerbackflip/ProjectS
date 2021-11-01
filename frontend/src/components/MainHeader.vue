@@ -15,7 +15,7 @@
 					<span @click="drawer = true">
 						<md-icon class="cursor-pointer text-white mr-3">menu</md-icon>
 					</span>
-					<v-toolbar-title class="title-dashboard">Dashboard</v-toolbar-title>
+					<v-toolbar-title class="title-dashboard">{{user.userName}}</v-toolbar-title>
 
 					<v-toolbar-items class="hidden-sm-and-down ml-4">
 						<template v-for="route of routes">
@@ -85,13 +85,13 @@
 								person_add
 							</md-icon>
 						</v-btn>
-						
-						<v-btn class="user-icon" text v-if="isLoggedIn">
+						<!-- This v-btn was show the userName (moved to the dashboard title)
+							 <v-btn class="user-icon" text v-if="isLoggedIn">
 							<md-icon class="text-white">person</md-icon>
 							<span class="text-white">
 								{{user.userName}}
 							</span>
-						</v-btn>
+						</v-btn> -->
 						
 						<v-btn text v-if="isLoggedIn" @click="logoutApp()">
 							<md-icon class="cursor-pointer ml-5 text-white" >logout</md-icon>
