@@ -33,6 +33,10 @@ export const routes = [
     {   title: 'ניהול',
         icon: 'list_alt',
         children: [{
+            title: "=== Short-List ===",
+            path: null,
+            action: '',
+            },{
             title: "Import Short-list",
             path: null,
             action: 'import short listed items',
@@ -49,7 +53,7 @@ export const routes = [
             path: null,
             action: 'copy short listed items',
             },{
-            title: "___________________",
+            title: "=== Payable Items ===",
             path: null,
             action: '',
             },{
@@ -61,7 +65,7 @@ export const routes = [
             path: null,
             action: 'delete payable items',
             },{
-            title: "___________________",
+            title: "=== Users ===",
             path: null,
             action: '',
             },{

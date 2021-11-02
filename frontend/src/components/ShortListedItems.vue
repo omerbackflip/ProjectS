@@ -3,13 +3,22 @@
 		<div class="main-container">
 			<template >
 				<template v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
-				<div v-if="showSearch" class="search-wrapper d-flex mr-3">
+				<!-- <div v-if="showSearch" class="search-wrapper d-flex mr-3">
 					<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
 					<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
 						Search
 					</button>
-				</div>
+				</div> -->
 					<template  v-if="!isLoading && shortListedItems">
+						<v-card-title>
+							<v-text-field
+								v-model="search"
+								append-icon="mdi-magnify"
+								label="Search Local"
+								single-line
+								hide-details
+							></v-text-field>
+						</v-card-title>
 						<v-data-table 
 							:headers="headers"
 							:items="shortListedItems"
@@ -18,6 +27,7 @@
 							height="85vh"
 							fixed-header
 							hide-default-footer
+							:search="search"
 							dense>
 							<template v-slot:[`item.price`]="{ item }">
 								{{item.price.toLocaleString()}}
@@ -143,13 +153,14 @@ export default {
 				{text:'UNIT',			value:'unit'},
 				{text:'PRICE',			value:'price'},
 				{text:'AMOUNT',			value:'amount'},
-				{text:'TOTAL',			value:'total'},
-				{text:'REMARKS',		value:'remarks'},
-				{text:'IMG',			value:'IMG'},
-				{text:'DEL',			value:'DEL'},
+				{text:'TOTAL',			value:'total', class: 'hdr-styles'},
+				{text:'REMARKS',		value:'remarks', class: 'hdr-styles'},
+				{text:'IMG',			value:'IMG', class: 'success--text hdr-styles title'},
+				{text:'DEL',			value:'DEL', class: 'success--text hdr-styles title'},
 			],
 			messageType : 'danger',
 			disableFileUpload : false,
+			search: '',
 		}
 	},
 	methods: {
@@ -213,9 +224,9 @@ export default {
 				this.file = event.target.files[0];
 			}
 		},
-		toggleSearch(){
-			this.showSearch = !this.showSearch;
-		},
+		// toggleSearch(){
+		// 	this.showSearch = !this.showSearch;
+		// },
 		//api call to import short list file
 		async shortListItems() {
 			try {
@@ -242,6 +253,7 @@ export default {
 					body.itemId = itemId;
 					body.userName = this.user.userName;
 					await updateShortListItem(body);
+					//console.log(itemId +'  ' + e.target.value);
 				}
 			} catch (error) {
 				console.log(error);
@@ -285,9 +297,9 @@ export default {
 				this.showMessage("Couln't download the file",'danger');
 			}
 		},
-		loadListItems(){
-			this.loadShortListedItems(0,this.keyword);
-		},
+		// loadListItems(){
+		// 	this.loadShortListedItems(0,this.keyword);
+		// },
 		scrollToItem(itemId) {
 			const el = document.getElementById(itemId);
 			if(el) {
@@ -323,7 +335,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .area-wrapper{
     border: 1px solid yellow;
     padding: 12px;

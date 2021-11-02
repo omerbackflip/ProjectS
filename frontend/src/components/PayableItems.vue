@@ -200,7 +200,7 @@ export default {
 }
 </script>
 
-<style>
+<style >
 
 .area-wrapper{
     border: 1px solid yellow;
