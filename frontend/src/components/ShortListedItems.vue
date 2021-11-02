@@ -109,7 +109,6 @@ import {
 	importShortListDataFile , 
 	updateShortListItem,
 	deleteShortListItem,
-	exportData,
 	addFileToItem,
 	downloadAttachedFile,
 	getImageById

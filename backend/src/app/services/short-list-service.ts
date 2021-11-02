@@ -111,7 +111,7 @@ export class ShortListService {
     public async saveShortListedItems(body: any, workbook: any) {
         try {
             var sheet_name_list = workbook.SheetNames;
-            await this.deleteShortListItems(body.userName);
+            await this.deleteShortListItems(body);
             const data = this.payableItemsService.transformData(sheet_name_list , workbook);
             if(data) {
                 const filteredData = [].concat.apply([], data).filter((element: any) => element!== null);
