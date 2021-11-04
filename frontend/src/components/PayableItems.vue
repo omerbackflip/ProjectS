@@ -101,11 +101,11 @@ export default {
 			itemIds: [],
 			user: {},
 			headers:[
-				{text:'ID', 			value:'itemId', class: 'success--text hdr-styles title'},
-				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'success--text hdr-styles title'},
-				{text:'UNIT',			value:'unit', class: 'success--text hdr-styles title'},
-				{text:'PRICE',			value:'price', class: 'success--text hdr-styles title'},
-				{text:'ADD',	value:'add_to_paka', class: 'success--text hdr-styles title'},
+				{text:'ID', 			value:'itemId', class: 'hdr-styles-payable'},
+				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'hdr-styles-payable'},
+				{text:'UNIT',			value:'unit', class: 'hdr-styles-payable'},
+				{text:'PRICE',			value:'price', class: 'hdr-styles-payable'},
+				{text:'ADD',	value:'add_to_paka', class: 'text hdr-styles-payable'},
 			],
 			search: '',
 		}
@@ -200,7 +200,7 @@ export default {
 }
 </script>
 
-<style >
+<style>
 
 .area-wrapper{
     border: 1px solid yellow;
@@ -213,7 +213,7 @@ export default {
     color: #FFF;
 }
 
-.hdr-styles{
+.hdr-styles-payable{
 	background-color: green !important;
 	font-size: 18px !important;
 	font-weight: 600;

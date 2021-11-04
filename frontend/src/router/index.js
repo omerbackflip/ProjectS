@@ -1,3 +1,5 @@
+// This routes are genric routes made by vue automatice once installed vue-router 
+
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'

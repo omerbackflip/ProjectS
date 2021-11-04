@@ -612,13 +612,13 @@ export default {
 			const user = JSON.parse(getUser());
 			this.user = user;
 			this.getUsers();
-			this.showSearch = !(this.$route.name === 'Summary' || this.$route.name === 'Users');
+			this.showSearch = (this.$route.name === 'Payable Items');
 			this.showCreateUser = this.$route.name === 'Users';
 	},
 
     watch: {
 		'$route': function(to, from) {
-			this.showSearch = !(this.$route.name === 'Summary' || this.$route.name === 'Users');
+			this.showSearch = (this.$route.name === 'Payable Items');
 			this.showCreateUser = this.$route.name === 'Users';
 		}
 	}

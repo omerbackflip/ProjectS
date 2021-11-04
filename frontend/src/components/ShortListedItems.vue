@@ -42,7 +42,7 @@
 							</template>
 
 							<template :id="item.itemId" v-slot:[`item.total`]="{ item }">
-								{{(item.amount * item.price).toLocaleString()}}
+								{{((item.amount * item.price).toFixed(2)).toLocaleString()}}
 							</template>
 
 							<template v-slot:[`item.remarks`]="{ item }">
@@ -67,15 +67,23 @@
 									</label> 
 								</span>
 								<div v-if="(item.attachedFile)" class="image-upload ">
-									<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
-										<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
-									</template>
-									<template v-else>
-										<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
-									</template>
+									<viewer
+										@inited="inited"
+										class="viewer" ref="viewer"
+									>
+										<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
+											<!-- <img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">																	 -->
+											<img :id="item.itemID" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block images width-thumb">
+
+										</template>
+										<template v-else>
+											<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+										</template>
+									</viewer>
+
 								</div>
 							</template>
-
+							<img id="largeImage" src="" alt="" srcset="">
 							<template v-slot:[`item.DEL`]="{ item }">
 								<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
 							</template>							
@@ -125,11 +133,15 @@ import {
 } from '../api';
 import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
+  import 'viewerjs/dist/viewer.css'
+  import { component as Viewer } from "v-viewer"
+
 
 export default {
 	name: 'Short-Listed-Items',
 	components: {
-		MainHeader	
+		MainHeader,
+		Viewer
 	},
 	//main data state used in component level
 	data() {
@@ -155,8 +167,8 @@ export default {
 				{text:'AMOUNT',			value:'amount'},
 				{text:'TOTAL',			value:'total', class: 'hdr-styles'},
 				{text:'REMARKS',		value:'remarks', class: 'hdr-styles'},
-				{text:'IMG',			value:'IMG', class: 'success--text hdr-styles title'},
-				{text:'DEL',			value:'DEL', class: 'success--text hdr-styles title'},
+				{text:'IMG',			value:'IMG', class: 'hdr-styles'},
+				{text:'DEL',			value:'DEL', class: 'hdr-styles'},
 			],
 			messageType : 'danger',
 			disableFileUpload : false,
@@ -164,6 +176,9 @@ export default {
 		}
 	},
 	methods: {
+     inited (viewer) {			// this is for review the Image
+        this.$viewer = viewer
+      },
 		//basic load list function for short list
 		async loadShortListedItems(page,keyword) {
 			try {
@@ -336,6 +351,12 @@ export default {
 </script>
 
 <style>
+
+
+.hdr-styles{
+	background: blue !important;
+	color: white !important;
+}
 .area-wrapper{
     border: 1px solid yellow;
     padding: 12px;
@@ -467,4 +488,5 @@ td{
     width: 80px;
     cursor: pointer;
 }
+
 </style>
