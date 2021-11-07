@@ -71,16 +71,39 @@
 										@inited="inited"
 										class="viewer" ref="viewer"
 									>
+
+			
 										<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
-											<!-- <img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">																	 -->
-											<img :id="item.itemID" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block images width-thumb">
+											<!-- downloads the attchment -->
+											<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
+											 <!-- View the imageSrc 
+											<img :id="item.itemID" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block images width-thumb"> -->
 
 										</template>
+
+
+
 										<template v-else>
 											<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+											<pdf :src="`${item.imageSrc.data}`"></pdf>
 										</template>
-									</viewer>
+											<v-tooltip bottom>
+												<template v-slot:activator="{ on }">
+												<a 
+													target="_blank"
+													:href="item.imageSrc.data"
+													v-on="on"
+												>
+													view
+												</a>
+												</template>
+												Opens pdf in a new window
+											</v-tooltip>
+											<v-btn text x-small outlined @click="removeFile($event, item.itemId, 'attachedFile')">Remove</v-btn>
 
+
+
+									</viewer>
 								</div>
 							</template>
 							<img id="largeImage" src="" alt="" srcset="">
@@ -133,15 +156,17 @@ import {
 } from '../api';
 import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
-  import 'viewerjs/dist/viewer.css'
-  import { component as Viewer } from "v-viewer"
+import 'viewerjs/dist/viewer.css'
+import { component as Viewer } from "v-viewer"
+import pdf from 'vue-pdf'
 
 
 export default {
 	name: 'Short-Listed-Items',
 	components: {
 		MainHeader,
-		Viewer
+		Viewer,
+		pdf
 	},
 	//main data state used in component level
 	data() {
@@ -176,9 +201,12 @@ export default {
 		}
 	},
 	methods: {
-     inited (viewer) {			// this is for review the Image
-        this.$viewer = viewer
-      },
+		
+		// this is for preview the Image
+		inited (viewer) {			
+			this.$viewer = viewer
+		},
+
 		//basic load list function for short list
 		async loadShortListedItems(page,keyword) {
 			try {
@@ -215,34 +243,12 @@ export default {
 				this.isLoading = false;
 			}
 		},
-		//export excel list
-		async exportExcel(){
-			try {
-				window.open(`${exportData}?userName=${this.user.userName}`);	
-			} catch (error) {
-				console.log(error);
-			}
-		},
-		//file handler
-		onFileSelect(event) {
-			event.preventDefault();
-			if (event && event.target && event.target.files[0]) {
-				const {name , size} = event.target.files[0];
-				const type = this.getExtension(name);
-				if (!(['.xls','.xlsx','.docx'].includes(type))) {
-					this.showMessage(`Sorry! ${type} is not supported!` , 'danger');
-					return;
-				} else if ((size / 1024 / 1024) > 1) {
-					this.showMessage(`Sorry, your file size exceeds the limit.` , 'danger');
-					return;
-				}
-				this.file = event.target.files[0];
-			}
-		},
+
 		// toggleSearch(){
 		// 	this.showSearch = !this.showSearch;
 		// },
-		//api call to import short list file
+
+		//api call to import short list file  ???????? WHat for
 		async shortListItems() {
 			try {
 				if(this.file) {
@@ -259,26 +265,56 @@ export default {
 				this.showMessage("Couln't upload the shortlist file",'danger');
 			}
 		},
+
 		//used to update remark or amount for short list item
 		async updateItem(e,itemId, key) {
 			try {
 				const body = {};
 				if(e && e.target) {
-					body[key] = String(e.target.value);
+					body[key] = String(e.target.value);  //"e.target.value" contains the content of the changed field (amount or remark)
 					body.itemId = itemId;
 					body.userName = this.user.userName;
 					await updateShortListItem(body);
-					//console.log(itemId +'  ' + e.target.value);
+					//console.log(body);
 				}
 			} catch (error) {
 				console.log(error);
 				this.showMessage("Couln't upload the shortlist file",'danger');
 			}
 		},
+
+
+		//used to remove img/file from an item
+		async removeFile(e,itemId, key) {
+			if (2==3){ // dont run this yet
+				try {
+					const body = {};
+					if(e && e.target) {
+						body[key] = String(e.target.value); //"e.target.value" contains the content of the changed field (amount or remark)
+						body.itemId = itemId;
+						body.userName = this.user.userName;
+						item.attachedFile = '';
+						await updateShortListItem(body);
+						//console.log(itemId +'  ' + e.target.value);
+					}
+				} catch (error) {
+					console.log(error);
+					this.showMessage("Couln't upload the shortlist file",'danger');
+				}
+			}else {
+				console.log(e.target)
+			}
+		},
+
+
+
+
+
+
 		//used to delete any short listed item
 		async deleteItem(itemId, key) {
 			try {
-				if(window.confirm('Are you sure you want to delete this item?')){
+				if(window.confirm(`Are you sure you want to delete item  ${itemId}  ??`)){
 					await deleteShortListItem(itemId,this.user.userName);
 					this.loadShortListedItems();
 				}
@@ -287,6 +323,7 @@ export default {
 				this.showMessage("Couln't delete the shortlist file",'danger');
 			}
 		},
+
 		//used to add file to a short list item
 		async addFile(event) {
 			try {
@@ -301,6 +338,7 @@ export default {
 				this.showMessage("Couln't upload the file",'danger');
 			}
 		},
+
 		//used to download file for a short list item
 		async downloadFile(attachedFile) {
 			try {
@@ -312,9 +350,11 @@ export default {
 				this.showMessage("Couln't download the file",'danger');
 			}
 		},
+
 		// loadListItems(){
 		// 	this.loadShortListedItems(0,this.keyword);
 		// },
+
 		scrollToItem(itemId) {
 			const el = document.getElementById(itemId);
 			if(el) {
@@ -322,6 +362,7 @@ export default {
 				this.itemClicked = this.summary.filter(item => item.itemId === itemId)[0];
 			}
 		},
+
 		showMessage(message,type){
 			this.message = message;
 			this.messageType = type;
@@ -333,15 +374,13 @@ export default {
 				this.$refs.fileInput.value=null;
 			}
 		},
-		getExtension(filename) {
-			var i = filename.lastIndexOf('.');
-			return (i < 0) ? '' : filename.substr(i);
-		},
+
 		openFilePicker(id) {
 			this.selectedItemId = id;
 			document.getElementById("raised-button-file").click();
 		},
 	},
+
 	created(){
 		const user = JSON.parse(getUser());
 		this.user = user;

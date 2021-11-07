@@ -14,7 +14,8 @@ var upload = multer({ dest: 'short-listed/' })
 
 var storage = multer.diskStorage({
 	destination: function (req: any, file: any, cb: any) {
-	  cb(null, './src/app/controllers/attached-files/')
+		console.log(req.body)
+	  cb(null, `./src/app/controllers/attached-files/${req.body.userName}/`)	//Middleware to create/save to directory files
 	},
 	filename: function (req: any, file: any, cb: any) {
 	  cb(null, file.originalname) //Appending .jpg

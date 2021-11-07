@@ -1,4 +1,5 @@
-export const routes = [
+// This routes are custum routes made for the specific needs of the header
+export const routes = [             
     {   title: 'סעיפים',
         icon: 'list_alt',
         path: '/payable-items-list',

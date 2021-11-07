@@ -8,6 +8,8 @@ export async function authLogin(username,password) {
 }
 
 
+
+
 // ****** PAYABLE ITEMS ******** //
 export async function getAllPayableItems(params) {
     return await get('/payable-items/get',{}, params);
@@ -38,9 +40,11 @@ export async function deletePayableItems() {
     return await put('/payable-items/delete', {});
 }
 
+
+
+
+
 // ****** SHORTLISTED ITEMS ******** //
-
-
 export async function getAllShortListedItems(params) {
     return await get('/short-list-items/get', {}, params);
 }
@@ -128,8 +132,10 @@ export async function getImageById(query) {
 }
 
 
-// ****** USERS ******** //
 
+
+
+// ****** USERS ******** //
 export async function getAllUsers() {
     return await get('/users/get', {});
 }

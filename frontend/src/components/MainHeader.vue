@@ -194,18 +194,16 @@
 								<div :class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
 									{{message}}
 								</div>
-								<v-toolbar
-								color="primary"
-								>Import Short List items</v-toolbar>
+								<v-toolbar color="primary">Import Short List items</v-toolbar>
 								<v-card-text>
-								<input 
-									@change="onShortListFileSelect($event)" 
-									id="fileSelect" 
-									class="mt-4"
-									ref="fileInput"
-									type="file" 
-									accept=".xlsx, application/vnd.openxmlformds-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
-								/>
+									<input 
+										@change="onShortListFileSelect($event)" 
+										id="fileSelect" 
+										class="mt-4"
+										ref="fileInput"
+										type="file" 
+										accept=".xlsx, application/vnd.openxmlformds-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
+									/>
 								</v-card-text>
 								<v-card-actions class="justify-end">
 								<v-btn
@@ -214,6 +212,13 @@
 									@click = "shortListItems()"
 								>Short List</v-btn>
 								</v-card-actions>
+								
+
+								<v-checkbox 
+									v-model="overwrite"
+									:label="`overwrite: ${overwrite.toString()}`"
+								></v-checkbox>
+
 							</v-card>
 						</template>
 				</v-dialog>
@@ -237,7 +242,7 @@
 									<v-select
 										v-model="selectedUsers"
 										:items="getUsersToShow()"
-										chips
+									
 										class="mt-4 mb-4"
 										label="Chips"
 										multiple
@@ -330,6 +335,7 @@ export default {
 		drawer: false,
 	    group:null,
 		idPrefixes: [],
+		overwrite: false,
 	}),
 	
 	methods:{
@@ -374,6 +380,7 @@ export default {
 		},
 
 		getAreas(data) {
+
 			data = data.map(item => {
 				return {...item, subItems: item.subItems.filter(n => n)};
 			})
@@ -397,7 +404,7 @@ export default {
 					this.messageType = "success";
 					window.location.reload();
 				} else {
-					this.message = "Coundn't delete payable items !";
+					this.message = "Couldn't delete payable items !";
 					this.messageType = "danger";
 				}
 			}
@@ -561,6 +568,7 @@ export default {
 				this.showMessage("Couln't upload the shortlist file",'danger');
 			}
 		},
+
 		isActive(route) {
 			if(this.$route.name === route.title) {
 				this.toggleActive = true;
@@ -577,6 +585,7 @@ export default {
 			}
 			return false;
 		},
+		
 		//copy short list api call
 		async copyShortList() {
 			try {
@@ -761,6 +770,11 @@ td{
 	color:#FFF !important;
 	background: #1867c0 !important;
   }
+
+  #app > div.v-menu__content.theme--light.v-menu__content--fixed.menuable__content__active{
+	  top: 230px !important;
+  }
+
 
   v-list-item-title {
 	  align-content: center;

@@ -23,9 +23,12 @@
 			<label class="mt-2 mb-2 mr-3 ml-3">Root user</label>
 			<input name="rootUser" v-model="newUser.rootUser" class="ml-3" type="checkbox"/>
 		</div>
-		<button type="submit" class="btn btn-success">
+		<v-btn type="submit" class="btn btn-success">
 			{{editMode ? 'Update' : 'Submit'}}
-		</button>
+		</v-btn>
+		<v-btn @click="closeForm($event)" class="btn btn-success ml-3">
+			Cancel
+		</v-btn>
 	</form>
 
 	<v-data-table 
@@ -69,7 +72,7 @@ import MainHeader from './MainHeader.vue';
 
 Vue.filter('formatDate', function(value) {
     if (value) {
-        return moment(String(value)).format('MM/DD/YYYY hh:mm')
+        return moment(String(value)).format('DD/MM/YYYY hh:mm')
     }
 });
 
@@ -118,10 +121,11 @@ export default {
 				console.log(error);
 			}
 		},
+
 		//used to create a user
 		async createUser(e) {
 			try {
-				e.preventDefault();
+				e.preventDefault(); // prevent the form from submitting
 				const {userName , firstName , lastName , password} = this.newUser;
 				if(userName && firstName && lastName && password){
 					let response;
@@ -159,9 +163,14 @@ export default {
 				console.log(error);
 			}
 		},
+		closeForm(e) {
+			e.preventDefault(); // prevent the form from submitting
+			this.openForm=false;
+		},
 		toggleCreateUser() {
 			this.openForm = !this.openForm;
 		},
+
 		//edit user form open
 		editUser(user) {
 			this.openForm = true;
@@ -169,6 +178,7 @@ export default {
 			this.newUser = user;
 			this.editMode = true;
 		},
+
 		//used to delete a user from the DB
 		async deleteUser(id){
 			if(window.confirm("Are you sure you want to delete this user?")){
@@ -182,8 +192,9 @@ export default {
 					this.messageType = "danger";
 				}
 			}
-	  }
+	  	}
 	},
+	
 	created(){
 		this.getUsers();
 		this.user = JSON.parse(getUser());
