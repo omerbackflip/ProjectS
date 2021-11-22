@@ -239,24 +239,28 @@
 								color="primary"
 								>Copy Items</v-toolbar>
 								<v-card-text>
-									<v-select
-										v-model="selectedUsers"
-										:items="getUsersToShow()"
-									
-										class="mt-4 mb-4"
-										label="Chips"
-										multiple
-										outlined
-									></v-select>
+									<div class="row">
+										<div class="col-md-9">
+											<v-select
+												v-model="selectedUsers"
+												:items="getUsersToShow()"
+												class="mt-4 mb-4"
+												label="Chips"
+												multiple
+												outlined
+											></v-select>
+										</div>
+										<div class="col-md-3 mt-44 mb-4">
+											<v-btn
+												text
+												class="dialog-button-height"
+												:disabled="!(selectedUsers.length)" @click = "copyShortList()"
+											>Submit</v-btn>
+										</div>
+									</div>
+
 								</v-card-text>
 								<v-card-actions class="justify-end">
-								<v-btn
-									text
-									class="dialog-button-height"
-									footer
-									bottom
-									:disabled="!(selectedUsers.length)" @click = "copyShortList()"
-								>Submit</v-btn>
 								</v-card-actions>
 							</v-card>
 						</template>
@@ -669,6 +673,10 @@ export default {
   color: #2c3e50;
 }
 
+.mt-44{
+	margin-top: 44px;
+}
+
 #nav a.router-link-exact-active {
   color: #42b983;
 }
@@ -764,9 +772,9 @@ td{
   }
 
   .dialog-button-height{
-	position: relative;
+	/* position: relative;
     bottom: 0;
-    top: 260px;
+    top: 160px; */
 	color:#FFF !important;
 	background: #1867c0 !important;
   }
@@ -781,5 +789,12 @@ td{
 	  background: #1867c0 !important;
 	  font-size: 8px !important;
   }
+
+ 
+
+.v-sheet{
+	top: 429 !important;
+}
+
 @import'~bootstrap/dist/css/bootstrap.css'
 </style>

@@ -94,6 +94,10 @@ export async function deleteShortListItem(id,userName) {
     return await deleteItem(`/short-list-items/delete-item/${id}/${userName}`, {});
 }
 
+export async function removeFile(id,userName) {
+    return await put(`/short-list-items/remove-file/${id}/${userName}`, {});
+}
+
 export async function addShortListItems(body) {
     return await put(`/short-list-items/add`, body);
 }

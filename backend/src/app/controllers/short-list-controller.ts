@@ -14,8 +14,7 @@ var upload = multer({ dest: 'short-listed/' })
 
 var storage = multer.diskStorage({
 	destination: function (req: any, file: any, cb: any) {
-		console.log(req.body)
-	  cb(null, `./src/app/controllers/attached-files/${req.body.userName}/`)	//Middleware to create/save to directory files
+	  cb(null, `./src/app/controllers/attached-files/`)	//Middleware to create/save to directory files
 	},
 	filename: function (req: any, file: any, cb: any) {
 	  cb(null, file.originalname) //Appending .jpg
@@ -31,7 +30,7 @@ var excel = require('exceljs');
 const constants = require('../constants/constant');
 
 @JsonController(constants.appRoutingPrefix)
-// @UseBefore(PassportAuthMiddleware)
+@UseBefore(PassportAuthMiddleware)
 export class ShortListController {
 
 	@Inject()
@@ -241,7 +240,7 @@ export class ShortListController {
 
 			}
 		} catch (error) {
-			res.send(error);			
+			console.log("Error")
 		}
 	}
 	
@@ -261,6 +260,25 @@ export class ShortListController {
 			return res.send({
 				hasErrors:true,
 				message:"Couldn't get summary!"
+			})
+		}
+	}
+
+	@Put("/short-list-items/remove-file/:id/:userName")
+	public async removeFile(
+		@Req() req: any,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+		try {
+			const result = await this.shortListService.removeFile(req.params);
+			if (result) {
+				return res.send(result);
+			}
+		} catch (error) {
+			return res.send({
+				hasErrors:true,
+				message:"Couldn't delete file!"
 			})
 		}
 	}

@@ -42,7 +42,7 @@
 							</template>
 
 							<template :id="item.itemId" v-slot:[`item.total`]="{ item }">
-								{{((item.amount * item.price).toFixed(2)).toLocaleString()}}
+								{{numberWithCommas(item.amount * item.price)}}
 							</template>
 
 							<template v-slot:[`item.remarks`]="{ item }">
@@ -50,62 +50,64 @@
 								class="form-control form-control-sm mt-2" type="text" :value="item.remarks"></textarea>
 							</template>
 
+
+							<!-- ---------------------- Short listed attached files  ---------------------- -->
+
 							<template v-slot:[`item.IMG`]="{ item }">
-								<span  v-if="!(item.attachedFile)" class="image-upload">
-									<input
-										style="display: 'none'"
-										id="raised-button-file"
-										ref="attachFile"  @input="($event) => addFile($event)"
-										type="file"
-									/>
-									<label htmlFor="raised-button-file">
-									<div @click="openFilePicker(item.itemId)">
-										<md-icon class="icon-clickable" variant="raised" component="span" >
-											upload
-										</md-icon>
-									</div>
-									</label> 
-								</span>
+								
+								<!-- Upload file -->
+									<span  v-if="!(item.attachedFile)" class="image-upload">
+										<input
+											style="display: 'none'"
+											id="raised-button-file"
+											ref="attachFile"  @input="($event) => addFile($event)"
+											type="file"
+										/>
+										<label htmlFor="raised-button-file">
+										<div @click="openFilePicker(item.itemId)">
+											<md-icon class="icon-clickable" variant="raised" component="span" >
+												upload
+											</md-icon>
+										</div>
+										</label> 
+									</span>
+
+								<!-- End Upload file -->
+
+
 								<div v-if="(item.attachedFile)" class="image-upload ">
 									<viewer
 										@inited="inited"
 										class="viewer" ref="viewer"
 									>
 
-			
 										<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
 											<!-- downloads the attchment -->
 											<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
-											 <!-- View the imageSrc 
-											<img :id="item.itemID" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block images width-thumb"> -->
-
 										</template>
-
-
 
 										<template v-else>
 											<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
-											<pdf :src="`${item.imageSrc.data}`"></pdf>
-										</template>
-											<v-tooltip bottom>
-												<template v-slot:activator="{ on }">
-												<a 
-													target="_blank"
-													:href="item.imageSrc.data"
-													v-on="on"
-												>
-													view
-												</a>
-												</template>
-												Opens pdf in a new window
+											<v-tooltip v-if="item.attachedFile.mimetype === 'application/pdf'" bottom>
+													<template v-slot:activator="{ on }">
+													<v-btn
+														@click="viewPDF(item.imageSrc.data)" 
+														v-on="on"
+													>
+														view
+													</v-btn>
+													</template>
+													Opens pdf in a new window
 											</v-tooltip>
-											<v-btn text x-small outlined @click="removeFile($event, item.itemId, 'attachedFile')">Remove</v-btn>
-
-
+										</template>
+										<v-btn text x-small outlined @click="deleteFile(item.itemId)">Remove</v-btn>
 
 									</viewer>
 								</div>
 							</template>
+
+							<!-- ---------------------- End Short listed attached files  ---------------------- -->
+
 							<img id="largeImage" src="" alt="" srcset="">
 							<template v-slot:[`item.DEL`]="{ item }">
 								<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
@@ -150,6 +152,7 @@ import {
 	importShortListDataFile , 
 	updateShortListItem,
 	deleteShortListItem,
+	removeFile,
 	addFileToItem,
 	downloadAttachedFile,
 	getImageById
@@ -157,8 +160,10 @@ import {
 import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
 import 'viewerjs/dist/viewer.css'
+import { jsPDF } from "jspdf";
 import { component as Viewer } from "v-viewer"
 import pdf from 'vue-pdf'
+import VueDocPreview from 'vue-doc-preview'
 
 
 export default {
@@ -166,7 +171,8 @@ export default {
 	components: {
 		MainHeader,
 		Viewer,
-		pdf
+		pdf,
+		VueDocPreview
 	},
 	//main data state used in component level
 	data() {
@@ -283,33 +289,23 @@ export default {
 			}
 		},
 
-
-		//used to remove img/file from an item
-		async removeFile(e,itemId, key) {
-			if (2==3){ // dont run this yet
-				try {
-					const body = {};
-					if(e && e.target) {
-						body[key] = String(e.target.value); //"e.target.value" contains the content of the changed field (amount or remark)
-						body.itemId = itemId;
-						body.userName = this.user.userName;
-						item.attachedFile = '';
-						await updateShortListItem(body);
-						//console.log(itemId +'  ' + e.target.value);
-					}
-				} catch (error) {
-					console.log(error);
-					this.showMessage("Couln't upload the shortlist file",'danger');
+		//used to remove any short listed item file
+		async deleteFile(itemId) {
+			try {
+				if(window.confirm(`Are you sure you want to delete file  ??`)){
+					await removeFile(itemId,this.user.userName);
+					this.loadShortListedItems();
 				}
-			}else {
-				console.log(e.target)
+			} catch (error) {
+				console.log(error);
+				this.showMessage("Couln't delete the shortlist file",'danger');
 			}
 		},
 
-
-
-
-
+		viewPDF(data){
+			var win = window.open();
+		    win.document.write(`<iframe src=data:application/pdf;base64,${data} frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen"><\/iframe>`);
+		},
 
 		//used to delete any short listed item
 		async deleteItem(itemId, key) {
@@ -322,6 +318,10 @@ export default {
 				console.log(error);
 				this.showMessage("Couln't delete the shortlist file",'danger');
 			}
+		},
+
+		numberWithCommas(x) {
+    		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		},
 
 		//used to add file to a short list item
