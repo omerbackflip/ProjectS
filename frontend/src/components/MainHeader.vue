@@ -74,6 +74,16 @@
 							</md-icon>
 						</v-btn>
 
+						<input 
+							v-model="keyword" 
+							class="form-control form-control-sm mt-3 mb-2 ml-4 dir-rtl text-right" 
+							type="text" 
+							placeholder="חפש מילים מסויימיות..." 
+							style="width:auto"
+						>
+
+
+
 						<!-- Create User button -->
 						<v-btn
 							v-if="showCreateUser"
@@ -117,22 +127,22 @@
 								:key="page.itemId+Math.floor(Math.random() * 1548) + index"
 								v-for="(page,index) of idPrefixes"
 							>
-							<v-expansion-panel-header>
-								{{page.itemId+'-'+page.description}}  <!-- page is relative to area contain itemID and description-->
-							</v-expansion-panel-header>
-							<v-expansion-panel-content > <!-- elemnet is relative to sub-area -->
-								<v-list-item 
-									@click="()=>onPageChange(element.itemId)" 
-									v-bind:class="{'bg-blue':  element && element.itemId && element.itemId.length === 5, }"  
-									:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
-									v-for="(element,index) of page.subItems" 
-								>
-								<v-list-item-title>
-									<!-- {{(isShortList ? element.itemId.substr(9,2) : element.itemId.substr(3,2)) + (' - '+element.description)}} -->
-									{{(element.itemId.substr(3,2)) + (' - '+element.description)}}
-								</v-list-item-title>
-								</v-list-item>
-							</v-expansion-panel-content>
+								<v-expansion-panel-header>
+									{{page.itemId+'-'+page.description}}  <!-- page is relative to area contain itemID and description-->
+								</v-expansion-panel-header>
+								<v-expansion-panel-content > <!-- elemnet is relative to sub-area -->
+									<v-list-item 
+										@click="()=>onPageChange(element.itemId)" 
+										v-bind:class="{'bg-blue':  element && element.itemId && element.itemId.length === 5, }"  
+										:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
+										v-for="(element,index) of page.subItems" 
+									>
+										<v-list-item-title>
+											<!-- {{(isShortList ? element.itemId.substr(9,2) : element.itemId.substr(3,2)) + (' - '+element.description)}} -->
+											{{(element.itemId.substr(3,2)) + (' - '+element.description)}}
+										</v-list-item-title>
+									</v-list-item>
+								</v-expansion-panel-content>
 							</v-expansion-panel>
 						</v-expansion-panels>
 					</v-list-item-group>
@@ -569,22 +579,6 @@ export default {
 			}
 		},
 
-		isActive(route) {
-			if(this.$route.name === route.title) {
-				this.toggleActive = true;
-				return true;
-			} 
-			// route.children && (route.children.filter(child => child.title === currentChild)).length
-			const children = JSON.parse(JSON.stringify(route.children));
-			if(children.length){
-				const index = children.findIndex(child => child.title === this.currentChild);
-				if(index>=0) {
-					this.toggleActive = false;
-					return true;
-				}
-			}
-			return false;
-		},
 		
 		//copy short list api call
 		async copyShortList() {

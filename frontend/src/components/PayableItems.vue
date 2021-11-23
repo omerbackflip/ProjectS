@@ -5,7 +5,7 @@
     </div>
 	<template >
 		<div v-if="showSearch" class="search-wrapper d-flex mr-3">
-			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
+			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4 dir-rtl text-right" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
 			<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
 				Search Global
 			</button>
@@ -38,7 +38,8 @@
 				</template>
 
 				<template class="dir-rtl text-right" v-slot:[`item.description`]="{ item }">
-					{{item.itemId.length === 10 ? item.description.substr(12,300) : item.description}}
+					<!-- {{item.itemId.length === 10 ? item.description.substr(12,300) : item.description}} -->
+					{{item.description}}
 				</template>
 
 				<template v-slot:[`item.add_to_paka`]="{ item }">
@@ -103,8 +104,8 @@ export default {
 			headers:[
 				{text:'ID', 			value:'itemId', class: 'hdr-styles-payable'},
 				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'hdr-styles-payable'},
-				{text:'UNIT',			value:'unit', class: 'hdr-styles-payable'},
-				{text:'PRICE',			value:'price', class: 'hdr-styles-payable'},
+				{text:'UNIT',			value:'unit', class: 'hdr-styles-payable', align:'right'},
+				{text:'PRICE',			value:'price', class: 'hdr-styles-payable', align:'right'},
 				{text:'ADD',	value:'add_to_paka', class: 'text hdr-styles-payable'},
 			],
 			search: '',

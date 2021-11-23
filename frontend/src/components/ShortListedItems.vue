@@ -34,7 +34,8 @@
 							</template>
 
 							<template v-slot:[`item.description`]="{ item }">
-								{{item.description.substr(12,300)}}
+								<!-- {{item.description.substr(12,300)}} -->
+								{{item.description}}
 							</template>
 							
 							<template v-slot:[`item.amount`]="{ item }">
@@ -42,7 +43,7 @@
 							</template>
 
 							<template :id="item.itemId" v-slot:[`item.total`]="{ item }">
-								{{((item.amount * item.price).toFixed(2)).toLocaleString()}}
+								{{item.amount ? ((item.amount * item.price)).toLocaleString() : '' }}
 							</template>
 
 							<template v-slot:[`item.remarks`]="{ item }">
@@ -80,9 +81,6 @@
 											<img :id="item.itemID" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block images width-thumb"> -->
 
 										</template>
-
-
-
 										<template v-else>
 											<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
 											<pdf :src="`${item.imageSrc.data}`"></pdf>
@@ -100,9 +98,6 @@
 												Opens pdf in a new window
 											</v-tooltip>
 											<v-btn text x-small outlined @click="removeFile($event, item.itemId, 'attachedFile')">Remove</v-btn>
-
-
-
 									</viewer>
 								</div>
 							</template>
@@ -185,15 +180,16 @@ export default {
 			user : {},
 			message : '',
 			headers:[
-				{text:'ID', 			value:'itemId'},
-				{text:'DESCRIPTION', 	value:'description', align:'right'},
-				{text:'UNIT',			value:'unit'},
-				{text:'PRICE',			value:'price'},
-				{text:'AMOUNT',			value:'amount'},
-				{text:'TOTAL',			value:'total', class: 'hdr-styles'},
-				{text:'REMARKS',		value:'remarks', class: 'hdr-styles'},
-				{text:'IMG',			value:'IMG', class: 'hdr-styles'},
-				{text:'DEL',			value:'DEL', class: 'hdr-styles'},
+				{text:'ID',			value:'itemId',			class: 'hdr-styles'},
+				{text:'תאור הסעיף', value:'description',	class: 'hdr-styles',	align:'right'},
+				{text:'יחידה',		value:'unit',			class: 'hdr-styles',	align:'right'},
+				{text:'מחיר',		value:'price',			class: 'hdr-styles',	align:'right'},
+				{text:'מתוכנן',		value:'planned',		class: 'hdr-styles',	align:'right'},
+				{text:'מצטבר',		value:'amount',			class: 'hdr-styles',	align:'right'},
+				{text:'סה"כ',		value:'total',			class: 'hdr-styles',	align:'right'},
+				{text:'הערה',		value:'remarks',		class: 'hdr-styles'},
+				{text:'IMG',		value:'IMG',			class: 'hdr-styles'},
+				{text:'DEL',		value:'DEL',			class: 'hdr-styles'},
 			],
 			messageType : 'danger',
 			disableFileUpload : false,
