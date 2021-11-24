@@ -241,6 +241,30 @@ export class ShortListService {
         }
     }
 
+    public async removeFile(params: any) {
+        try {
+            const response = await shortListModel.update({
+                    itemId: params.id,
+                    userName: params.userName
+                },{$unset: {attachedFile: 1 } }
+            );
+
+            if(response) {
+                return {
+                    hasErrors: false,
+                    message:"File successfully deleted!"
+                }     
+            }   
+       
+        } catch (error) {
+            return {
+                hasErrors: true,
+                error,
+            }
+        }
+    }
+
+
     public async addFile(body: any, file: any) {
         try {
             const payload: any = {};

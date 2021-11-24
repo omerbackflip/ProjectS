@@ -78,13 +78,11 @@ export default class ErrorHandler implements ExpressErrorMiddlewareInterface {
 
 		switch (err.name) {
 			default:
-				console.log(err);
 				req.logger.logError(err, 'Something went wrong');
 				errorModel.message = err.message;
 				errorModel.stack = config.env === "development" ? err.stack : undefined;
 				response.errorModel = errorModel;
 
-				res.status(500).send(response);
 				return next();
 		}
 	}
