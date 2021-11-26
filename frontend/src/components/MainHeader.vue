@@ -63,7 +63,7 @@
 							</span>
 						</v-btn>
 
-						<!-- Toggle search button -->
+						<!-- Toggle search button should show only on smart devices-->
 						<v-btn
 							text
 							v-show="showSearch"
@@ -79,8 +79,11 @@
 							@change="onKeywordChange"
 							class="form-control form-control-sm mt-3 mb-2 ml-4 dir-rtl text-right" 
 							type="text" 
-							placeholder="חפש מילים מסויימיות..." 
+							placeholder=" חיפוש בכל המחירון..." 
 							style="width:auto"
+							v-on:keyup.enter="loadListItems"
+							v-show="showSearch"
+							clearable
 						>
 
 

@@ -15,7 +15,7 @@
 				<v-text-field
 					v-model="search"
 					append-icon="mdi-magnify"
-					label="Search Local"
+					label="חיפוש מקומי דינמי"
 					single-line
 					hide-details
 				></v-text-field>
