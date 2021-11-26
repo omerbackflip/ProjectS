@@ -34,8 +34,7 @@
 							</template>
 
 							<template v-slot:[`item.description`]="{ item }">
-								<!-- {{item.description.substr(12,300)}} -->
-								{{item.description}}
+								{{item.description.substr(12,300)}}
 							</template>
 							
 							<template v-slot:[`item.amount`]="{ item }">
@@ -82,6 +81,9 @@
 											<!-- downloads the attchment -->
 											<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
 										</template>
+
+
+
 										<template v-else>
 											<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
 											<v-tooltip v-if="item.attachedFile.mimetype === 'application/pdf'" bottom>
@@ -186,16 +188,15 @@ export default {
 			user : {},
 			message : '',
 			headers:[
-				{text:'ID',			value:'itemId',			class: 'hdr-styles'},
-				{text:'תאור הסעיף', value:'description',	class: 'hdr-styles',	align:'right'},
-				{text:'יחידה',		value:'unit',			class: 'hdr-styles',	align:'right'},
-				{text:'מחיר',		value:'price',			class: 'hdr-styles',	align:'right'},
-				{text:'מתוכנן',		value:'planned',		class: 'hdr-styles',	align:'right'},
-				{text:'מצטבר',		value:'amount',			class: 'hdr-styles',	align:'right'},
-				{text:'סה"כ',		value:'total',			class: 'hdr-styles',	align:'right'},
-				{text:'הערה',		value:'remarks',		class: 'hdr-styles'},
-				{text:'IMG',		value:'IMG',			class: 'hdr-styles'},
-				{text:'DEL',		value:'DEL',			class: 'hdr-styles'},
+				{text:'ID', 			value:'itemId'},
+				{text:'DESCRIPTION', 	value:'description', align:'right'},
+				{text:'UNIT',			value:'unit'},
+				{text:'PRICE',			value:'price'},
+				{text:'AMOUNT',			value:'amount'},
+				{text:'TOTAL',			value:'total', class: 'hdr-styles'},
+				{text:'REMARKS',		value:'remarks', class: 'hdr-styles'},
+				{text:'IMG',			value:'IMG', class: 'hdr-styles'},
+				{text:'DEL',			value:'DEL', class: 'hdr-styles'},
 			],
 			messageType : 'danger',
 			disableFileUpload : false,
