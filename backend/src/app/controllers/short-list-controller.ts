@@ -204,7 +204,7 @@ export class ShortListController {
                 data.forEach((item: any,index: number)=>{
                     rows.push({
                         itemId: item.itemId,
-                        description: item.description.substr(12,300),
+                        description: (item.description && item.description.substr(12,300)) || '',
                         unit: item.unit,
                         price: this.shortListService.numberWithCommas(item.price),
                         amount: this.shortListService.numberWithCommas(item.amount),
@@ -240,7 +240,9 @@ export class ShortListController {
 
 			}
 		} catch (error) {
-			console.log("Error")
+			console.log("*******************************************")
+			console.log(error)
+			console.log("*******************************************")
 		}
 	}
 	

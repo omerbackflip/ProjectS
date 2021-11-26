@@ -69,14 +69,14 @@
 							v-show="showSearch"
 							@click="loadListItems"
 							>
-							<md-icon>
+							<md-icon class="search-icon">
 								search
 							</md-icon>
 						</v-btn>
 
 						<input 
 							v-model="keyword" 
-							v-show="showSearch"
+							@change="onKeywordChange"
 							class="form-control form-control-sm mt-3 mb-2 ml-4 dir-rtl text-right" 
 							type="text" 
 							placeholder="חפש מילים מסויימיות..." 
@@ -363,6 +363,9 @@ export default {
 		redirect(path){
 			this.$router.push(path);
 		},
+		onKeywordChange(e) {
+			this.keyword = e.target.value;
+		},
 
 		//Navigation or popups features as in the drop down
 		navigateTo(child) {
@@ -438,7 +441,7 @@ export default {
 		//used to emit parent load list
 		loadListItems() {
 			if(this.$refs.payableItems && this.$refs.payableItems.toggleSearch){
-				this.$refs.payableItems.toggleSearch();
+				this.$refs.payableItems.loadPayableItems(0,this.keyword);   
 			}
 		},
 
@@ -805,6 +808,10 @@ td{
 
 .v-sheet{
 	top: 429 !important;
+}
+
+.search-icon{
+	color: #FFF !important;
 }
 
 @import'~bootstrap/dist/css/bootstrap.css'

@@ -4,12 +4,12 @@
         {{message}}
     </div>
 	<template >
-		<div v-if="showSearch" class="search-wrapper d-flex mr-3">
+		<!-- <div v-if="showSearch" class="search-wrapper d-flex mr-3">
 			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
 			<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
 				Search Global
 			</button>
-		</div>
+		</div> -->
 		<template  v-if="!isLoading && payableItems">
 			<v-card-title>
 				<v-text-field
@@ -91,7 +91,7 @@ export default {
 	data() {
 		return {
 			payableItems : [],
-			keyword:'',
+			// keyword:'',
 			isLoading : false,
 			file: '',
 			showSearch: false,
@@ -116,13 +116,13 @@ export default {
 			try {
 				this.isLoading = true;
 				const params = {
-					userName: this.user.userName
+					// userName: this.user.userName
 				};
 				if(page) {
 					params['itemId'] = page;
 					this.currentPage = page; // Save current page in order to stay in the current page
 				} else if(keyword){
-					params['keyword'] = this.keyword;
+					params['keyword'] = keyword;
 				} else {
 					params['itemId'] = "01";
 				}
@@ -167,9 +167,9 @@ export default {
 			this.showSearch = !this.showSearch;
 		},
 		//to load this function when search keyword is entered
-		loadListItems(){
-			this.loadPayableItems(0,this.keyword);
-		},
+		// loadListItems(){
+		// 	this.loadPayableItems(0,this.keyword);
+		// },
 		//add to short list function
 		addToList(id){
 			//getting index if the item is already pushed in itemIds
