@@ -3,3 +3,4 @@ build/
 logs/
 *.log
 .env
+backend/src/app/controllers/attached-files/

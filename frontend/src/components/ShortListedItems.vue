@@ -52,55 +52,43 @@
 
 							<!-- ---------------------- Short listed attached files  ---------------------- -->
 							<template v-slot:[`item.IMG`]="{ item }">
-								
+					
 								<!-- Upload file -->
-									<span  v-if="!(item.attachedFile)" class="image-upload">
-										<input
-											style="display: 'none'"
-											id="raised-button-file"
-											ref="attachFile"  @input="($event) => addFile($event)"
-											type="file"
-										/>
-										<label htmlFor="raised-button-file">
-										<div @click="openFilePicker(item.itemId)">
-											<md-icon class="icon-clickable" variant="raised" component="span" >
-												upload
-											</md-icon>
-										</div>
-										</label> 
-									</span>
-								<!-- End Upload file -->
+								<span  v-if="!(item.attachedFile)" class="image-upload">
+									<input
+										style="display: 'none'"
+										id="raised-button-file"
+										ref="attachFile"  @input="($event) => addFile($event)"
+										type="file"
+									/>
+									<label htmlFor="raised-button-file">
+									<div @click="openFilePicker(item.itemId)">
+										<md-icon class="icon-clickable" variant="raised" component="span" >
+											upload
+										</md-icon>
+									</div>
+									</label> 
+								</span>
 
-								<div v-if="(item.attachedFile)" class="image-upload ">
-									<viewer
-										@inited="inited"
-										class="viewer" ref="viewer"
-									>
-
+								<!-- View/Download file -->
+								<div v-if="(item.attachedFile)" class="image-upload">
+									<viewer @inited="inited" class="viewer" ref="viewer">
 										<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
-											<!-- downloads the attchment -->
-											<img @click="downloadFile(item.attachedFile)" :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
+											<!-- downloads the img attchment -->
+											<img :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
 										</template>
-
-
-
 										<template v-else>
-											<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
 											<v-tooltip v-if="item.attachedFile.mimetype === 'application/pdf'" bottom>
 													<template v-slot:activator="{ on }">
-													<v-btn
-														@click="viewPDF(item.imageSrc.data)" 
-														v-on="on"
-													>
-														view
-													</v-btn>
+													<v-btn text x-small outlined @click="viewPDF(item.imageSrc.data)" v-on="on">{{item.attachedFile.filename}}</v-btn>
 													</template>
-													Opens pdf in a new window
+													View pdf
 											</v-tooltip>
 										</template>
 										<v-btn text x-small outlined @click="deleteFile(item.itemId)">Remove</v-btn>
-
 									</viewer>
+									<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+									{{item.attachedFile.filename}}
 								</div>
 							</template>
 							<!-- ---------------------- End Short listed attached files  ---------------------- -->
@@ -188,11 +176,11 @@ export default {
 			user : {},
 			message : '',
 			headers:[
-				{text:'ID', 			value:'itemId'},
-				{text:'DESCRIPTION', 	value:'description', align:'right'},
-				{text:'UNIT',			value:'unit'},
-				{text:'PRICE',			value:'price'},
-				{text:'AMOUNT',			value:'amount'},
+				{text:'ID', 			value:'itemId', class: 'hdr-styles'},
+				{text:'DESCRIPTION', 	value:'description', class: 'hdr-styles', align:'right'},
+				{text:'UNIT',			value:'unit', class: 'hdr-styles'},
+				{text:'PRICE',			value:'price', class: 'hdr-styles'},
+				{text:'AMOUNT',			value:'amount', class: 'hdr-styles'},
 				{text:'TOTAL',			value:'total', class: 'hdr-styles'},
 				{text:'REMARKS',		value:'remarks', class: 'hdr-styles'},
 				{text:'IMG',			value:'IMG', class: 'hdr-styles'},
@@ -513,10 +501,6 @@ td{
 .width-thumb{
 	width: 30px;
 	cursor: pointer;
-}
-.image-upload > input
-{
-    display: none;
 }
 
 .icon-image
