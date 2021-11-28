@@ -34,20 +34,35 @@
 							</template>
 
 							<template v-slot:[`item.description`]="{ item }">
-								{{item.description.substr(12,300)}}
+								<!-- {{item.description.substr(12,300)}} -->
+								{{item.description}}
 							</template>
-							
+
+							<template v-slot:[`item.planned`]="{ item }">
+								{{item.planned ? item.planned : ''}}
+							</template>
+
+							<template v-slot:[`item.paid`]="{ item }">
+								{{item.paid ? item.paid : ''}}
+							</template>
+
 							<template v-slot:[`item.amount`]="{ item }">
-								<input :id="item.itemId.slice(0,2)" class="amount-width" @change="updateItem($event, item.itemId, 'amount')" :value="item.amount" />	
+								<input :id="item.itemId.slice(0,2)" 
+										class="amount-width" 
+										@change="updateItem($event, item.itemId, 'amount')" 
+										:value="item.amount"
+										autocomplete="off" />	
 							</template>
 
 							<template :id="item.itemId" v-slot:[`item.total`]="{ item }">
-								{{numberWithCommas(item.amount * item.price)}}
+								{{ item.amount ? numberWithCommas(item.amount * item.price) : ''}}
 							</template>
 
 							<template v-slot:[`item.remarks`]="{ item }">
 								<textarea @change="updateItem($event, item.itemId, 'remarks')"
-								class="form-control form-control-sm mt-2" type="text" :value="item.remarks"></textarea>
+										  class="form-control form-control-sm mt-2" 
+										  type="text" 
+										  :value="item.remarks"></textarea>
 							</template>
 
 							<!-- ---------------------- Short listed attached files  ---------------------- -->
@@ -62,11 +77,12 @@
 										type="file"
 									/>
 									<label htmlFor="raised-button-file">
-									<div @click="openFilePicker(item.itemId)">
-										<md-icon class="icon-clickable" variant="raised" component="span" >
+									<!-- <div @click="openFilePicker(item.itemId)">
+										 <md-icon class="icon-clickable" variant="raised" component="span" >
 											upload
 										</md-icon>
-									</div>
+									</div> -->
+										<v-btn icon @click="openFilePicker(item.itemId)"> <v-icon>upload</v-icon> </v-btn>
 									</label> 
 								</span>
 
@@ -74,20 +90,19 @@
 								<div v-if="(item.attachedFile)" class="image-upload">
 									<viewer @inited="inited" class="viewer" ref="viewer">
 										<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
-											<!-- downloads the img attchment -->
 											<img :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
 										</template>
 										<template v-else>
 											<v-tooltip v-if="item.attachedFile.mimetype === 'application/pdf'" bottom>
 													<template v-slot:activator="{ on }">
-													<v-btn text x-small outlined @click="viewPDF(item.imageSrc.data)" v-on="on">{{item.attachedFile.filename}}</v-btn>
+													<v-btn text x-small outlined @click="viewPDF(item.imageSrc.data)" v-on="on">view pdf</v-btn>
 													</template>
 													View pdf
 											</v-tooltip>
 										</template>
 										<v-btn text x-small outlined @click="deleteFile(item.itemId)">Remove</v-btn>
 									</viewer>
-									<button class="icon-button" @click="downloadFile(item.attachedFile)"><md-icon  class="icon-clickable">download</md-icon></button>
+									<v-btn icon @click="downloadFile(item.attachedFile)"> <v-icon>download</v-icon> </v-btn>
 									{{item.attachedFile.filename}}
 								</div>
 							</template>
@@ -95,14 +110,14 @@
 
 							<img id="largeImage" src="" alt="" srcset="">
 							<template v-slot:[`item.DEL`]="{ item }">
-								<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon  class="icon-clickable">delete</md-icon></button>
+								<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon class="icon-clickable">delete</md-icon></button>
 							</template>							
 						</v-data-table>
 					</template>
 				</template>
 			</template>
 			<div style="position:static" v-if="!(shortListedItems.length)" class="mt-3 mb-4 text-center alert alert-warning container">
-				No Data has been short listed!
+				There is no data in short-list.
 			</div>
 			<template v-if="isLoading">
 				<md-progress-spinner></md-progress-spinner>
@@ -176,15 +191,17 @@ export default {
 			user : {},
 			message : '',
 			headers:[
-				{text:'ID', 			value:'itemId', class: 'hdr-styles'},
-				{text:'DESCRIPTION', 	value:'description', class: 'hdr-styles', align:'right'},
-				{text:'UNIT',			value:'unit', class: 'hdr-styles'},
-				{text:'PRICE',			value:'price', class: 'hdr-styles'},
-				{text:'AMOUNT',			value:'amount', class: 'hdr-styles'},
-				{text:'TOTAL',			value:'total', class: 'hdr-styles'},
-				{text:'REMARKS',		value:'remarks', class: 'hdr-styles'},
-				{text:'IMG',			value:'IMG', class: 'hdr-styles'},
-				{text:'DEL',			value:'DEL', class: 'hdr-styles'},
+				{text:'סעיף', 			value:'itemId', class: 'hdr-styles'},
+				{text:'תאור הסעיף', 	value:'description', class: 'hdr-styles', align:'right'},
+				{text:'יחידה',			value:'unit', class: 'hdr-styles'},
+				{text:'מחיר',			value:'price', class: 'hdr-styles'},
+				{text:'מתוכנן',			value:'planned', class: 'hdr-styles'},
+				{text:'כמות',			value:'amount', class: 'hdr-styles'},
+				{text:'שולם',			value:'paid', class: 'hdr-styles'},
+				{text:'סה"כ',			value:'total', class: 'hdr-styles'},
+				{text:'הערות',			value:'remarks', class: 'hdr-styles'},
+				{text:'מצורף',			value:'IMG', class: 'hdr-styles'},
+				{text:'מחק',			value:'DEL', class: 'hdr-styles'},
 			],
 			messageType : 'danger',
 			disableFileUpload : false,
@@ -266,7 +283,6 @@ export default {
 					body.itemId = itemId;
 					body.userName = this.user.userName;
 					await updateShortListItem(body);
-					//console.log(body);
 				}
 			} catch (error) {
 				console.log(error);

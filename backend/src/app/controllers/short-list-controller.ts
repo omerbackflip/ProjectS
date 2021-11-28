@@ -204,7 +204,7 @@ export class ShortListController {
                 data.forEach((item: any,index: number)=>{
                     rows.push({
                         itemId: item.itemId,
-                        description: (item.description && item.description.substr(12,300)) || '',
+                        description: (item.description) || '',
                         unit: item.unit,
                         price: this.shortListService.numberWithCommas(item.price),
                         amount: this.shortListService.numberWithCommas(item.amount),

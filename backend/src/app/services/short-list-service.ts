@@ -126,8 +126,9 @@ export class ShortListService {
                             delete response.createdAt;
                             delete response._id;
                             response.amount = item.Amount;
+                            response.planned = item.Planned;
+                            response.paid = item.Paid;                            
                             response.remarks = item.Remarks; // item MUST be the same name as in the Excel e.g "Remarks"
-                            response.paid = item.Paid;
                             response.userName = body.userName;
                             countImported++;
                             await this._databaseService.addItem(shortListModel , response);

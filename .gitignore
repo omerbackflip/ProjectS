@@ -4,3 +4,4 @@ logs/
 *.log
 .env
 backend/src/app/controllers/attached-files/
+backend/short-listed
