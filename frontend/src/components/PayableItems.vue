@@ -117,7 +117,7 @@ export default {
 			try {
 				this.isLoading = true;
 				const params = {
-					// userName: this.user.userName
+					userName: this.user.userName
 				};
 				if(page) {
 					params['itemId'] = page;

@@ -61,8 +61,8 @@ const conf = convict({
         },
         name: {
             format: '*',
-            default: 'admin',
-            //default: 'mivne_tzibur',            
+            default: 'admin',           // טיכונט, חשמונאים, רמת החייל
+            //default: 'mivne_tzibur',  // בית מארס          
             env: 'DB_NAME',
         },
         username: {

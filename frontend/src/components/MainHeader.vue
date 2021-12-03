@@ -46,11 +46,9 @@
 						</template>
 					</v-toolbar-items>
 
-
 					<div class="flex-grow-1"></div>
 
 					<v-toolbar-items>
-
 						<!-- Add Short List Items button -->
 						<v-btn
 							v-show="itemIds.length"
@@ -64,11 +62,7 @@
 						</v-btn>
 
 						<!-- Toggle search button should show only on smart devices-->
-						<v-btn
-							text
-							v-show="showSearch"
-							@click="loadListItems"
-							>
+						<v-btn text v-show="showSearch" @click="loadListItems">
 							<md-icon class="search-icon">
 								search
 							</md-icon>
@@ -86,15 +80,8 @@
 							clearable
 						>
 
-
-
 						<!-- Create User button -->
-						<v-btn
-							v-if="showCreateUser"
-							@click="createUser"
-							class=mx-2 plus-button
-							text
-							>
+						<v-btn v-if="showCreateUser" @click="createUser" class=mx-2 plus-button text>
 							<md-icon>
 								person_add
 							</md-icon>
@@ -106,19 +93,13 @@
 								{{user.userName}}
 							</span>
 						</v-btn> -->
-						
 						<v-btn text v-if="isLoggedIn" @click="logoutApp()">
 							<md-icon class="cursor-pointer ml-5 text-white" >logout</md-icon>
 						</v-btn>
 					</v-toolbar-items>
-										
 				</v-app-bar>
 
-				<v-navigation-drawer
-					v-model="drawer"
-					absolute
-					temporary
-				>
+				<v-navigation-drawer v-model="drawer" absolute temporary>
 					<v-list nav dense >
 					<v-list-item-group
 						v-model="group"
