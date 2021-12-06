@@ -54,8 +54,22 @@
 										autocomplete="off" />	
 							</template>
 
+							<template v-slot:[`item.topic`]="{ item }">
+								<textarea @change="updateItem($event, item.itemId, 'topic')"
+										  class="form-control form-control-sm mt-2" 
+										  type="text" 
+										  :value="item.topic"></textarea>
+								<!-- <v-select
+									v-model="item.topic"
+									:items="topics"
+									@change="updateItem($event, item.itemId, 'topic')"
+								></v-select> -->
+							</template>
+
+
+
 							<template :id="item.itemId" v-slot:[`item.total`]="{ item }">
-								{{ item.amount ? numberWithCommas(item.amount * item.price) : ''}}
+								{{ item.amount ? (numberWithCommas((item.amount * item.price).toFixed(0))) : ''}}
 							</template>
 
 							<template v-slot:[`item.remarks`]="{ item }">
@@ -199,6 +213,7 @@ export default {
 				{text:'כמות',			value:'amount', class: 'hdr-styles', align:'right'},
 				{text:'שולם',			value:'paid', class: 'hdr-styles', align:'right'},
 				{text:'סה"כ',			value:'total', class: 'hdr-styles', align:'right'},
+				{text:'נושא',			value:'topic', class: 'hdr-styles', align:'right'},
 				{text:'הערות',			value:'remarks', class: 'hdr-styles'},
 				{text:'מצורף',			value:'IMG', class: 'hdr-styles'},
 				{text:'מחק',			value:'DEL', class: 'hdr-styles'},
@@ -206,6 +221,7 @@ export default {
 			messageType : 'danger',
 			disableFileUpload : false,
 			search: '',
+			topics: ['AAA','BBB'],
 		}
 	},
 	methods: {

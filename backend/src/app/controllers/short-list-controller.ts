@@ -210,7 +210,7 @@ export class ShortListController {
                         price: this.shortListService.numberWithCommas(item.price),
                         planned: this.shortListService.numberWithCommas(item.planned),
                         amount: this.shortListService.numberWithCommas(item.amount),
-						total: this.shortListService.numberWithCommas((item.amount * item.price).toFixed(2)),
+						total: (item.amount * item.price) ? this.shortListService.numberWithCommas((item.amount * item.price).toFixed(0)) : '',
                         remarks: item.remarks,
                     });
                 });

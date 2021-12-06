@@ -63,21 +63,16 @@
 
 						<!-- Toggle search button should show only on smart devices-->
 						<v-btn text v-show="showSearch" @click="loadListItems">
-							<md-icon class="search-icon">
-								search
-							</md-icon>
+							<md-icon class="search-icon">search</md-icon>
 						</v-btn>
-
 						<input 
 							v-model="keyword" 
-							@change="onKeywordChange"
 							class="form-control form-control-sm mt-3 mb-2 ml-4 dir-rtl text-right" 
 							type="text" 
-							placeholder=" חיפוש בכל המחירון..." 
+							placeholder="חיפוש בכל המאגר..." 
 							style="width:auto"
 							v-on:keyup.enter="loadListItems"
 							v-show="showSearch"
-							clearable
 						>
 
 						<!-- Create User button -->

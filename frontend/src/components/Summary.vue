@@ -74,7 +74,12 @@ export default {
 	async created(){
 		this.user = JSON.parse(await getUser());
 		this.getSummary();
-	}
+	},
+
+	numberWithCommas(x) { // not used ...
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+},
+
 }
 </script>
 

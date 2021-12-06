@@ -198,6 +198,10 @@ export class ShortListService {
                 payload.amount = body.amount;
             }
 
+            if("topic" in body) {
+                payload.topic = body.topic;
+            }
+
             const response = await this._databaseService.updateItem(shortListModel ,{
                 itemId: body.itemId,
                 userName: body.userName

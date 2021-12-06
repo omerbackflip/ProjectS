@@ -102,11 +102,11 @@ export default {
 			itemIds: [],
 			user: {},
 			headers:[
-				{text:'ID', 			value:'itemId', class: 'hdr-styles-payable'},
-				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'hdr-styles-payable'},
-				{text:'UNIT',			value:'unit', class: 'hdr-styles-payable'},
-				{text:'PRICE',			value:'price', class: 'hdr-styles-payable'},
-				{text:'ADD',	value:'add_to_paka', class: 'text hdr-styles-payable'},
+				{text:'ID', 			value:'itemId', 	class: 'hdr-styles-payable'},
+				{text:'DESCRIPTION', 	value:'description', class: 'hdr-styles-payable', align:'right', rtl: true},
+				{text:'UNIT',			value:'unit', 		class: 'hdr-styles-payable'},
+				{text:'PRICE',			value:'price', 		class: 'hdr-styles-payable', align:'right'},
+				{text:'ADD',			value:'add_to_paka', class: 'text hdr-styles-payable'},
 			],
 			search: '',
 		}

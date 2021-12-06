@@ -14,6 +14,7 @@ const shortListModel = new Schema({
     planned: {type: Number , default: 0},
     createdAt: {type: Date, default:Date.now()},
     attachedFile: {},
+    topic: {type: String},
 });
 let ShortList: any;
 module.exports = ShortList = mongoose.model('ShortList', shortListModel);
