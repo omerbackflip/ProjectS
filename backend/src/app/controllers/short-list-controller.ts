@@ -193,6 +193,7 @@ export class ShortListController {
                 { header: 'Planned', key: 'planned', width: 12 },
                 { header: 'Amount', key: 'amount', width: 12 },
 				{ header: 'Total', key: 'total', width: 12 },
+				{ header: 'Topic', key: 'topic', width: 12 },
                 { header: 'Remarks', key: 'remarks', width: 75 },
             ]
             let rows: any[] = [];
@@ -211,6 +212,7 @@ export class ShortListController {
                         planned: this.shortListService.numberWithCommas(item.planned),
                         amount: this.shortListService.numberWithCommas(item.amount),
 						total: (item.amount * item.price) ? this.shortListService.numberWithCommas((item.amount * item.price).toFixed(0)) : '',
+                        topic: item.topic,
                         remarks: item.remarks,
                     });
                 });
