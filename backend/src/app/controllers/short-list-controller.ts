@@ -198,7 +198,8 @@ export class ShortListController {
             ]
             let rows: any[] = [];
             let data = await this._databaseService.getManyItems(shortListModel , query);
-			
+			rows.push('sadjlkjkl' + data[1].userName); // try to print the user name in the header
+			// console.log(data[1].userName);			
             if(data) {
 
 				data = await this.shortListService.sortObject(data);

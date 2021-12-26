@@ -53,11 +53,9 @@
 							class="cursor-pointer"
 						>
 					</td>
-
 					<td v-else-if="(item.added)">
 						<p v-if="item.itemId.length === 10">{{item.amount}}</p>
 					</td>				
-				
 					<td v-else-if="item.unit === 'הערה' && !(item.added)">
 						<p v-if="item.itemId.length === 10"></p>
 					</td>	

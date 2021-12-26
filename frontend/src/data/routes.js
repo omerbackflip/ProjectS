@@ -1,16 +1,16 @@
 // This routes are custum routes made for the specific needs of the header
 export const routes = [             
-    {   title: 'סעיפים',
+    {   title: 'PaybleItemList',
         icon: 'list_alt',
         path: '/payable-items-list',
         children: []
     },
-    {   title: 'חשבון חלקי',
+    {   title: 'ShortList',
         icon: 'money',
         path: '/short-listed-items',
         children: []
     },    
-    {   title: 'סיכום',
+    {   title: 'Summary',
         icon: 'money',
         path: '/summary',
         children: []
@@ -31,7 +31,7 @@ export const routes = [
     //         action: 'delete payable items',}
     //     ]
     // },
-    {   title: 'ניהול',
+    {   title: 'Maintnence',
         icon: 'list_alt',
         children: [{
             title: "=== Short-List ===",

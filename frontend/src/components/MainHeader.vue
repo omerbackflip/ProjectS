@@ -3,7 +3,7 @@
 	<span>
 		<v-card
 			class="mx-auto"
-			height="auto"
+			height="900px"
 			v-if="isLoggedIn"
 		>
 			<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
@@ -634,15 +634,15 @@ export default {
 <style scoped>
   .md-app {
     max-height: 100%;
-    height: 100%;
+    height: 80%;
   }
 
   .page-container{
-    height: 100%;
+    height: 80%;
   }
   .md-drawer {
     width: 220px;
-    height: 100%;
+    height: 80%;
     max-width: calc(100vw - 125px);
   }
 

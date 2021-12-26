@@ -59,10 +59,9 @@
 										  class="form-control form-control-sm mt-2" 
 										  type="text" 
 										  :value="item.topic"></textarea>
-								<!-- <v-select
-									v-model="item.topic"
-									:items="topics"
-									@change="updateItem($event, item.itemId, 'topic')"
+								<!-- <v-select 	@change="updateItem($event, item.itemId, 'topic')"
+												v-model="item.topic"
+												:items="topics"									
 								></v-select> -->
 							</template>
 
@@ -96,7 +95,7 @@
 											upload
 										</md-icon>
 									</div> -->
-										<v-btn icon @click="openFilePicker(item.itemId)"> <v-icon>upload</v-icon> </v-btn>
+										<v-btn icon @click="openFilePicker(item.itemId)"> <v-icon small>upload</v-icon> </v-btn>
 									</label> 
 								</span>
 
@@ -124,7 +123,7 @@
 
 							<img id="largeImage" src="" alt="" srcset="">
 							<template v-slot:[`item.DEL`]="{ item }">
-								<button class="icon-button" @click="deleteItem(item.itemId)"><md-icon class="icon-clickable">delete</md-icon></button>
+								<v-button class="icon-button" @click="deleteItem(item.itemId)"><v-icon small class="icon-clickable">delete</v-icon></v-button>
 							</template>							
 						</v-data-table>
 					</template>
@@ -214,9 +213,9 @@ export default {
 				{text:'שולם',			value:'paid', class: 'hdr-styles', align:'right'},
 				{text:'סה"כ',			value:'total', class: 'hdr-styles', align:'right'},
 				{text:'נושא',			value:'topic', class: 'hdr-styles', align:'right'},
-				{text:'הערות',			value:'remarks', class: 'hdr-styles'},
-				{text:'מצורף',			value:'IMG', class: 'hdr-styles'},
-				{text:'מחק',			value:'DEL', class: 'hdr-styles'},
+				{text:'הערות',			value:'remarks', class: 'hdr-styles', width: '18%'},
+				{text:'מצורף',			value:'IMG', class: 'hdr-styles', width: '1%'},
+				{text:'מחק',			value:'DEL', class: 'hdr-styles', width: '1%'},
 			],
 			messageType : 'danger',
 			disableFileUpload : false,
@@ -383,7 +382,7 @@ export default {
 		showMessage(message,type){
 			this.message = message;
 			this.messageType = type;
-			setTimeout(() => this.message = '', 4000);	
+			setTimeout(() => this.message = '', 6000);	
 			if(this.$refs.attachFile) {
 				this.$refs.attachFile.value=null;
 			}
