@@ -190,7 +190,9 @@ export class ShortListController {
                 { header: 'Description', key: 'description', width: 75 },
                 { header: 'Unit', key: 'unit', width: 10 },
                 { header: 'Price', key: 'price', width: 12 },
+				{ header: 'מחיר חוזה', key: 'discount_price', width: 12 },
                 { header: 'Planned', key: 'planned', width: 12 },
+                { header: 'Paied', key: 'paid', width: 12 },
                 { header: 'Amount', key: 'amount', width: 12 },
 				{ header: 'Total', key: 'total', width: 12 },
 				{ header: 'Topic', key: 'topic', width: 12 },
@@ -198,21 +200,20 @@ export class ShortListController {
             ]
             let rows: any[] = [];
             let data = await this._databaseService.getManyItems(shortListModel , query);
-			rows.push('sadjlkjkl' + data[1].userName); // try to print the user name in the header
-			// console.log(data[1].userName);			
+			// rows.push('New Line ' + data[1].userName); // try to print the user name in the header		
             if(data) {
-
 				data = await this.shortListService.sortObject(data);
-
                 data.forEach((item: any,index: number)=>{
                     rows.push({
                         itemId: item.itemId,
                         description: (item.description) || '',
                         unit: item.unit,
                         price: this.shortListService.numberWithCommas(item.price),
+						discount_price: this.shortListService.numberWithCommas((item.price*0.744).toFixed(2)),
                         planned: this.shortListService.numberWithCommas(item.planned),
                         amount: this.shortListService.numberWithCommas(item.amount),
-						total: (item.amount * item.price) ? this.shortListService.numberWithCommas((item.amount * item.price).toFixed(0)) : '',
+                        paid: this.shortListService.numberWithCommas(item.paid),
+						total: (item.amount * item.price) ? this.shortListService.numberWithCommas((item.amount * item.price*0.744).toFixed(0)) : '',
                         topic: item.topic,
                         remarks: item.remarks,
                     });

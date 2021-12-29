@@ -30,7 +30,7 @@
 							:search="search"
 							dense>
 							<template v-slot:[`item.price`]="{ item }">
-								{{item.price.toLocaleString()}}
+								{{(item.price * user.discount).toFixed(2)}}
 							</template>
 
 							<template v-slot:[`item.description`]="{ item }">
@@ -65,10 +65,8 @@
 								></v-select> -->
 							</template>
 
-
-
 							<template :id="item.itemId" v-slot:[`item.total`]="{ item }">
-								{{ item.amount ? (numberWithCommas((item.amount * item.price).toFixed(0))) : ''}}
+								{{ item.amount ? (numberWithCommas((item.amount * item.price * user.discount).toFixed(0))) : ''}}
 							</template>
 
 							<template v-slot:[`item.remarks`]="{ item }">
@@ -123,7 +121,9 @@
 
 							<img id="largeImage" src="" alt="" srcset="">
 							<template v-slot:[`item.DEL`]="{ item }">
-								<v-button class="icon-button" @click="deleteItem(item.itemId)"><v-icon small class="icon-clickable">delete</v-icon></v-button>
+								<v-btn class="icon-button" @click="deleteItem(item.itemId)">
+									<v-icon small class="icon-clickable">delete</v-icon>
+								</v-btn>
 							</template>							
 						</v-data-table>
 					</template>

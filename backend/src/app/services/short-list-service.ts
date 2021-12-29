@@ -5,6 +5,7 @@ import appUtilities from "../utils/app-utils";
 import { CustomErrorModel } from '../../common/models/custom-error-model';
 import { CustomInject } from '../../common/injector/custom-injector';
 import { PayableItemsService } from "./payable-items-service";
+import { isTemplateMiddle } from "typescript";
 const shortListModel = require('../models/mongoose/short-list');
 const payableItemsModel = require('../models/mongoose/payable-items');
 
@@ -118,10 +119,7 @@ export class ShortListService {
                 if(filteredData && filteredData.length) {
                     let countImported = 0;
                     await Promise.all( filteredData.map(async (item: any) => {
-                        const response = await this._databaseService.getSingleItem(payableItemsModel , 
-                        {
-                            itemId: item.ID                            
-                        });
+                        const response = await this._databaseService.getSingleItem(payableItemsModel, {itemId: item.ID});
                         if(response){
                             delete response.createdAt;
                             delete response._id;
@@ -132,6 +130,8 @@ export class ShortListService {
                             response.userName = body.userName;
                             countImported++;
                             await this._databaseService.addItem(shortListModel , response);
+                        } else {
+                            console.log('Can not find ID - ' + item.ID)
                         }
                     }));
                     if(countImported > 0 && countImported <= filteredData.length) {

@@ -1,31 +1,25 @@
 
 <template>
 	<span>
-		<v-card
-			class="mx-auto"
-			height="900px"
-			v-if="isLoggedIn"
-		>
-			<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
+		<v-card class="mx-auto" height="900px" v-if="isLoggedIn">
+			<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" 
+						class="alert m-4 mb-4" v-if="message">
 				{{message}}
 			</div>
-
 			<template v-if="isLoggedIn" class="row ml-4 navigation text-center">
 				<v-app-bar  class="app-bar overflow-scroll">
 					<span @click="drawer = true">
 						<md-icon class="cursor-pointer text-white mr-3">menu</md-icon>
 					</span>
 					<v-toolbar-title class="title-dashboard">{{user.userName}}</v-toolbar-title>
-
 					<v-toolbar-items class="hidden-sm-and-down ml-4">
 						<template v-for="route of routes">
 							<template  v-if="!(route.children.length)">
-								<v-btn  :key="route.id" text @click="redirect(route.path)">
+								<v-btn  :key="route.id" text @click="(currPath === route.path) ? '' : redirect(route.path) ">
 									<md-icon class="text-white">{{route.icon}}</md-icon>
 									<span class="div-text text-white font-weight-bold">{{route.title}}</span>
 								</v-btn>
 							</template>
-
 							<template v-if="route.children.length">
 								<v-menu :key="route.id" data-app :rounded="true" open-on-hover offset-y transition="slide-x-transition" bottom right>
 									<template v-slot:activator="{ on, attrs }">
@@ -264,7 +258,7 @@
 			</template>    		
 		</v-card>
 		<template v-if="!isLoggedIn">
-		<router-view/>
+			<router-view/>
 		</template>
 	</span>
 </template>
@@ -330,6 +324,7 @@ export default {
 	    group:null,
 		idPrefixes: [],
 		overwrite: false,
+		currPath: '',
 	}),
 	
 	methods:{
@@ -340,6 +335,7 @@ export default {
 			this.$router.push('login');
 		},
 		redirect(path){
+			this.currPath = path; // being used above when calling to avoid warning of calling same route 
 			this.$router.push(path);
 		},
 		onKeywordChange(e) {
@@ -634,15 +630,15 @@ export default {
 <style scoped>
   .md-app {
     max-height: 100%;
-    height: 80%;
+    height: 100%;
   }
 
   .page-container{
-    height: 80%;
+    height: 100%;
   }
   .md-drawer {
     width: 220px;
-    height: 80%;
+    height: 100%;
     max-width: calc(100vw - 125px);
   }
 
