@@ -67,7 +67,8 @@ export async function downloadAttachedFile(params) {
 }
 
 export async function exportExcelFile(params) {
-    fetch(`${baseUrl}/short-list-items/export-excel?userName=${params.userName}`, {
+    fetch(`${baseUrl}/short-list-items/export-excel?userName=${params.userName}&userDiscount=${params.userDiscount}`, {
+    //fetch(`${baseUrl}/short-list-items/export-excel?userName=${params.userName}`, {
         headers: {
             Authorization : `Bearer ${getSession()}`
         }

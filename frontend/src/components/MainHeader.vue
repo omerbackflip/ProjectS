@@ -443,7 +443,7 @@ export default {
 		//used to export short list excel
 		async exportExcel(){
 			try {
-				exportExcelFile({userName: this.user.userName});
+				exportExcelFile({userName: this.user.userName, userDiscount: this.user.discount});
 			} catch (error) {
 				console.log(error);
 			}

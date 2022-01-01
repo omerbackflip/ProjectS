@@ -199,6 +199,8 @@ export class ShortListController {
                 { header: 'Remarks', key: 'remarks', width: 75 },
             ]
             let rows: any[] = [];
+			let userDiscount = query.userDiscount; // Isolate the userDiscount from the query
+			delete query.userDiscount; // bring back the query to hold only 'userName' as was before..
             let data = await this._databaseService.getManyItems(shortListModel , query);
 			// rows.push('New Line ' + data[1].userName); // try to print the user name in the header		
             if(data) {
@@ -209,11 +211,11 @@ export class ShortListController {
                         description: (item.description) || '',
                         unit: item.unit,
                         price: this.shortListService.numberWithCommas(item.price),
-						discount_price: this.shortListService.numberWithCommas((item.price*0.744).toFixed(2)),
+						discount_price: this.shortListService.numberWithCommas((item.price*userDiscount).toFixed(2)),
                         planned: this.shortListService.numberWithCommas(item.planned),
                         amount: this.shortListService.numberWithCommas(item.amount),
                         paid: this.shortListService.numberWithCommas(item.paid),
-						total: (item.amount * item.price) ? this.shortListService.numberWithCommas((item.amount * item.price*0.744).toFixed(0)) : '',
+						total: (item.amount * item.price) ? this.shortListService.numberWithCommas((item.amount * item.price*userDiscount).toFixed(0)) : '',
                         topic: item.topic,
                         remarks: item.remarks,
                     });
