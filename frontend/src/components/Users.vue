@@ -14,7 +14,7 @@
 			<input name="lastName" v-model="newUser.lastName" class="form-control"/>
 
 			<label class="mt-2 mb-2">Discount</label>
-			<input name="lastName" v-model="newUser.discount" class="form-control"/>
+			<input name="discount" v-model="newUser.discount" class="form-control"/>
 
 			<label class="mt-2 mb-2">Password</label>
 			<input type="password" v-if="!editMode"
@@ -131,8 +131,8 @@ export default {
 		async createUser(e) {
 			try {
 				e.preventDefault(); // prevent the form from submitting
-				const {userName , firstName , lastName , password} = this.newUser;
-				if(userName && firstName && lastName && password){
+				const {userName , firstName , lastName , password, discount} = this.newUser;
+				if(userName && firstName && lastName && password && discount){
 					let response;
 					if(this.editMode) {
 						delete this.newUser.password;
@@ -151,6 +151,7 @@ export default {
 							firstName: '',
 							lastName: '',
 							password: '',
+							discount: '',
 							rootUser: false,
 						}
 						this.editMode= false;

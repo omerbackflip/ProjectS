@@ -48,20 +48,21 @@
 
 							<template v-slot:[`item.amount`]="{ item }">
 								<input :id="item.itemId.slice(0,2)" 
-										class="amount-width" 
+										class="form-control form-control-sm" 
 										@change="updateItem($event, item.itemId, 'amount')" 
 										:value="item.amount"
-										autocomplete="off" />	
+										autocomplete="off">	
 							</template>
 
 							<template v-slot:[`item.topic`]="{ item }">
-								<textarea @change="updateItem($event, item.itemId, 'topic')"
-										  class="form-control form-control-sm mt-2" 
-										  type="text" 
-										  :value="item.topic"></textarea>
+								<input @change="updateItem($event, item.itemId, 'topic')"
+										class="form-control form-control-sm" 
+										type="text" 
+										:value="item.topic">
 								<!-- <v-select 	@change="updateItem($event, item.itemId, 'topic')"
-												v-model="item.topic"
-												:items="topics"									
+											v-model="item.topic"
+											:items="topics"
+											:value="item.topic"								
 								></v-select> -->
 							</template>
 
@@ -204,20 +205,20 @@ export default {
 			user : {},
 			message : '',
 			headers:[
-				{text:'סעיף', 			value:'itemId', class: 'hdr-styles'},
-				{text:'תאור הסעיף', 	value:'description', class: 'hdr-styles', align:'right'},
-				{text:'יחידה',			value:'unit', class: 'hdr-styles', align:'right'},
-				{text:'מחיר',			value:'price', class: 'hdr-styles', align:'right'},
-				{text:'מתוכנן',			value:'planned', class: 'hdr-styles', align:'right'},
-				{text:'כמות',			value:'amount', class: 'hdr-styles', align:'right'},
-				{text:'שולם',			value:'paid', class: 'hdr-styles', align:'right'},
-				{text:'סה"כ',			value:'total', class: 'hdr-styles', align:'right'},
-				{text:'נושא',			value:'topic', class: 'hdr-styles', align:'right'},
-				{text:'הערות',			value:'remarks', class: 'hdr-styles', width: '18%'},
-				{text:'מצורף',			value:'IMG', class: 'hdr-styles', width: '1%'},
-				{text:'מחק',			value:'DEL', class: 'hdr-styles', width: '1%'},
+				{text:'סעיף', 			value:'itemId', 	class: 'hdr-styles'},
+				{text:'תאור הסעיף', 	value:'description',class: 'hdr-styles', align:'right'},
+				{text:'יחידה',			value:'unit', 		class: 'hdr-styles', align:'right', width: '1%'},
+				{text:'מחיר',			value:'price', 		class: 'hdr-styles', align:'right', width: '4%'},
+				{text:'מתוכנן',			value:'planned', 	class: 'hdr-styles', align:'right', width: '4%'},
+				{text:'כמות',			value:'amount', 	class: 'hdr-styles', align:'right', width: '5%'},
+				{text:'שולם',			value:'paid', 		class: 'hdr-styles', align:'right'},
+				{text:'סה"כ',			value:'total', 		class: 'hdr-styles', align:'right'},
+				{text:'נושא',			value:'topic', 		class: 'hdr-styles', align:'right'},
+				{text:'הערות',			value:'remarks', 	class: 'hdr-styles', 				width: '18%'},
+				{text:'מצורף',			value:'IMG', 		class: 'hdr-styles', 				width: '1%'},
+				{text:'מחק',			value:'DEL', 		class: 'hdr-styles', 				width: '1%'},
 			],
-			messageType : 'danger',
+			messageType : 'danger',	
 			disableFileUpload : false,
 			search: '',
 			topics: ['AAA','BBB'],
