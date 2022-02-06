@@ -791,5 +791,4 @@ td{
 	top: 429 !important;
 }
 
-@import'~bootstrap/dist/css/bootstrap.css'
 </style>

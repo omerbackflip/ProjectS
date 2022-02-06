@@ -67,12 +67,11 @@
 import { getAllUsers,createUser , updateUserById , deleteUserById } from '../api';
 import {getUser} from '../data/utils';
 import Vue from 'vue';
-import moment from 'moment';
 import MainHeader from './MainHeader.vue';
 
 Vue.filter('formatDate', function(value) {
     if (value) {
-        return moment(String(value)).format('DD/MM/YYYY hh:mm')
+        return String(value)
     }
 });
 

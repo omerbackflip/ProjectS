@@ -8,7 +8,7 @@
     "lint": "eslint . --ext .ts,.tsx --fix",
     "clean": "rimraf coverage build tmp",
     "watch": "nodemon -e 'yml, yaml, js, ts, tsx, json' -x 'ts-node' src/server.ts | bunyan -o simple",
-    "build": "npm run build:endpoints && npm run build:notification-jobs",
+    "build": "npm run build",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "test": "jest --passWithNoTests",
     "test:unit": "npm test -- tests/unit",
