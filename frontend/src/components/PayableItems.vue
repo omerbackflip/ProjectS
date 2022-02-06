@@ -4,18 +4,18 @@
         {{message}}
     </div>
 	<template >
-		<div v-if="showSearch" class="search-wrapper d-flex mr-3">
-			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4 dir-rtl text-right" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
+		<!-- <div v-if="showSearch" class="search-wrapper d-flex mr-3">
+			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
 			<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
 				Search Global
 			</button>
-		</div>
+		</div> -->
 		<template  v-if="!isLoading && payableItems">
 			<v-card-title>
 				<v-text-field
 					v-model="search"
 					append-icon="mdi-magnify"
-					label="Search Local"
+					label="חיפוש מקומי דינמי"
 					single-line
 					hide-details
 				></v-text-field>
@@ -39,7 +39,7 @@
 
 				<template class="dir-rtl text-right" v-slot:[`item.description`]="{ item }">
 					<!-- {{item.itemId.length === 10 ? item.description.substr(12,300) : item.description}} -->
-					{{item.description}}
+					{{ item.description }}
 				</template>
 
 				<template v-slot:[`item.add_to_paka`]="{ item }">
@@ -53,11 +53,9 @@
 							class="cursor-pointer"
 						>
 					</td>
-
 					<td v-else-if="(item.added)">
 						<p v-if="item.itemId.length === 10">{{item.amount}}</p>
 					</td>				
-				
 					<td v-else-if="item.unit === 'הערה' && !(item.added)">
 						<p v-if="item.itemId.length === 10"></p>
 					</td>	
@@ -92,7 +90,7 @@ export default {
 	data() {
 		return {
 			payableItems : [],
-			keyword:'',
+			// keyword:'',
 			isLoading : false,
 			file: '',
 			showSearch: false,
@@ -102,11 +100,11 @@ export default {
 			itemIds: [],
 			user: {},
 			headers:[
-				{text:'ID', 			value:'itemId', class: 'hdr-styles-payable'},
-				{text:'DESCRIPTION', 	value:'description', align:'right', rtl: true, class: 'hdr-styles-payable'},
-				{text:'UNIT',			value:'unit', class: 'hdr-styles-payable', align:'right'},
-				{text:'PRICE',			value:'price', class: 'hdr-styles-payable', align:'right'},
-				{text:'ADD',	value:'add_to_paka', class: 'text hdr-styles-payable'},
+				{text:'ID', 			value:'itemId', 	class: 'hdr-styles-payable'},
+				{text:'DESCRIPTION', 	value:'description', class: 'hdr-styles-payable', align:'right', rtl: true},
+				{text:'UNIT',			value:'unit', 		class: 'hdr-styles-payable'},
+				{text:'PRICE',			value:'price', 		class: 'hdr-styles-payable', align:'right'},
+				{text:'ADD',			value:'add_to_paka', class: 'text hdr-styles-payable'},
 			],
 			search: '',
 		}
@@ -123,7 +121,7 @@ export default {
 					params['itemId'] = page;
 					this.currentPage = page; // Save current page in order to stay in the current page
 				} else if(keyword){
-					params['keyword'] = this.keyword;
+					params['keyword'] = keyword;
 				} else {
 					params['itemId'] = "01";
 				}
@@ -168,9 +166,9 @@ export default {
 			this.showSearch = !this.showSearch;
 		},
 		//to load this function when search keyword is entered
-		loadListItems(){
-			this.loadPayableItems(0,this.keyword);
-		},
+		// loadListItems(){
+		// 	this.loadPayableItems(0,this.keyword);
+		// },
 		//add to short list function
 		addToList(id){
 			//getting index if the item is already pushed in itemIds

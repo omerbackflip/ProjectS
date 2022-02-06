@@ -11,6 +11,7 @@ module.exports = {
         body: {
             userName: Joi.string().required(),
             password: Joi.string().required(),
+            discount: Joi.string().required(),
             firstName: Joi.string().required(),
             lastName: Joi.string().required(),
             rootUser: Joi.boolean().required(),

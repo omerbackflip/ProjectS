@@ -1,31 +1,25 @@
 
 <template>
 	<span>
-		<v-card
-			class="mx-auto"
-			height="auto"
-			v-if="isLoggedIn"
-		>
-			<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" class="alert m-4 mb-4" v-if="message">
+		<v-card class="mx-auto" height="900px" v-if="isLoggedIn">
+			<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" 
+						class="alert m-4 mb-4" v-if="message">
 				{{message}}
 			</div>
-
 			<template v-if="isLoggedIn" class="row ml-4 navigation text-center">
 				<v-app-bar  class="app-bar overflow-scroll">
 					<span @click="drawer = true">
 						<md-icon class="cursor-pointer text-white mr-3">menu</md-icon>
 					</span>
 					<v-toolbar-title class="title-dashboard">{{user.userName}}</v-toolbar-title>
-
 					<v-toolbar-items class="hidden-sm-and-down ml-4">
 						<template v-for="route of routes">
 							<template  v-if="!(route.children.length)">
-								<v-btn  :key="route.id" text @click="redirect(route.path)">
+								<v-btn  :key="route.id" text @click="(currPath === route.path) ? '' : redirect(route.path) ">
 									<md-icon class="text-white">{{route.icon}}</md-icon>
 									<span class="div-text text-white font-weight-bold">{{route.title}}</span>
 								</v-btn>
 							</template>
-
 							<template v-if="route.children.length">
 								<v-menu :key="route.id" data-app :rounded="true" open-on-hover offset-y transition="slide-x-transition" bottom right>
 									<template v-slot:activator="{ on, attrs }">
@@ -46,11 +40,9 @@
 						</template>
 					</v-toolbar-items>
 
-
 					<div class="flex-grow-1"></div>
 
 					<v-toolbar-items>
-
 						<!-- Add Short List Items button -->
 						<v-btn
 							v-show="itemIds.length"
@@ -63,35 +55,22 @@
 							</span>
 						</v-btn>
 
-						<!-- Toggle search button -->
-						<v-btn
-							text
-							v-show="showSearch"
-							@click="loadListItems"
-							>
-							<md-icon>
-								search
-							</md-icon>
+						<!-- Toggle search button should show only on smart devices-->
+						<v-btn text v-show="showSearch" @click="loadListItems">
+							<md-icon class="search-icon">search</md-icon>
 						</v-btn>
-
 						<input 
 							v-model="keyword" 
-							v-show="showSearch"
 							class="form-control form-control-sm mt-3 mb-2 ml-4 dir-rtl text-right" 
 							type="text" 
-							placeholder="חפש מילים מסויימיות..." 
+							placeholder="חיפוש בכל המאגר..." 
 							style="width:auto"
+							v-on:keyup.enter="loadListItems"
+							v-show="showSearch"
 						>
 
-
-
 						<!-- Create User button -->
-						<v-btn
-							v-if="showCreateUser"
-							@click="createUser"
-							class=mx-2 plus-button
-							text
-							>
+						<v-btn v-if="showCreateUser" @click="createUser" class=mx-2 plus-button text>
 							<md-icon>
 								person_add
 							</md-icon>
@@ -103,19 +82,13 @@
 								{{user.userName}}
 							</span>
 						</v-btn> -->
-						
 						<v-btn text v-if="isLoggedIn" @click="logoutApp()">
 							<md-icon class="cursor-pointer ml-5 text-white" >logout</md-icon>
 						</v-btn>
 					</v-toolbar-items>
-										
 				</v-app-bar>
 
-				<v-navigation-drawer
-					v-model="drawer"
-					absolute
-					temporary
-				>
+				<v-navigation-drawer v-model="drawer" absolute temporary>
 					<v-list nav dense >
 					<v-list-item-group
 						v-model="group"
@@ -128,22 +101,22 @@
 								:key="page.itemId+Math.floor(Math.random() * 1548) + index"
 								v-for="(page,index) of idPrefixes"
 							>
-								<v-expansion-panel-header>
-									{{page.itemId+'-'+page.description}}  <!-- page is relative to area contain itemID and description-->
-								</v-expansion-panel-header>
-								<v-expansion-panel-content > <!-- elemnet is relative to sub-area -->
-									<v-list-item 
-										@click="()=>onPageChange(element.itemId)" 
-										v-bind:class="{'bg-blue':  element && element.itemId && element.itemId.length === 5, }"  
-										:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
-										v-for="(element,index) of page.subItems" 
-									>
-										<v-list-item-title>
-											<!-- {{(isShortList ? element.itemId.substr(9,2) : element.itemId.substr(3,2)) + (' - '+element.description)}} -->
-											{{(element.itemId.substr(3,2)) + (' - '+element.description)}}
-										</v-list-item-title>
-									</v-list-item>
-								</v-expansion-panel-content>
+							<v-expansion-panel-header>
+								{{page.itemId+'-'+page.description}}  <!-- page is relative to area contain itemID and description-->
+							</v-expansion-panel-header>
+							<v-expansion-panel-content > <!-- elemnet is relative to sub-area -->
+								<v-list-item 
+									@click="()=>onPageChange(element.itemId)" 
+									v-bind:class="{'bg-blue':  element && element.itemId && element.itemId.length === 5, }"  
+									:key="page.itemId+index+Math.floor(Math.random() * 1228)" 
+									v-for="(element,index) of page.subItems" 
+								>
+								<v-list-item-title>
+									<!-- {{(isShortList ? element.itemId.substr(9,2) : element.itemId.substr(3,2)) + (' - '+element.description)}} -->
+									{{(element.itemId.substr(3,2)) + (' - '+element.description)}}
+								</v-list-item-title>
+								</v-list-item>
+							</v-expansion-panel-content>
 							</v-expansion-panel>
 						</v-expansion-panels>
 					</v-list-item-group>
@@ -285,7 +258,7 @@
 			</template>    		
 		</v-card>
 		<template v-if="!isLoggedIn">
-		<router-view/>
+			<router-view/>
 		</template>
 	</span>
 </template>
@@ -351,6 +324,7 @@ export default {
 	    group:null,
 		idPrefixes: [],
 		overwrite: false,
+		currPath: '',
 	}),
 	
 	methods:{
@@ -361,7 +335,11 @@ export default {
 			this.$router.push('login');
 		},
 		redirect(path){
+			this.currPath = path; // being used above when calling to avoid warning of calling same route 
 			this.$router.push(path);
+		},
+		onKeywordChange(e) {
+			this.keyword = e.target.value;
 		},
 
 		//Navigation or popups features as in the drop down
@@ -438,7 +416,7 @@ export default {
 		//used to emit parent load list
 		loadListItems() {
 			if(this.$refs.payableItems && this.$refs.payableItems.toggleSearch){
-				this.$refs.payableItems.toggleSearch();
+				this.$refs.payableItems.loadPayableItems(0,this.keyword);   
 			}
 		},
 
@@ -465,7 +443,7 @@ export default {
 		//used to export short list excel
 		async exportExcel(){
 			try {
-				exportExcelFile({userName: this.user.userName});
+				exportExcelFile({userName: this.user.userName, userDiscount: this.user.discount});
 			} catch (error) {
 				console.log(error);
 			}
@@ -584,6 +562,22 @@ export default {
 			}
 		},
 
+		isActive(route) {
+			if(this.$route.name === route.title) {
+				this.toggleActive = true;
+				return true;
+			} 
+			// route.children && (route.children.filter(child => child.title === currentChild)).length
+			const children = JSON.parse(JSON.stringify(route.children));
+			if(children.length){
+				const index = children.findIndex(child => child.title === this.currentChild);
+				if(index>=0) {
+					this.toggleActive = false;
+					return true;
+				}
+			}
+			return false;
+		},
 		
 		//copy short list api call
 		async copyShortList() {
@@ -791,4 +785,9 @@ td{
 	top: 429 !important;
 }
 
+.search-icon{
+	color: #FFF !important;
+}
+
+@import'~bootstrap/dist/css/bootstrap.css'
 </style>

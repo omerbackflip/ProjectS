@@ -2,41 +2,31 @@
 <div class="main-container">
 
 	<div v-if="summary && summary.length" class="summary-wrapper">
-
 		<template>
 			<v-simple-table dense>
 				<template v-slot:default>
-				<thead>
-					<tr>
-						<th class="text-left">
-							Total
-						</th>
-						<th class="text-left">
-							Description
-						</th>
-						<th class="text-left">
-							ID
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-					v-for="item in summary"
-					:key="item.itemId"
-					>
-						<td class="text-right">{{ item.total.toFixed(0) }}</td>
-						<td class="text-right">{{ item.description }}</td>
-						<td>{{ item.itemId  }}</td>
-					</tr>
-				</tbody>
+					<thead>
+						<tr>
+							<th class="text-left">Total</th>
+							<th class="text-left">Description</th>
+							<th class="text-left">ID</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="item in summary" :key="item.itemId">
+							<td class="text-right">{{ (user.discount*item.total).toLocaleString() }}</td>
+							<td class="text-right">{{ item.description }}</td>
+							<td>{{ item.itemId  }}</td>
+						</tr>
+					</tbody>
 				</template>
 			</v-simple-table>
-			</template>
+		</template>
 
 	</div>
-			<div class="grand-total mt-3 ml-3">
-				<strong>Grand Total = {{grandTotal.toLocaleString()}}</strong>
-			</div>
+	<div class="grand-total mt-3 ml-3">
+		<strong>Grand Total = {{ (user.discount*grandTotal).toLocaleString() }}</strong>
+	</div>
 </div>
 </template>
 
@@ -74,7 +64,12 @@ export default {
 	async created(){
 		this.user = JSON.parse(await getUser());
 		this.getSummary();
-	}
+	},
+
+	numberWithCommas(x) { // not used ...
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+},
+
 }
 </script>
 

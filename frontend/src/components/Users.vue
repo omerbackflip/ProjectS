@@ -12,8 +12,11 @@
 			<input name="firstName" v-model="newUser.firstName" class="form-control"/>
 			<label class="mt-2 mb-2">Last name</label>
 			<input name="lastName" v-model="newUser.lastName" class="form-control"/>
-			<label class="mt-2 mb-2">Password</label>
 
+			<label class="mt-2 mb-2">Discount</label>
+			<input name="discount" v-model="newUser.discount" class="form-control"/>
+
+			<label class="mt-2 mb-2">Password</label>
 			<input type="password" v-if="!editMode"
 			v-model="newUser.password" autocomplete="off" class="form-control"/>
 
@@ -89,6 +92,7 @@ export default {
 				{text:'Username', 		value:'userName'},
 				{text:'First Name', 	value:'firstName'},
 				{text:'Last Name',		value:'lastName'},
+				{text:'Discount',		value:'discount'},
 				{text:'Root User',		value:'rootUser'},
 				{text:'Date Created',	value:'createdAt'},
 				{text:'EDIT',			value:'edit'},
@@ -98,6 +102,7 @@ export default {
 				userName: '',
 				firstName: '',
 				lastName: '',
+				discount: '',
 				password: '',
 				rootUser: false,
 			},
@@ -125,8 +130,8 @@ export default {
 		async createUser(e) {
 			try {
 				e.preventDefault(); // prevent the form from submitting
-				const {userName , firstName , lastName , password} = this.newUser;
-				if(userName && firstName && lastName && password){
+				const {userName , firstName , lastName , password, discount} = this.newUser;
+				if(userName && firstName && lastName && password && discount){
 					let response;
 					if(this.editMode) {
 						delete this.newUser.password;
@@ -145,6 +150,7 @@ export default {
 							firstName: '',
 							lastName: '',
 							password: '',
+							discount: '',
 							rootUser: false,
 						}
 						this.editMode= false;

@@ -5,6 +5,7 @@ import appUtilities from "../utils/app-utils";
 import { CustomErrorModel } from '../../common/models/custom-error-model';
 import { CustomInject } from '../../common/injector/custom-injector';
 import { PayableItemsService } from "./payable-items-service";
+import { isTemplateMiddle } from "typescript";
 const shortListModel = require('../models/mongoose/short-list');
 const payableItemsModel = require('../models/mongoose/payable-items');
 
@@ -118,20 +119,22 @@ export class ShortListService {
                 if(filteredData && filteredData.length) {
                     let countImported = 0;
                     await Promise.all( filteredData.map(async (item: any) => {
-                        const response = await this._databaseService.getSingleItem(payableItemsModel , 
-                        {
-                            itemId: item.ID                            
-                        });
+                        const response = await this._databaseService.getSingleItem(payableItemsModel, {itemId: item.ID});
                         if(response){
                             delete response.createdAt;
                             delete response._id;
+                            //////////    ID     //////////////
                             response.amount = item.Amount;
-                            response.remarks = item.Remarks; // item MUST be the same name as in the Excel e.g "Remarks"
-                            response.paid = item.Paid;
                             response.planned = item.Planned;
+                            response.paid = item.Paid;                            
+                            response.remarks = item.Remarks; // item MUST be the same name as in the Excel e.g "Remarks"
+                            response.topic = item.Topic;
+                            //////////////////////////////////
                             response.userName = body.userName;
                             countImported++;
                             await this._databaseService.addItem(shortListModel , response);
+                        } else {
+                            console.log('Can not find ID - ' + item.ID)
                         }
                     }));
                     if(countImported > 0 && countImported <= filteredData.length) {
@@ -196,6 +199,10 @@ export class ShortListService {
 
             if("amount" in body) {
                 payload.amount = body.amount;
+            }
+
+            if("topic" in body) {
+                payload.topic = body.topic;
             }
 
             const response = await this._databaseService.updateItem(shortListModel ,{
@@ -335,7 +342,11 @@ export class ShortListService {
     }
 
     public numberWithCommas(x : any) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        if(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        } else {
+            return '';
+        }
     }
 
 }

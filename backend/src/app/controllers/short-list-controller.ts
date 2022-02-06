@@ -190,25 +190,34 @@ export class ShortListController {
                 { header: 'Description', key: 'description', width: 75 },
                 { header: 'Unit', key: 'unit', width: 10 },
                 { header: 'Price', key: 'price', width: 12 },
+				{ header: 'מחיר חוזה', key: 'discount_price', width: 12 },
+                { header: 'Planned', key: 'planned', width: 12 },
+                { header: 'Paied', key: 'paid', width: 12 },
                 { header: 'Amount', key: 'amount', width: 12 },
 				{ header: 'Total', key: 'total', width: 12 },
+				{ header: 'Topic', key: 'topic', width: 12 },
                 { header: 'Remarks', key: 'remarks', width: 75 },
             ]
             let rows: any[] = [];
+			let userDiscount = query.userDiscount; // Isolate the userDiscount from the query
+			delete query.userDiscount; // bring back the query to hold only 'userName' as was before..
             let data = await this._databaseService.getManyItems(shortListModel , query);
-			
+			// rows.push('New Line ' + data[1].userName); // try to print the user name in the header		
             if(data) {
-
 				data = await this.shortListService.sortObject(data);
-
                 data.forEach((item: any,index: number)=>{
                     rows.push({
                         itemId: item.itemId,
-                        description: item.description.substr(12,300),
+                        description: (item.description) || '',
                         unit: item.unit,
-                        price: this.shortListService.numberWithCommas(item.price),
-                        amount: this.shortListService.numberWithCommas(item.amount),
-						total: this.shortListService.numberWithCommas((item.amount * item.price).toFixed(2)),
+                        //price: this.shortListService.numberWithCommas(item.price), // This function makes numbers to be string in the Excel...
+                        price: item.price,
+						discount_price: (item.price*userDiscount),
+                        planned: item.planned,
+                        amount: item.amount,
+                        paid: item.paid,
+						total: (item.amount * item.price) ? this.shortListService.numberWithCommas((item.amount * item.price*userDiscount).toFixed(0)) : '',
+                        topic: item.topic,
                         remarks: item.remarks,
                     });
                 });
@@ -240,7 +249,9 @@ export class ShortListController {
 
 			}
 		} catch (error) {
-			console.log("Error")
+			console.log("*******************************************")
+			console.log(error)
+			console.log("*******************************************")
 		}
 	}
 	
