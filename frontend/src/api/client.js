@@ -5,7 +5,7 @@ import {getSession} from '../data/utils';
 // client for sending REST based requested {post, get, put/patch, delete/destroy}
 const client = axios;
 
-export const baseUrl = 'http://localhost:3001';
+export const baseUrl = 'http://185.28.152.24:3001';
 
 export const setAuthToken = (token) => {
     axios.defaults.headers['authorization'] = `Bearer ${token}`;
