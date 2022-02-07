@@ -174,10 +174,8 @@ import {
 import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
 import 'viewerjs/dist/viewer.css'
-import { jsPDF } from "jspdf";
 import { component as Viewer } from "v-viewer"
 import pdf from 'vue-pdf'
-import VueDocPreview from 'vue-doc-preview'
 
 
 export default {
@@ -186,7 +184,6 @@ export default {
 		MainHeader,
 		Viewer,
 		pdf,
-		VueDocPreview
 	},
 	//main data state used in component level
 	data() {

@@ -96,5 +96,6 @@ export default {
     padding: 0 !important;
     padding-right: 0px !important;
   }
-@import'~bootstrap/dist/css/bootstrap.css'
+  @import'~bootstrap/dist/css/bootstrap.css'
+
 </style>

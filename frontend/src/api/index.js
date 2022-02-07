@@ -1,6 +1,5 @@
 import { post, get, put,deleteItem , baseUrl } from './client.js';
 import { getSession } from '../data/utils.js';
-const download = require("downloadjs");
 
 // ****** LOGIN ******** //
 export async function authLogin(username,password) {
