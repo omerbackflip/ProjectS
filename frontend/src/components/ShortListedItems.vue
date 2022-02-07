@@ -2,7 +2,7 @@
 	<div>
 		<div class="main-container">
 			<template >
-				<template v-if="(shortListedItems.length)" style="height: 900px; border: 1px solid #eee">
+				<template v-if="(shortListedItems.length)" style="height: auto; border: 1px solid #eee">
 				<!-- <div v-if="showSearch" class="search-wrapper d-flex mr-3">
 					<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
 					<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
@@ -24,7 +24,7 @@
 							:items="shortListedItems"
 							disable-pagination
 							bordered
-							height="85vh"
+							height="81vh"
 							fixed-header
 							hide-default-footer
 							:search="search"

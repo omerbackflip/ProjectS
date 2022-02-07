@@ -1,7 +1,7 @@
 
 <template>
 	<span>
-		<v-card class="mx-auto" height="900px" v-if="isLoggedIn">
+		<v-card class="mx-auto" height="auto" v-if="isLoggedIn">
 			<div v-bind:class="{'alert-danger': messageType === 'danger', 'alert-success': messageType === 'success'}" 
 						class="alert m-4 mb-4" v-if="message">
 				{{message}}
@@ -702,6 +702,8 @@ td{
 .app-bar{
 	background: #1867c0 !important;
 	color: white !important;
+	/* position: fixed;
+	top: 10px; */
 }
 
 .bg-yellow{

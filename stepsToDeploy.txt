@@ -1,0 +1,23 @@
+1. Open putty with IP
+2. Enter username root and password
+3. Commands to run the project to production
+
+	pm2 list (list all running proceses)
+	pm2 kill (kill all existing processes)
+
+
+	FRONTEND
+	cd ../home/projectS/
+	- git pull origin master (ignore this if you have latest code)
+	- cd frontend 
+	- to check if there are which files in the folder "ls"
+	- rm -rf ./dist and run "npm run build" 
+	- npm run build (if you have the latest code or build name folder dist (then ignore this)
+	- pm2 kill (kill all existing processes)
+	- pm2 serve ./dist (to serve the frontend new build)
+
+	BACKEND
+
+	cd ../backend
+	pm2 start "npx ts-node ./src/server.ts"
+ 

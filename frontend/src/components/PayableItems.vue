@@ -25,7 +25,7 @@
 				:items="payableItems"
 				disable-pagination
 				bordered
-				height="91vh"
+				height="84vh"
 				fixed-header
 				hide-default-footer
 				:item-class="itemRowBackground"

@@ -8,8 +8,10 @@
 		<div class="form-group">
 			<label>User name</label>
 			<input name="userName" v-model="newUser.userName" class="form-control"/>
+
 			<label class="mt-2 mb-2">First name</label>
 			<input name="firstName" v-model="newUser.firstName" class="form-control"/>
+			
 			<label class="mt-2 mb-2">Last name</label>
 			<input name="lastName" v-model="newUser.lastName" class="form-control"/>
 
