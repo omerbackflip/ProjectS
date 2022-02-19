@@ -108,6 +108,38 @@ export class ShortListService {
         }
     }
     
+    public async getTopicsSummary(query: any, userDiscount: any) {
+        try {
+            const data = await this._databaseService.getManyItems(shortListModel , query);
+            const topics = [... new Set(data.map((item:any) => item.topic))];
+            if(data && topics) {
+                let response: any = {};
+                response.summary = await Promise.all(topics.map( async (topic: any) =>{
+                    let sum = 0;
+                    data.forEach((el: any)=> {
+                        if(el && el.topic === topic) {
+                            sum+=(el.price * el.amount * userDiscount) || 0;
+                        }
+                    });
+                    return `${topic} - ${sum.toFixed(0)}`
+                }));
+                let total = 0;
+                data.forEach((num: any) => {
+                    total+=(num.price * num.amount * userDiscount) || 0;
+                })
+                response.grandTotal = total;
+                return response;
+          }
+        } catch (error) {
+            return {
+                success:false,
+                error,
+            }
+        }
+    }
+
+
+
     //This function is used to import excel file for short listed items
     public async saveShortListedItems(body: any, workbook: any) {
         try {

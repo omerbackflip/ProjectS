@@ -202,7 +202,7 @@ export class ShortListController {
 			let userDiscount = query.userDiscount; // Isolate the userDiscount from the query
 			delete query.userDiscount; // bring back the query to hold only 'userName' as was before..
             let data = await this._databaseService.getManyItems(shortListModel , query);
-			// rows.push('New Line ' + data[1].userName); // try to print the user name in the header		
+			//rows.push({userDiscount} ); // try to print the user name in the header	
             if(data) {
 				data = await this.shortListService.sortObject(data);
                 data.forEach((item: any,index: number)=>{
@@ -216,7 +216,7 @@ export class ShortListController {
                         planned: item.planned,
                         amount: item.amount,
                         paid: item.paid,
-						total: (item.amount * item.price) ? this.shortListService.numberWithCommas((item.amount * item.price*userDiscount).toFixed(0)) : '',
+						total: (item.amount * item.price) ? (item.amount * item.price*userDiscount) : '',
                         topic: item.topic,
                         remarks: item.remarks,
                     });
@@ -235,6 +235,24 @@ export class ShortListController {
 						description:`Grand Total:  ${summary.grandTotal.toFixed(0)}`
 					})
 				}
+
+
+				const topicSummary = await this.shortListService.getTopicsSummary(query, userDiscount);
+				if(topicSummary && topicSummary?.summary.length) {
+					rows.push({}); // empty row
+					rows.push({}); // empty row
+					rows.push({}); // empty row
+					topicSummary.summary.forEach((sum: any) => {
+						rows.push({
+							description: sum
+						})
+					})
+					rows.push({
+						description:`Grand Total:  ${topicSummary.grandTotal.toFixed(0)}`
+					})
+				}
+
+
 
                 worksheet.addRows([
 					...rows,

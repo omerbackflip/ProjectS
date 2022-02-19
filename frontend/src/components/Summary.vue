@@ -2,8 +2,9 @@
 <div class="main-container">
 
 	<div v-if="summary && summary.length" class="summary-wrapper">
-		<template>
-			<v-simple-table dense>
+		<v-container>
+		<!-- <template> -->
+			<!-- <v-simple-table dense>
 				<template v-slot:default>
 					<thead>
 						<tr>
@@ -20,8 +21,35 @@
 						</tr>
 					</tbody>
 				</template>
-			</v-simple-table>
-		</template>
+			</v-simple-table> -->
+			<v-layout row wrap justify-space-around>
+      			<v-flex xs12 md5>
+					<v-data-table 
+						:headers="headers1"
+						:items="summary"
+						disable-pagination
+						bordered
+						height="81vh"
+						fixed-header
+						hide-default-footer
+						>
+					</v-data-table>
+				</v-flex>
+				<v-flex xs12 md5>
+					<v-data-table 
+						:headers="headers2"
+						:items="summary"
+						disable-pagination
+						bordered
+						height="81vh"
+						fixed-header
+						hide-default-footer
+						>
+					</v-data-table>
+				</v-flex>
+			</v-layout>
+		<!-- </template> -->
+		</v-container>
 
 	</div>
 	<div class="grand-total mt-3 ml-3">
@@ -45,6 +73,15 @@ export default {
 			summary: [],
 			user: {},
 			grandTotal:0,
+			headers1:[
+				{text:'total', 			value:'total', 		class: 'hdr-styles'},
+				{text:'description', 	value:'description',class: 'hdr-styles'},
+				{text:'ID',				value:'itemId',		class: 'hdr-styles'},
+			],
+			headers2:[
+				{text:'total', 	value:'total',	class: 'hdr-styles'},
+				{text:'Topic', 	value:'topic',	class: 'hdr-styles'},
+			],
 		}
 	},
 	methods: {
