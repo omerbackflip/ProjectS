@@ -120,7 +120,7 @@ export function logout() {
 }
 
 export async function getSummary(userName) {
-    return await put('/short-list-items/get-summary', {userName});
+    return await put('/short-list-items/get-summary', {userName} );
 }
 
 export async function deleteShortListedItems(userName) {

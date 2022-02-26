@@ -72,10 +72,13 @@ export class ShortListService {
     public async getSummaries(query: any, excel?: boolean) {
         try {
             const data = await this._databaseService.getManyItems(shortListModel , query);
-            const priceIds = [... new Set(data.map((item:any) => item.itemId.slice(0,2)))];
+            console.log("after this._databaseService.getManyItems(shortListModel , query) in getSummaries")
+            console.log(query)
+            //Get ID's summary
+            const priceIds = [...new Set(data.map((item: any) => item.itemId.slice(0, 2)))];
+            let response: any = {};
             if(data && priceIds) {
-                let response: any = {};
-                response.summary = await Promise.all(priceIds.map( async (priceId: any) =>{
+                response.summaryIDs = await Promise.all(priceIds.map( async (priceId: any) =>{
                     let priceItem = await this._databaseService.getSingleItem(payableItemsModel, {itemId : priceId});
                     let sum = 0;
                     data.forEach((el: any)=> {
@@ -83,24 +86,53 @@ export class ShortListService {
                             sum+=(el.price * el.amount) || 0;
                         }
                     });
-                    if(!excel) {
+                    if(excel) {
+                        return `${priceId} - ${sum.toFixed(0)} - ${priceItem.description.trim()}`
+                     } else {
                         return {
                             itemId:priceId,
                             description:priceItem.description,
                             total: sum,
-                        }    
-                    } else {
-                        return `${priceId} - ${sum.toFixed(0)} - ${priceItem.description.trim()}`
+                        }   
                     }
                 }));
                 let total = 0;
                 data.forEach((num: any) => {
                     total+=(num.price * num.amount) || 0;
                 })
-                response.grandTotal = total;
-                return response;
-          }
+                response.grandTotalIDs = total;
+            }
+
+            //Get Topics Summary
+            const topics = [... new Set(data.map((item:any) => item.topic))];
+            if(data && topics) {
+                response.summaryTopics = await Promise.all(topics.map( async (topic: any) =>{
+                    let sum = 0;
+                    data.forEach((el: any)=> {
+                        if(el && el.topic === topic) {
+                            sum+=(el.price * el.amount * 0.94) || 0;
+                        }
+                    });
+                    if(excel) {
+                        return `${topic} - ${sum.toFixed(0)}`
+                    } else {
+                        return {
+                            topic:topic,
+                            total: sum,
+                        }   
+                    }
+                }));
+                let total = 0;
+                data.forEach((num: any) => {
+                    total+=(num.price * num.amount * 0.94) || 0;
+                })
+                response.grandTotalTopics = total;
+                //return response;
+            }
+            return response;
         } catch (error) {
+            console.log("ERRORORORORO")
+            console.log(error)
             return {
                 success:false,
                 error,
@@ -108,35 +140,35 @@ export class ShortListService {
         }
     }
     
-    public async getTopicsSummary(query: any, userDiscount: any) {
-        try {
-            const data = await this._databaseService.getManyItems(shortListModel , query);
-            const topics = [... new Set(data.map((item:any) => item.topic))];
-            if(data && topics) {
-                let response: any = {};
-                response.summary = await Promise.all(topics.map( async (topic: any) =>{
-                    let sum = 0;
-                    data.forEach((el: any)=> {
-                        if(el && el.topic === topic) {
-                            sum+=(el.price * el.amount * userDiscount) || 0;
-                        }
-                    });
-                    return `${topic} - ${sum.toFixed(0)}`
-                }));
-                let total = 0;
-                data.forEach((num: any) => {
-                    total+=(num.price * num.amount * userDiscount) || 0;
-                })
-                response.grandTotal = total;
-                return response;
-          }
-        } catch (error) {
-            return {
-                success:false,
-                error,
-            }
-        }
-    }
+    // public async getTopicsSummary(query: any, userDiscount: any) {
+    //     try {
+    //         const data = await this._databaseService.getManyItems(shortListModel , query);
+    //         const topics = [... new Set(data.map((item:any) => item.topic))];
+    //         if(data && topics) {
+    //             let response: any = {};
+    //             response.summary = await Promise.all(topics.map( async (topic: any) =>{
+    //                 let sum = 0;
+    //                 data.forEach((el: any)=> {
+    //                     if(el && el.topic === topic) {
+    //                         sum+=(el.price * el.amount * userDiscount) || 0;
+    //                     }
+    //                 });
+    //                 return `${topic} - ${sum.toFixed(0)}`
+    //             }));
+    //             let total = 0;
+    //             data.forEach((num: any) => {
+    //                 total+=(num.price * num.amount * userDiscount) || 0;
+    //             })
+    //             response.grandTotal = total;
+    //             return response;
+    //       }
+    //     } catch (error) {
+    //         return {
+    //             success:false,
+    //             error,
+    //         }
+    //     }
+    // }
 
 
 

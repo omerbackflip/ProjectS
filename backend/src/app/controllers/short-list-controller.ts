@@ -222,35 +222,35 @@ export class ShortListController {
                     });
                 });
 				const summary = await this.shortListService.getSummaries(query,true);
-				if(summary && summary?.summary.length) {
+				if(summary && summary?.summaryIDs.length) {
 					rows.push({}); // empty row
 					rows.push({}); // empty row
 					rows.push({}); // empty row
-					summary.summary.forEach((sum: any) => {
+					summary.summaryIDs.forEach((sum: any) => {
 						rows.push({
 							description: sum
 						})
 					})
 					rows.push({
-						description:`Grand Total:  ${summary.grandTotal.toFixed(0)}`
+						description:`Grand Total:  ${summary.grandTotalIDs.toFixed(0)}`
 					})
 				}
 
 
-				const topicSummary = await this.shortListService.getTopicsSummary(query, userDiscount);
-				if(topicSummary && topicSummary?.summary.length) {
-					rows.push({}); // empty row
-					rows.push({}); // empty row
-					rows.push({}); // empty row
-					topicSummary.summary.forEach((sum: any) => {
-						rows.push({
-							description: sum
-						})
-					})
-					rows.push({
-						description:`Grand Total:  ${topicSummary.grandTotal.toFixed(0)}`
-					})
-				}
+				// const topicSummary = await this.shortListService.getTopicsSummary(query, userDiscount);
+				// if(topicSummary && topicSummary?.summary.length) {
+				// 	rows.push({}); // empty row
+				// 	rows.push({}); // empty row
+				// 	rows.push({}); // empty row
+				// 	topicSummary.summary.forEach((sum: any) => {
+				// 		rows.push({
+				// 			description: sum
+				// 		})
+				// 	})
+				// 	rows.push({
+				// 		description:`Grand Total:  ${topicSummary.grandTotal.toFixed(0)}`
+				// 	})
+				// }
 
 
 
@@ -267,9 +267,7 @@ export class ShortListController {
 
 			}
 		} catch (error) {
-			console.log("*******************************************")
 			console.log(error)
-			console.log("*******************************************")
 		}
 	}
 	

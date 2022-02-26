@@ -1,59 +1,42 @@
 <template>
 <div class="main-container">
 
-	<div v-if="summary && summary.length" class="summary-wrapper">
+	<div v-if="summaryIDs && summaryIDs.length" class="summary-wrapper">
 		<v-container>
-		<!-- <template> -->
-			<!-- <v-simple-table dense>
-				<template v-slot:default>
-					<thead>
-						<tr>
-							<th class="text-left">Total</th>
-							<th class="text-left">Description</th>
-							<th class="text-left">ID</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="item in summary" :key="item.itemId">
-							<td class="text-right">{{ (user.discount*item.total).toLocaleString() }}</td>
-							<td class="text-right">{{ item.description }}</td>
-							<td>{{ item.itemId  }}</td>
-						</tr>
-					</tbody>
-				</template>
-			</v-simple-table> -->
 			<v-layout row wrap justify-space-around>
       			<v-flex xs12 md5>
 					<v-data-table 
-						:headers="headers1"
-						:items="summary"
+						:headers="headersID"
+						:items="summaryIDs"
 						disable-pagination
 						bordered
-						height="81vh"
+						height="85vh"
 						fixed-header
 						hide-default-footer
+						class="elevation-1"
 						>
 					</v-data-table>
 				</v-flex>
+				<v-btn> asdk </v-btn>
 				<v-flex xs12 md5>
 					<v-data-table 
-						:headers="headers2"
-						:items="summary"
+						:headers="headersTopics"
+						:items="summaryTopics"
 						disable-pagination
 						bordered
-						height="81vh"
+						height="85vh"
 						fixed-header
 						hide-default-footer
+						class="elevation-1"
 						>
 					</v-data-table>
 				</v-flex>
 			</v-layout>
-		<!-- </template> -->
 		</v-container>
 
 	</div>
 	<div class="grand-total mt-3 ml-3">
-		<strong>Grand Total = {{ (user.discount*grandTotal).toLocaleString() }}</strong>
+		<strong>Grand Total = {{ (user.discount*grandTotalIDs).toLocaleString() }}</strong>
 	</div>
 </div>
 </template>
@@ -70,17 +53,19 @@ export default {
 	},
 	data() {
 		return {
-			summary: [],
+			summaryIDs: [],
+			summaryTopics: [],
 			user: {},
-			grandTotal:0,
-			headers1:[
-				{text:'total', 			value:'total', 		class: 'hdr-styles'},
-				{text:'description', 	value:'description',class: 'hdr-styles'},
+			grandTotalIDs:0,
+			grandTotalTopics:0,
+			headersID:[
+				{text:'Total', 			value:'total', 		class: 'hdr-styles'},
+				{text:'Description', 	value:'description',class: 'hdr-styles', align:'right'},
 				{text:'ID',				value:'itemId',		class: 'hdr-styles'},
 			],
-			headers2:[
-				{text:'total', 	value:'total',	class: 'hdr-styles'},
-				{text:'Topic', 	value:'topic',	class: 'hdr-styles'},
+			headersTopics:[
+				{text:'Total', 	value:'total',	class: 'hdr-styles'},
+				{text:'Topic', 	value:'topic',	class: 'hdr-styles', align:'right'},
 			],
 		}
 	},
@@ -90,8 +75,10 @@ export default {
 			try {
 				const response = await getSummary(this.user.userName);
 				if(response.data) {
-					this.summary = response.data.summary;
-					this.grandTotal = response.data.grandTotal;
+					this.summaryIDs = response.data.summaryIDs;
+					this.grandTotalIDs = response.data.grandTotalIDs;
+					this.summaryTopics = response.data.summaryTopics;
+					this.grandTotalTopics = response.data.grandTotalTopics;
 				} 		
 			} catch (error) {
 				console.log(error);
@@ -100,6 +87,7 @@ export default {
 	},
 	async created(){
 		this.user = JSON.parse(await getUser());
+		//console.log(this.user)
 		this.getSummary();
 	},
 
