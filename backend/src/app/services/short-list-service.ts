@@ -6,6 +6,7 @@ import { CustomErrorModel } from '../../common/models/custom-error-model';
 import { CustomInject } from '../../common/injector/custom-injector';
 import { PayableItemsService } from "./payable-items-service";
 import { isTemplateMiddle } from "typescript";
+import { userInfo } from "os";
 const shortListModel = require('../models/mongoose/short-list');
 const payableItemsModel = require('../models/mongoose/payable-items');
 
@@ -71,19 +72,17 @@ export class ShortListService {
 
     public async getSummaries(query: any, excel?: boolean) {
         try {
-            const data = await this._databaseService.getManyItems(shortListModel , query);
-            console.log("after this._databaseService.getManyItems(shortListModel , query) in getSummaries")
-            console.log(query)
+            const data = await this._databaseService.getManyItems(shortListModel , {userName: query.userName});
             //Get ID's summary
             const priceIds = [...new Set(data.map((item: any) => item.itemId.slice(0, 2)))];
             let response: any = {};
             if(data && priceIds) {
-                response.summaryIDs = await Promise.all(priceIds.map( async (priceId: any) =>{
+                response.summaryIDs = await Promise.all(priceIds.map( async (priceId: any) =>{  //Promise.all will execute next line after all resolved
                     let priceItem = await this._databaseService.getSingleItem(payableItemsModel, {itemId : priceId});
                     let sum = 0;
                     data.forEach((el: any)=> {
                         if(el && el.itemId.slice(0,2) === priceId) {
-                            sum+=(el.price * el.amount) || 0;
+                            sum+=(el.price * el.amount * query.discount) || 0;
                         }
                     });
                     if(excel) {
@@ -106,11 +105,11 @@ export class ShortListService {
             //Get Topics Summary
             const topics = [... new Set(data.map((item:any) => item.topic))];
             if(data && topics) {
-                response.summaryTopics = await Promise.all(topics.map( async (topic: any) =>{
+                response.summaryTopics = topics.map( (topic: any) =>{
                     let sum = 0;
                     data.forEach((el: any)=> {
                         if(el && el.topic === topic) {
-                            sum+=(el.price * el.amount * 0.94) || 0;
+                            sum+=(el.price * el.amount * query.discount) || 0;
                         }
                     });
                     if(excel) {
@@ -121,17 +120,16 @@ export class ShortListService {
                             total: sum,
                         }   
                     }
-                }));
+                });
                 let total = 0;
                 data.forEach((num: any) => {
-                    total+=(num.price * num.amount * 0.94) || 0;
+                    total+=(num.price * num.amount * query.discount) || 0;
                 })
                 response.grandTotalTopics = total;
                 //return response;
             }
             return response;
         } catch (error) {
-            console.log("ERRORORORORO")
             console.log(error)
             return {
                 success:false,

@@ -3,7 +3,7 @@
 
 	<div v-if="summaryIDs && summaryIDs.length" class="summary-wrapper">
 		<v-container>
-			<v-layout row wrap justify-space-around>
+			<v-layout class="justify-content-space-between" row wrap >
       			<v-flex xs12 md5>
 					<v-data-table 
 						:headers="headersID"
@@ -14,10 +14,11 @@
 						fixed-header
 						hide-default-footer
 						class="elevation-1"
+						dense
 						>
 					</v-data-table>
 				</v-flex>
-				<v-btn> asdk </v-btn>
+				
 				<v-flex xs12 md5>
 					<v-data-table 
 						:headers="headersTopics"
@@ -28,6 +29,7 @@
 						fixed-header
 						hide-default-footer
 						class="elevation-1"
+						dense
 						>
 					</v-data-table>
 				</v-flex>
@@ -36,7 +38,7 @@
 
 	</div>
 	<div class="grand-total mt-3 ml-3">
-		<strong>Grand Total = {{ (user.discount*grandTotalIDs).toLocaleString() }}</strong>
+		<strong>Grand Total = {{ (user.discount*grandTotalIDs).toFixed(0) }}</strong>
 	</div>
 </div>
 </template>
@@ -73,7 +75,7 @@ export default {
 		//get summary from api
 		async getSummary() {
 			try {
-				const response = await getSummary(this.user.userName);
+				const response = await getSummary(this.user.userName,this.user.discount);
 				if(response.data) {
 					this.summaryIDs = response.data.summaryIDs;
 					this.grandTotalIDs = response.data.grandTotalIDs;
@@ -86,7 +88,7 @@ export default {
 		},
 	},
 	async created(){
-		this.user = JSON.parse(await getUser());
+		this.user = JSON.parse(getUser());
 		//console.log(this.user)
 		this.getSummary();
 	},
@@ -101,6 +103,10 @@ export default {
 <style scoped>
 td{
 	border-left: 1px solid #ececec;
+}
+
+.justify-content-space-between{
+	justify-content: space-between;
 }
 
 </style>

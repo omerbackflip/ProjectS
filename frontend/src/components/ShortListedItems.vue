@@ -122,7 +122,7 @@
 
 							<img id="largeImage" src="" alt="" srcset="">
 							<template v-slot:[`item.DEL`]="{ item }">
-								<v-btn class="icon-button" @click="deleteItem(item.itemId)">
+								<v-btn small class="icon-button" @click="deleteItem(item.itemId)">
 									<v-icon small class="icon-clickable">delete</v-icon>
 								</v-btn>
 							</template>							

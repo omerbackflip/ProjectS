@@ -274,8 +274,8 @@ export class ShortListController {
 
 	@Put("/short-list-items/get-summary")
 	public async getSummary(
-		@Req() req: any,
-		@Res() res: Response,
+		@Req() req: any,		//req.body 
+		@Res() res: Response, 	//Generic type of response like responseData responseType ResponseError
 		@QueryParams() query: any
 	): Promise<any> {
 		try {

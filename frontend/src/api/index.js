@@ -119,8 +119,8 @@ export function logout() {
     return true;
 }
 
-export async function getSummary(userName) {
-    return await put('/short-list-items/get-summary', {userName} );
+export async function getSummary(userName,discount) {
+    return await put('/short-list-items/get-summary', {userName,discount} );
 }
 
 export async function deleteShortListedItems(userName) {
