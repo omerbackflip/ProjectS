@@ -199,10 +199,8 @@ export class ShortListController {
                 { header: 'Remarks', key: 'remarks', width: 75 },
             ]
             let rows: any[] = [];
-			let userDiscount = query.userDiscount; // Isolate the userDiscount from the query
-			delete query.userDiscount; // bring back the query to hold only 'userName' as was before..
-            let data = await this._databaseService.getManyItems(shortListModel , query);
-			//rows.push({userDiscount} ); // try to print the user name in the header	
+            let data = await this._databaseService.getManyItems(shortListModel , {userName: query.userName});
+			//rows.push({discount} ); // try to print the user name in the header	
             if(data) {
 				data = await this.shortListService.sortObject(data);
                 data.forEach((item: any,index: number)=>{
@@ -212,11 +210,12 @@ export class ShortListController {
                         unit: item.unit,
                         //price: this.shortListService.numberWithCommas(item.price), // This function makes numbers to be string in the Excel...
                         price: item.price,
-						discount_price: (item.price*userDiscount),
+						discount_price: (item.price * query.discount),
+						//discount_price: (item.price*discount).toLocaleString(undefined, {maximumFractionDigits: 0}),
                         planned: item.planned,
                         amount: item.amount,
                         paid: item.paid,
-						total: (item.amount * item.price) ? (item.amount * item.price*userDiscount) : '',
+						total: (item.amount * item.price) ? (item.amount * item.price * query.discount) : '',
                         topic: item.topic,
                         remarks: item.remarks,
                     });
@@ -236,22 +235,19 @@ export class ShortListController {
 					})
 				}
 
-
-				// const topicSummary = await this.shortListService.getTopicsSummary(query, userDiscount);
-				// if(topicSummary && topicSummary?.summary.length) {
-				// 	rows.push({}); // empty row
-				// 	rows.push({}); // empty row
-				// 	rows.push({}); // empty row
-				// 	topicSummary.summary.forEach((sum: any) => {
-				// 		rows.push({
-				// 			description: sum
-				// 		})
-				// 	})
-				// 	rows.push({
-				// 		description:`Grand Total:  ${topicSummary.grandTotal.toFixed(0)}`
-				// 	})
-				// }
-
+				if(summary && summary?.summaryTopics.length) {
+					rows.push({}); // empty row
+					rows.push({}); // empty row
+					rows.push({}); // empty row
+					summary.summaryTopics.forEach((sum: any) => {
+						rows.push({
+							description: sum
+						})
+					})
+					rows.push({
+						description:`Grand Total:  ${summary.grandTotalTopics.toFixed(0)}`
+					})
+				}
 
 
                 worksheet.addRows([

@@ -14,8 +14,10 @@
 						fixed-header
 						hide-default-footer
 						class="elevation-1"
-						dense
-						>
+						dense>
+						<template v-slot:[`item.total`]="{ item }">
+							{{ item.total ? (item.total).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
+						</template>
 					</v-data-table>
 				</v-flex>
 				
@@ -29,8 +31,10 @@
 						fixed-header
 						hide-default-footer
 						class="elevation-1"
-						dense
-						>
+						dense>
+						<template v-slot:[`item.total`]="{ item }">
+							{{ item.total ? (item.total).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
+						</template>
 					</v-data-table>
 				</v-flex>
 			</v-layout>
@@ -38,7 +42,7 @@
 
 	</div>
 	<div class="grand-total mt-3 ml-3">
-		<strong>Grand Total = {{ (user.discount*grandTotalIDs).toFixed(0) }}</strong>
+		<strong>Grand Total = {{ (user.discount*grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
 	</div>
 </div>
 </template>
