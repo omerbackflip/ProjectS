@@ -18,6 +18,9 @@
 						<template v-slot:[`item.total`]="{ item }">
 							{{ item.total ? (item.total).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
 						</template>
+						<template v-slot:[`item.paid`]="{ item }">
+							{{ item.paid ? (item.paid).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
+						</template>
 					</v-data-table>
 				</v-flex>
 				
@@ -42,7 +45,7 @@
 
 	</div>
 	<div class="grand-total mt-3 ml-3">
-		<strong>Grand Total = {{ (user.discount*grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
+		<strong>Grand Total = {{ (grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
 	</div>
 </div>
 </template>
@@ -66,6 +69,7 @@ export default {
 			grandTotalTopics:0,
 			headersID:[
 				{text:'Total', 			value:'total', 		class: 'hdr-styles'},
+				{text:'Paid',			value:'paid',		class: 'hdr-styles'},
 				{text:'Description', 	value:'description',class: 'hdr-styles', align:'right'},
 				{text:'ID',				value:'itemId',		class: 'hdr-styles'},
 			],

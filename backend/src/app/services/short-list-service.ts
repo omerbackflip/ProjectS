@@ -58,7 +58,7 @@ export class ShortListService {
                         idPrefixes: this.sortObject(idPrefixes),
                         summaries: await this.getSummaries({
                             userName: query.userName,
-                            discout: query.discount
+                            discount: query.discount
                         })
                     };
                 }
@@ -81,9 +81,11 @@ export class ShortListService {
                 response.summaryIDs = await Promise.all(priceIds.map( async (priceId: any) =>{  //Promise.all will execute next line after all resolved
                     let priceItem = await this._databaseService.getSingleItem(payableItemsModel, {itemId : priceId});
                     let sum = 0;
+                    let sum1 = 0;
                     data.forEach((el: any)=> {
                         if(el && el.itemId.slice(0,2) === priceId) {
                             sum+=(el.price * el.amount * query.discount) || 0;
+                            sum1+=(el.price * el.paid * query.discount) || 0;
                         }
                     });
                     if(excel) {
@@ -93,6 +95,7 @@ export class ShortListService {
                             itemId:priceId,
                             description:priceItem.description,
                             total: sum,
+                            paid: sum1,
                         }   
                     }
                 }));

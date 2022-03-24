@@ -192,7 +192,7 @@ export class ShortListController {
                 { header: 'Price', key: 'price', width: 12 },
 				{ header: 'מחיר חוזה', key: 'discount_price', width: 12 },
                 { header: 'Planned', key: 'planned', width: 12 },
-                { header: 'Paied', key: 'paid', width: 12 },
+                { header: 'Paid', key: 'paid', width: 12 },
                 { header: 'Amount', key: 'amount', width: 12 },
 				{ header: 'Total', key: 'total', width: 12 },
 				{ header: 'Topic', key: 'topic', width: 12 },
