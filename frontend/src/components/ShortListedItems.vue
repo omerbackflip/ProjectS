@@ -18,6 +18,7 @@
 								single-line
 								hide-details
 							></v-text-field>
+							{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
 						</v-card-title>
 						<v-data-table 
 							:headers="headers"
@@ -106,16 +107,14 @@
 										</template>
 										<template v-else>
 											<v-tooltip v-if="item.attachedFile.mimetype === 'application/pdf'" bottom>
-													<template v-slot:activator="{ on }">
+												<template v-slot:activator="{ on }">
 													<v-btn text x-small outlined @click="viewPDF(item.imageSrc.data)" v-on="on">view pdf</v-btn>
-													</template>
-													View pdf
+												</template>
 											</v-tooltip>
 										</template>
-										<v-btn text x-small outlined @click="deleteFile(item.itemId)">Remove</v-btn>
 									</viewer>
-									<v-btn icon @click="downloadFile(item.attachedFile)"> <v-icon>download</v-icon> </v-btn>
-									{{item.attachedFile.filename}}
+									<v-btn icon @click="deleteFile(item.itemId)">			<v-icon small>delete</v-icon></v-btn>
+									<v-btn icon @click="downloadFile(item.attachedFile)"> 	<v-icon small>download</v-icon> </v-btn>
 								</div>
 							</template>
 							<!-- ---------------------- End Short listed attached files  ---------------------- -->
@@ -136,26 +135,6 @@
 			<template v-if="isLoading">
 				<md-progress-spinner></md-progress-spinner>
 			</template>
-		</div>
-		<div class="summary-parent">
-			<!-- <p class="font-weight-bold ml-1">Summary</p> -->
-			<div class="ml-2" >
-				<div class="row justify-content-space-around font-weight-bold" >
-					<template v-if="summary && summary.length && !itemClicked">
-						<div class="col">
-							{{`Grand Total = ${grandTotal.toLocaleString()} `}}
-						</div>
-					</template>
-					<template v-if="itemClicked">
-						<div class="col-md-2" dir='rtl'>
-							{{` ${itemClicked.total.toLocaleString() }  - ${itemClicked.description} - ${itemClicked.itemId}`}}
-						</div>
-						<div class="col-md-2">
-							{{`Grand Total = ${grandTotal.toLocaleString()} `}}
-						</div>
-					</template>
-				</div>
-			</div>
 		</div>
 	</div>
 </template>
@@ -234,6 +213,7 @@ export default {
 				this.isLoading = true;
 				const params = {
 					userName: this.user.userName,
+					discount: this.user.discount,
 				};
 				if(page) {
 					params['itemId'] = page;
@@ -255,7 +235,7 @@ export default {
 						}
 					}));
 					this.$emit('getData', response.data.idPrefixes);
-					this.grandTotal = response.data?.summaries?.grandTotal;
+					this.grandTotal = response.data?.summaries?.grandTotalIDs;
 					this.summary = response.data?.summaries?.summary;
 					this.isLoading = false;
 				}

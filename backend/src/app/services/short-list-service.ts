@@ -100,10 +100,13 @@ export class ShortListService {
                     }
                 }));
                 let total = 0;
+                let totalPaid = 0;
                 data.forEach((num: any) => {
                     total+=(num.price * num.amount * query.discount) || 0;
+                    totalPaid+=(num.price * num.paid * query.discount) || 0;
                 })
                 response.grandTotalIDs = total;
+                response.grandTotalPaid = totalPaid;
             }
 
             //Get Topics Summary

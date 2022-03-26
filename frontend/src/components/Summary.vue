@@ -22,6 +22,10 @@
 							{{ item.paid ? (item.paid).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
 						</template>
 					</v-data-table>
+					<div class="grand-total mt-3 ml-3">
+						<strong>Total 	= {{ (grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }} --------- 
+						 		Approved = {{ (grandTotalPaid).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
+					</div>
 				</v-flex>
 				
 				<v-flex xs12 md5>
@@ -39,14 +43,17 @@
 							{{ item.total ? (item.total).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
 						</template>
 					</v-data-table>
+					<div class="grand-total mt-3 ml-3">
+						<strong>Total for Topics = {{ (grandTotalTopics).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
+					</div>
 				</v-flex>
 			</v-layout>
 		</v-container>
 
 	</div>
-	<div class="grand-total mt-3 ml-3">
+	<!-- <div class="grand-total mt-3 ml-3">
 		<strong>Grand Total = {{ (grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
-	</div>
+	</div> -->
 </div>
 </template>
 
@@ -66,10 +73,11 @@ export default {
 			summaryTopics: [],
 			user: {},
 			grandTotalIDs:0,
+			grandTotalPaid:0,
 			grandTotalTopics:0,
 			headersID:[
 				{text:'Total', 			value:'total', 		class: 'hdr-styles'},
-				{text:'Paid',			value:'paid',		class: 'hdr-styles'},
+				{text:'Approved',		value:'paid',		class: 'hdr-styles'},
 				{text:'Description', 	value:'description',class: 'hdr-styles', align:'right'},
 				{text:'ID',				value:'itemId',		class: 'hdr-styles'},
 			],
@@ -87,6 +95,7 @@ export default {
 				if(response.data) {
 					this.summaryIDs = response.data.summaryIDs;
 					this.grandTotalIDs = response.data.grandTotalIDs;
+					this.grandTotalPaid = response.data.grandTotalPaid;
 					this.summaryTopics = response.data.summaryTopics;
 					this.grandTotalTopics = response.data.grandTotalTopics;
 				} 		
