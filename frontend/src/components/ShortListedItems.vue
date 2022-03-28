@@ -20,7 +20,7 @@
 							></v-text-field>
 							<v-flex >
 								{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
-								<Additional/>
+								<Additional v-bind:userName="user.userName" />
 							</v-flex>
 						</v-card-title>
 						<v-data-table 
@@ -236,7 +236,7 @@ export default {
 							}
 							return item;							
 						} catch (error) {
-							return item;
+							return error;	//guess should be "return error" and not item as originaly 
 						}
 					}));
 					this.$emit('getData', response.data.idPrefixes);

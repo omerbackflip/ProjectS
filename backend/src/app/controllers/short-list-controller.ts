@@ -80,6 +80,25 @@ export class ShortListController {
 		}
 	}
 
+	@Get("/short-list-items/additional")
+	public async getAdditional(
+		@Req() req: Request,
+		@Res() res: Response,
+		@QueryParams() query: any
+	): Promise<any> {
+
+		const result = await this.shortListService.getAdditional(query);
+		if (result) {
+			return res.send(result);
+		}
+		else {
+			return res.send({
+				hasErrors: true,
+				message: "No match found for shorlisting!"
+			});
+		}
+	}
+
 	@Put("/short-list-items/add")
 	public async addItem(
 		@Req() req: Request,

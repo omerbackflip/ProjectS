@@ -7,12 +7,58 @@
             <v-card-title>
                 <h2>Additionals</h2>
             </v-card-title>
+            <v-card-text>
+                <v-data-table
+                    :headers="headers"
+                    :items="additionalList">
+
+                </v-data-table>
+            </v-card-text>
         </v-card>
     </v-dialog>
 </template>
 
-<script>
-export default {
 
+<script>
+import { 
+    getAdditionals,
+} from '../api';
+
+export default {
+    props:[
+        'userName',
+    ],
+	data() {
+		return {
+            additionalList: [],
+			headers:[
+				{text:'סעיף', 			value:'itemId', 	class: 'hdr-styles'},
+				{text:'תאור הסעיף', 	value:'description',class: 'hdr-styles', align:'right'},
+                {text:'סה"כ',			value:'total', 		class: 'hdr-styles', align:'right'},
+			],
+        }
+	},
+    methods : {
+        async loadadditionals(additional) {
+            try {
+                this.isLoading = true;
+                const params = {
+                    additional: "99",
+                    userName: this.userName,
+                };
+                const response = await getAdditionals(params);
+                if (response.data) {
+                    this.additionalList = response.data.result;
+                }
+            } catch (error) {
+                console.log(error);
+                this.isLoading = false;
+            }
+        },
+    },
+
+    created(){
+		this.loadadditionals();
+	}
 }
 </script>

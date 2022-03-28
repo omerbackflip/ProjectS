@@ -135,7 +135,9 @@ export async function getImageById(query) {
     return await get('/short-list-items/get-image', {}, query);
 }
 
-
+export async function getAdditionals(params) {
+    return await get('/short-list-items/additional', {}, params);
+}
 
 
 

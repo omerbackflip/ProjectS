@@ -51,7 +51,7 @@ export class ShortListService {
                     return data;
                 })
                 
-                delete params.userName
+                delete params.userName // why this delete is needed??
                 if (allData) {
                     return {
                         result:this.sortObject(allData),
@@ -70,6 +70,36 @@ export class ShortListService {
         catch (err) {
         }
     }
+
+    public async getAdditional(query: any): Promise<any> {
+
+        try {
+            if(query.userName){
+                const params: any = {
+                    userName: query.userName,
+                }
+                if(query.additional){
+                    params["itemId"] = { "$regex": query.additional , "$options": "i"};
+                }
+
+                let allData = await shortListModel.find(params).sort({"createdAt": -1})
+                
+                if (allData) {
+                    return {
+                        result:allData,
+                    }
+                };
+            }
+            else {
+                return undefined;
+            }
+        }
+        
+        catch (err) {
+        }
+    }
+
+
 
     public async getSummaries(query: any, excel?: boolean) {
         try {
