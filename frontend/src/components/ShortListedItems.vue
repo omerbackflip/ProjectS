@@ -18,7 +18,10 @@
 								single-line
 								hide-details
 							></v-text-field>
-							{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
+							<v-flex >
+								{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
+								<Additional/>
+							</v-flex>
 						</v-card-title>
 						<v-data-table 
 							:headers="headers"
@@ -68,7 +71,7 @@
 							</template>
 
 							<template :id="item.itemId" v-slot:[`item.total`]="{ item }">
-								{{ item.amount ? (numberWithCommas((item.amount * item.price * user.discount).toFixed(0))) : ''}}
+								{{ item.amount ? (item.amount*item.price*user.discount).toLocaleString(undefined,{maximumFractionDigits: 0}):''}}
 							</template>
 
 							<template v-slot:[`item.remarks`]="{ item }">
@@ -86,7 +89,7 @@
 									<input
 										style="display: 'none'"
 										id="raised-button-file"
-										ref="attachFile"  @input="($event) => addFile($event)"
+										ref="attachFile"  @input="($event) => addAttach($event)"
 										type="file"
 									/>
 									<label htmlFor="raised-button-file">
@@ -113,13 +116,13 @@
 											</v-tooltip>
 										</template>
 									</viewer>
-									<v-btn icon @click="deleteFile(item.itemId)">			<v-icon small>delete</v-icon></v-btn>
-									<v-btn icon @click="downloadFile(item.attachedFile)"> 	<v-icon small>download</v-icon> </v-btn>
+									<v-btn icon @click="deleteAttach(item.itemId)">			<v-icon small>delete</v-icon></v-btn>
+									<v-btn icon @click="downloadAttach(item.attachedFile)"> 	<v-icon small>download</v-icon> </v-btn>
 								</div>
 							</template>
 							<!-- ---------------------- End Short listed attached files  ---------------------- -->
 
-							<img id="largeImage" src="" alt="" srcset="">
+							<img id="largeImage" src="" alt="" srcset="">  <!-- What this line reffering to ??? -->
 							<template v-slot:[`item.DEL`]="{ item }">
 								<v-btn small class="icon-button" @click="deleteItem(item.itemId)">
 									<v-icon small class="icon-clickable">delete</v-icon>
@@ -155,6 +158,7 @@ import MainHeader from './MainHeader.vue';
 import 'viewerjs/dist/viewer.css'
 import { component as Viewer } from "v-viewer"
 import pdf from 'vue-pdf'
+import Additional from './Additional.vue'
 
 
 export default {
@@ -163,6 +167,7 @@ export default {
 		MainHeader,
 		Viewer,
 		pdf,
+		Additional,
 	},
 	//main data state used in component level
 	data() {
@@ -284,7 +289,7 @@ export default {
 		},
 
 		//used to remove any short listed item file
-		async deleteFile(itemId) {
+		async deleteAttach(itemId) {
 			try {
 				if(window.confirm(`Are you sure you want to delete file  ??`)){
 					await removeFile(itemId,this.user.userName);
@@ -314,12 +319,8 @@ export default {
 			}
 		},
 
-		numberWithCommas(x) {
-    		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-		},
-
 		//used to add file to a short list item
-		async addFile(event) {
+		async addAttach(event) {
 			try {
 				event.preventDefault();
 				if (event && event.target && event.target.files[0]) {
@@ -334,7 +335,7 @@ export default {
 		},
 
 		//used to download file for a short list item
-		async downloadFile(attachedFile) {
+		async downloadAttach(attachedFile) {
 			try {
 				if(attachedFile && attachedFile.path){
 					downloadAttachedFile({destination: attachedFile.filename});
