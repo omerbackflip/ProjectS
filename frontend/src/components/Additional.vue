@@ -10,9 +10,16 @@
             <v-card-text>
                 <v-data-table
                     :headers="headers"
-                    :items="additionalList">
-
+                    :items="additionalList"
+                    disable-pagination
+                    hide-default-footer
+                    dense>
                 </v-data-table>
+                <span>
+                    <v-text-field v-model="additionalDescription" label="תאור"></v-text-field>
+                    <v-text-field v-model="additionalAmount" label="סה'כ"></v-text-field>
+                </span>
+                <v-btn small @click="addAdditional">add</v-btn>
             </v-card-text>
         </v-card>
     </v-dialog>
@@ -21,30 +28,35 @@
 
 <script>
 import { 
+    addShortListItems,
     getAdditionals,
 } from '../api';
 
 export default {
     props:[
-        'userName',
+        'user',
     ],
 	data() {
 		return {
             additionalList: [],
+            additionalID : '99.00.0000',
+            additionalDescription : '',
+            additionalAmount : '',
 			headers:[
 				{text:'סעיף', 			value:'itemId', 	class: 'hdr-styles'},
 				{text:'תאור הסעיף', 	value:'description',class: 'hdr-styles', align:'right'},
-                {text:'סה"כ',			value:'total', 		class: 'hdr-styles', align:'right'},
+                {text:'סה"כ',			value:'amount',		class: 'hdr-styles', align:'right'},
 			],
         }
 	},
+
     methods : {
-        async loadadditionals(additional) {
+        async loadAdditionals(additional) {
             try {
                 this.isLoading = true;
                 const params = {
-                    additional: "99",
-                    userName: this.userName,
+                    additional: this.additionalID,
+                    userName: this.user.userName,
                 };
                 const response = await getAdditionals(params);
                 if (response.data) {
@@ -55,10 +67,25 @@ export default {
                 this.isLoading = false;
             }
         },
+
+        addAdditional(){
+            const body = {
+                additional  : true,
+                userName    : this.user.userName,
+                itemId      : this.additionalID,
+                description : this.additionalDescription,
+                amount      : this.additionalAmount,
+                unit        : 'יח',
+                price       : 1,     //      1/this.user.discount,
+                remarks     : 'תוספות',
+                topic       : 'תוספות'
+            }
+            const response = addShortListItems(body);
+        }
     },
 
     created(){
-		this.loadadditionals();
+		this.loadAdditionals();
 	}
 }
 </script>

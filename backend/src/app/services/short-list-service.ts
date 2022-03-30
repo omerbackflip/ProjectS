@@ -109,7 +109,7 @@ export class ShortListService {
             let response: any = {};
             if(data && priceIds) {
                 response.summaryIDs = await Promise.all(priceIds.map( async (priceId: any) =>{  //Promise.all will execute next line after all resolved
-                    let priceItem = await this._databaseService.getSingleItem(payableItemsModel, {itemId : priceId});
+                    let priceItem = await this._databaseService.getSingleItem(payableItemsModel, {itemId : priceId}); // CHeck if possible to replace with area-keys.ts file
                     let sum = 0;
                     let sum1 = 0;
                     data.forEach((el: any)=> {
@@ -227,7 +227,14 @@ export class ShortListService {
 
     public async addItem(body: any) {
         try {
-            if(body && body.itemIds) {
+            if(body && body.price == 1) { // this is called from short_List_Items while adding "Additional" single item.
+                await this._databaseService.addItem(shortListModel , body);
+                return {
+                    hasErrors: false,
+                    message:"Additional Item 99 successfully added!"
+                }                
+            }
+            if(body && body.itemIds) { // "itemIds" - this is called from payable_Items while adding multiple items using "+" bottom.
                 await Promise.all(
                     body.itemIds.map(async (id: any) => {
                         const response = await this._databaseService.getSingleItem(payableItemsModel ,{

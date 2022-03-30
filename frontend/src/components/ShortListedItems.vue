@@ -20,7 +20,7 @@
 							></v-text-field>
 							<v-flex >
 								{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
-								<Additional v-bind:userName="user.userName" />
+								<Additional v-bind:user="user" />
 							</v-flex>
 						</v-card-title>
 						<v-data-table 
