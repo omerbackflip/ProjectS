@@ -18,7 +18,7 @@
 								single-line
 								hide-details
 							></v-text-field>
-							<v-flex >
+							<v-flex class="ml-4">
 								{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
 								<Additional v-bind:user="user" />
 							</v-flex>

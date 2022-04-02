@@ -119,16 +119,17 @@ export class ShortListService {
                         }
                     });
                     if(excel) {
-                         return `${priceId} - ${sum} - ${priceItem.description.trim()}`
+                         return `${priceId} - ${sum} - ${priceItem?.description.trim()}`
                      } else {
                         return {
                             itemId:priceId,
-                            description:priceItem.description,
+                            description:priceItem?.description,
                             total: sum,
                             paid: sum1,
                         }   
                     }
                 }));
+                //response.summaryIDs.sort({ itemId: 'asc' });
                 let total = 0;
                 let totalPaid = 0;
                 data.forEach((num: any) => {
@@ -180,30 +181,51 @@ export class ShortListService {
     public async saveShortListedItems(body: any, workbook: any) {
         try {
             var sheet_name_list = workbook.SheetNames;
-            await this.deleteShortListItems(body);
+            //await this.deleteShortListItems(body);
             const data = this.payableItemsService.transformData(sheet_name_list , workbook);
             if(data) {
                 const filteredData = [].concat.apply([], data).filter((element: any) => element!== null);
                 if(filteredData && filteredData.length) {
                     let countImported = 0;
                     await Promise.all( filteredData.map(async (item: any) => {
-                        const response = await this._databaseService.getSingleItem(payableItemsModel, {itemId: item.ID});
-                        if(response){
-                            delete response.createdAt;
-                            delete response._id;
-                            //////////    ID     //////////////
-                            response.amount = item.Amount;
-                            response.planned = item.Planned;
-                            response.paid = item.Paid;                            
-                            response.remarks = item.Remarks; // item MUST be the same name as in the Excel e.g "Remarks"
-                            response.topic = item.Topic;
-                            //////////////////////////////////
-                            response.userName = body.userName;
+                        const shortListResponse = await this._databaseService.getSingleItem(shortListModel, {itemId:item.ID , userName:body.userName});
+                        if(shortListResponse){  // Update item in Short_list table
+                            let payload: any = {};
+                            item.Planned ? payload.planned = item.Planned : '';
+                            item.Paid ? payload.paid = item.Paid : '';
+                            item.Amount ? payload.amount = item.Amount : '';
+                            item.Topic ? payload.topic = item.Topic : '';
+                            item.Remarks ? payload.remarks = item.Remarks : '';
                             countImported++;
-                            await this._databaseService.addItem(shortListModel , response);
-                        } else {
-                            console.log('Can not find ID - ' + item.ID)
-                        }
+                            await this._databaseService.updateItem(shortListModel ,{itemId: item.ID, userName: body.userName}, payload);
+                        } else {    // insert new item to Short_list table
+                            const response = await this._databaseService.getSingleItem(payableItemsModel, {itemId: item.ID});
+                            if(response){
+                                delete response.createdAt;
+                                delete response._id;
+                                item.Planned ? response.planned    = item.Planned : '';
+                                item.Paid ? response.paid       = item.Paid : '';                            
+                                item.Amount ? response.amount     = item.Amount : '';
+                                item.Topic ? response.topic      = item.Topic : '';
+                                item.Remarks ? response.remarks    = item.Remarks : ''; // item MUST be the same name as in the Excel e.g "Remarks"
+                                response.userName   = body.userName;
+                                countImported++;
+                                await this._databaseService.addItem(shortListModel , response);
+                            } else {
+                                let response : any = {};
+                                response.itemId     = item.ID;
+                                response.planned    = item.Planned ? item.Planned : '';
+                                response.paid       = item.Paid ? item.Paid : '';                            
+                                response.amount     = item.Amount ? item.Amount : '';
+                                response.topic      = item.Topic ? item.Topic : '';
+                                response.remarks    = item.Remarks ? item.Remarks : ''; // item MUST be the same name as in the Excel e.g "Remarks"
+                                response.userName   = body.userName;
+                                console.log(response)
+                                countImported++;
+                                await this._databaseService.addItem(shortListModel , response);
+                            }
+
+                        }   
                     }));
                     if(countImported > 0 && countImported <= filteredData.length) {
                         return {
@@ -269,13 +291,9 @@ export class ShortListService {
             if("remarks" in body) {
                 payload.remarks = body.remarks;
             }
-
-            //This is the function for adding remarks or amount to the item
-
             if("amount" in body) {
                 payload.amount = body.amount;
             }
-
             if("topic" in body) {
                 payload.topic = body.topic;
             }
@@ -381,7 +399,8 @@ export class ShortListService {
         if(body && body.userName) {
             return await shortListModel.remove({userName: body.userName});
         } else {
-            return await shortListModel.remove({});
+            //return await shortListModel.remove({});
+            return ('Error while delete - no userName');
         }
     }
 
@@ -408,7 +427,8 @@ export class ShortListService {
                 success: true
             }
         } else {
-            return await shortListModel.remove({});
+            //return await shortListModel.remove({});
+            return ('Error while copting - no body.users');
         }
     }
 

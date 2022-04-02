@@ -14,11 +14,14 @@
                     disable-pagination
                     hide-default-footer
                     dense>
+                    <template v-slot:[`item.amount`]="{ item }">
+                        {{item.amount.toLocaleString(undefined,{maximumFractionDigits: 0})}}
+                    </template>
                 </v-data-table>
-                <span>
-                    <v-text-field v-model="additionalDescription" label="תאור"></v-text-field>
-                    <v-text-field v-model="additionalAmount" label="סה'כ"></v-text-field>
-                </span>
+                <v-row>
+                    <v-text-field class ="mx-4" v-model="additionalAmount" label="סה'כ"></v-text-field>
+                    <v-text-field class ="mx-4" v-model="additionalDescription" label="תאור"></v-text-field>
+                </v-row>
                 <v-btn small @click="addAdditional">add</v-btn>
             </v-card-text>
         </v-card>
@@ -51,7 +54,7 @@ export default {
 	},
 
     methods : {
-        async loadAdditionals(additional) {
+        async loadAdditionals() {
             try {
                 this.isLoading = true;
                 const params = {
@@ -79,8 +82,11 @@ export default {
                 price       : 1,     //      1/this.user.discount,
                 remarks     : 'תוספות',
                 topic       : 'תוספות'
-            }
-            const response = addShortListItems(body);
+            };
+            addShortListItems(body);
+            this.additionalDescription='';
+            this.additionalAmount='';
+            this.loadAdditionals()
         }
     },
 
