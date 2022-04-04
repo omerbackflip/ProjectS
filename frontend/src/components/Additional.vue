@@ -15,7 +15,7 @@
                     hide-default-footer
                     dense>
                     <template v-slot:[`item.amount`]="{ item }">
-                        {{item.amount.toLocaleString(undefined,{maximumFractionDigits: 0})}}
+                        {{item.amount && item.amount.toLocaleString(undefined,{maximumFractionDigits: 0})}}
                     </template>
                 </v-data-table>
                 <v-row>
@@ -32,7 +32,7 @@
 <script>
 import { 
     addShortListItems,
-    getAdditionals,
+    getItemsID,
 } from '../api';
 
 export default {
@@ -61,7 +61,7 @@ export default {
                     additional: this.additionalID,
                     userName: this.user.userName,
                 };
-                const response = await getAdditionals(params);
+                const response = await getItemsID(params);
                 if (response.data) {
                     this.additionalList = response.data.result;
                 }
@@ -79,7 +79,7 @@ export default {
                 description : this.additionalDescription,
                 amount      : this.additionalAmount,
                 unit        : 'יח',
-                price       : 1,     //      1/this.user.discount,
+                price       :  1/this.user.discount,
                 remarks     : 'תוספות',
                 topic       : 'תוספות'
             };
@@ -92,6 +92,7 @@ export default {
 
     created(){
 		this.loadAdditionals();
+
 	}
 }
 </script>

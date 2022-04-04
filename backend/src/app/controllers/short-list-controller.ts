@@ -80,14 +80,14 @@ export class ShortListController {
 		}
 	}
 
-	@Get("/short-list-items/additional")
-	public async getAdditional(
+	@Get("/short-list-items/get-items-id")
+	public async getItemsID(
 		@Req() req: Request,
 		@Res() res: Response,
 		@QueryParams() query: any
 	): Promise<any> {
 
-		const result = await this.shortListService.getAdditional(query);
+		const result = await this.shortListService.getItemsID(query);
 		if (result) {
 			return res.send(result);
 		}

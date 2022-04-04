@@ -71,7 +71,7 @@ export class ShortListService {
         }
     }
 
-    public async getAdditional(query: any): Promise<any> {
+    public async getItemsID(query: any): Promise<any> {
 
         try {
             if(query.userName){
@@ -79,7 +79,10 @@ export class ShortListService {
                     userName: query.userName,
                 }
                 if(query.additional){
-                    params["itemId"] = { "$regex": query.additional , "$options": "i"};
+                    params["itemId"] = { "$regex": "^"+query.additional , "$options": "i"}; // "^" is a regular expression that tells the db to fetch only data that starts with the givien letters only
+                }
+                if(query.topic){
+                    params["topic"] = { "$regex": query.topic , "$options": "i"}; // this will fetch all the results that matches with a string at any place in the string
                 }
 
                 let allData = await shortListModel.find(params).sort({"createdAt": -1})
@@ -249,14 +252,14 @@ export class ShortListService {
 
     public async addItem(body: any) {
         try {
-            if(body && body.price == 1) { // this is called from short_List_Items while adding "Additional" single item.
+            if(body && body.additional) { // this is called from short_List_Items while adding "Additional" single item.
                 await this._databaseService.addItem(shortListModel , body);
                 return {
                     hasErrors: false,
                     message:"Additional Item 99 successfully added!"
                 }                
             }
-            if(body && body.itemIds) { // "itemIds" - this is called from payable_Items while adding multiple items using "+" bottom.
+            if(body && body.itemIds && !(body.additional)) { // "itemIds" - this is called from payable_Items while adding multiple items using "+" bottom.
                 await Promise.all(
                     body.itemIds.map(async (id: any) => {
                         const response = await this._databaseService.getSingleItem(payableItemsModel ,{

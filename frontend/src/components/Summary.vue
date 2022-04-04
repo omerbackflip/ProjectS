@@ -1,6 +1,5 @@
 <template>
 <div class="main-container">
-
 	<div v-if="summaryIDs && summaryIDs.length" class="summary-wrapper">
 		<v-container>
 			<v-layout class="justify-content-space-between" row wrap >
@@ -27,7 +26,6 @@
 						 		Approved = {{ (grandTotalPaid).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
 					</div>
 				</v-flex>
-				
 				<v-flex xs12 md5>
 					<v-data-table 
 						:headers="headersTopics"
@@ -42,6 +40,9 @@
 						<template v-slot:[`item.total`]="{ item }">
 							{{ item.total ? (item.total).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
 						</template>
+						<template v-slot:[`item.topic`]="{ item }">
+							<Topic v-bind:topic="item.topic" v-bind:total="item.total" v-bind:user="user" />
+						</template>	
 					</v-data-table>
 					<div class="grand-total mt-3 ml-3">
 						<strong>Total for Topics = {{ (grandTotalTopics).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
@@ -61,11 +62,13 @@
 import { getSummary } from '../api';
 import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
+import Topic from './Topic.vue';
 
 export default {
 	name: 'Summary',
 	components: {
-		MainHeader
+		MainHeader,
+		Topic,
 	},
 	data() {
 		return {
@@ -109,11 +112,6 @@ export default {
 		//console.log(this.user)
 		this.getSummary();
 	},
-
-	numberWithCommas(x) { // not used ...
-	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-},
-
 }
 </script>
 
