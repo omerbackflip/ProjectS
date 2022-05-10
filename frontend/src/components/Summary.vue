@@ -23,7 +23,8 @@
 					</v-data-table>
 					<div class="grand-total mt-3 ml-3">
 						<strong>Total 	= {{ (grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }} --------- 
-						 		Approved = {{ (grandTotalPaid).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
+						 		Approved = {{ (grandTotalPaid).toLocaleString(undefined,{maximumFractionDigits: 0}) }} </strong>
+						 		<!-- Count = {{ (countIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong> -->
 					</div>
 				</v-flex>
 				<v-flex xs12 md5>
@@ -36,6 +37,7 @@
 						fixed-header
 						hide-default-footer
 						class="elevation-1"
+						@click:row="rowClicked"
 						dense>
 						<template v-slot:[`item.total`]="{ item }">
 							{{ item.total ? (item.total).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
@@ -50,11 +52,7 @@
 				</v-flex>
 			</v-layout>
 		</v-container>
-
 	</div>
-	<!-- <div class="grand-total mt-3 ml-3">
-		<strong>Grand Total = {{ (grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong>
-	</div> -->
 </div>
 </template>
 
@@ -78,6 +76,7 @@ export default {
 			grandTotalIDs:0,
 			grandTotalPaid:0,
 			grandTotalTopics:0,
+			//countIDs:0,
 			headersID:[
 				{text:'Total', 			value:'total', 		class: 'hdr-styles'},
 				{text:'Approved',		value:'paid',		class: 'hdr-styles'},
@@ -85,7 +84,8 @@ export default {
 				{text:'ID',				value:'itemId',		class: 'hdr-styles'},
 			],
 			headersTopics:[
-				{text:'Total', 	value:'total',	class: 'hdr-styles'},
+				{text:'Total', 	value:'total',	class: 'hdr-styles', align:'right'},
+				{text:'Count', 	value:'count',	class: 'hdr-styles', align:'right'},
 				{text:'Topic', 	value:'topic',	class: 'hdr-styles', align:'right'},
 			],
 		}
@@ -99,6 +99,7 @@ export default {
 					this.summaryIDs = response.data.summaryIDs;
 					this.grandTotalIDs = response.data.grandTotalIDs;
 					this.grandTotalPaid = response.data.grandTotalPaid;
+					//this.countIDs = response.data.countIDs;
 					this.summaryTopics = response.data.summaryTopics;
 					this.grandTotalTopics = response.data.grandTotalTopics;
 				} 		
@@ -106,6 +107,10 @@ export default {
 				console.log(error);
 			}
 		},
+		rowClicked (row){
+			console.log(row)
+			//this.$router.push({ name: "Users", params: { row: row } });
+		}
 	},
 	async created(){
 		this.user = JSON.parse(getUser());

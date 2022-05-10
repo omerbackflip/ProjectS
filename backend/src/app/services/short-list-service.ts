@@ -107,6 +107,7 @@ export class ShortListService {
     public async getSummaries(query: any, excel?: boolean) {
         try {
             const data = await this._databaseService.getManyItems(shortListModel , {userName: query.userName});
+            //console.log(data.length);
             //Get ID's summary
             const priceIds = [...new Set(data.map((item: any) => item.itemId.slice(0, 2)))];
             let response: any = {};
@@ -141,6 +142,7 @@ export class ShortListService {
                 })
                 response.grandTotalIDs = total;
                 response.grandTotalPaid = totalPaid;
+                //response.countIDs = data.length;
             }
 
             //Get Topics Summary
@@ -148,9 +150,11 @@ export class ShortListService {
             if(data && topics) {
                 response.summaryTopics = topics.map( (topic: any) =>{
                     let sum = 0;
+                    let count = 0;
                     data.forEach((el: any)=> {
                         if(el && el.topic === topic) {
                             sum+=(el.price * el.amount * query.discount) || 0;
+                            count+=1;
                         }
                     });
                     if(excel) {
@@ -159,6 +163,7 @@ export class ShortListService {
                         return {
                             topic:topic,
                             total: sum,
+                            count: count,
                         }   
                     }
                 });
@@ -195,7 +200,7 @@ export class ShortListService {
                         if(shortListResponse){  // Update item in Short_list table
                             let payload: any = {};
                             item.Planned ? payload.planned = item.Planned : '';
-                            item.Paid ? payload.paid = item.Paid : '';
+                            payload.paid = item.Paid; // force the update of this field
                             item.Amount ? payload.amount = item.Amount : '';
                             item.Topic ? payload.topic = item.Topic : '';
                             item.Remarks ? payload.remarks = item.Remarks : '';
@@ -214,7 +219,7 @@ export class ShortListService {
                                 response.userName   = body.userName;
                                 countImported++;
                                 await this._databaseService.addItem(shortListModel , response);
-                            } else {
+                            } else {    // this section adds the "99.xx.xxxx" items to the short_list
                                 let response : any = {};
                                 response.itemId     = item.ID;
                                 response.planned    = item.Planned ? item.Planned : '';

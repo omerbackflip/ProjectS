@@ -13,12 +13,14 @@
                     :items="additionalList"
                     disable-pagination
                     hide-default-footer
+                    class="elevation-5"
                     dense>
                     <template v-slot:[`item.amount`]="{ item }">
                         {{item.amount && item.amount.toLocaleString(undefined,{maximumFractionDigits: 0})}}
                     </template>
                 </v-data-table>
                 <v-row>
+                    <v-text-field class ="mx-4" v-model="additionalID" label="ID"></v-text-field>
                     <v-text-field class ="mx-4" v-model="additionalAmount" label="סה'כ"></v-text-field>
                     <v-text-field class ="mx-4" v-model="additionalDescription" label="תאור"></v-text-field>
                 </v-row>
@@ -42,7 +44,7 @@ export default {
 	data() {
 		return {
             additionalList: [],
-            additionalID : '99.00.0000',
+            additionalID : '99.00.????',
             additionalDescription : '',
             additionalAmount : '',
 			headers:[
@@ -58,7 +60,7 @@ export default {
             try {
                 this.isLoading = true;
                 const params = {
-                    additional: this.additionalID,
+                    additional: "99.00.",
                     userName: this.user.userName,
                 };
                 const response = await getItemsID(params);
