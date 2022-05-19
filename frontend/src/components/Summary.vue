@@ -20,11 +20,16 @@
 						<template v-slot:[`item.paid`]="{ item }">
 							{{ item.paid ? (item.paid).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
 						</template>
+						<template v-slot:[`item.planned`]="{ item }">
+							{{ item.planned ? (item.planned).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
+						</template>
 					</v-data-table>
 					<div class="grand-total mt-3 ml-3">
-						<strong>Total 	= {{ (grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }} --------- 
-						 		Approved = {{ (grandTotalPaid).toLocaleString(undefined,{maximumFractionDigits: 0}) }} </strong>
-						 		<!-- Count = {{ (countIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }}</strong> -->
+						<strong>
+						 	Planned  = 	{{ (grandTotalPlanned).toLocaleString(undefined,{maximumFractionDigits: 0}) }} ---------
+							Current = 	{{ (grandTotalIDs).toLocaleString(undefined,{maximumFractionDigits: 0}) }} --------- 
+						 	Approved = 	{{ (grandTotalPaid).toLocaleString(undefined,{maximumFractionDigits: 0}) }}
+						</strong>
 					</div>
 				</v-flex>
 				<v-flex xs12 md5>
@@ -75,11 +80,12 @@ export default {
 			user: {},
 			grandTotalIDs:0,
 			grandTotalPaid:0,
+			grandTotalPlanned:0,
 			grandTotalTopics:0,
-			//countIDs:0,
 			headersID:[
 				{text:'Total', 			value:'total', 		class: 'hdr-styles'},
 				{text:'Approved',		value:'paid',		class: 'hdr-styles'},
+				{text:'Planned', 		value:'planned',	class: 'hdr-styles'},
 				{text:'Description', 	value:'description',class: 'hdr-styles', align:'right'},
 				{text:'ID',				value:'itemId',		class: 'hdr-styles'},
 			],
@@ -99,8 +105,11 @@ export default {
 					this.summaryIDs = response.data.summaryIDs;
 					this.grandTotalIDs = response.data.grandTotalIDs;
 					this.grandTotalPaid = response.data.grandTotalPaid;
-					//this.countIDs = response.data.countIDs;
-					this.summaryTopics = response.data.summaryTopics;
+					this.grandTotalPlanned = response.data.grandTotalPlanned;
+					//--------- Topics
+					this.summaryTopics = response.data.summaryTopics.filter((item) => {
+						return (item.topic != null && item.topic != "")
+					});
 					this.grandTotalTopics = response.data.grandTotalTopics;
 				} 		
 			} catch (error) {

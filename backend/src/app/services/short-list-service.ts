@@ -116,10 +116,12 @@ export class ShortListService {
                     let priceItem = await this._databaseService.getSingleItem(payableItemsModel, {itemId : priceId}); // CHeck if possible to replace with area-keys.ts file
                     let sum = 0;
                     let sum1 = 0;
+                    let sumPlanned = 0;
                     data.forEach((el: any)=> {
                         if(el && el.itemId.slice(0,2) === priceId) {
                             sum+=(el.price * el.amount * query.discount) || 0;
                             sum1+=(el.price * el.paid * query.discount) || 0;
+                            sumPlanned+=(el.price * el.planned * query.discount) || 0;
                         }
                     });
                     if(excel) {
@@ -130,18 +132,22 @@ export class ShortListService {
                             description:priceItem?.description,
                             total: sum,
                             paid: sum1,
+                            planned: sumPlanned,
                         }   
                     }
                 }));
                 //response.summaryIDs.sort({ itemId: 'asc' });
                 let total = 0;
                 let totalPaid = 0;
+                let totalPlanned = 0;
                 data.forEach((num: any) => {
                     total+=(num.price * num.amount * query.discount) || 0;
                     totalPaid+=(num.price * num.paid * query.discount) || 0;
+                    totalPlanned+=(num.price * num.planned * query.discount) || 0;
                 })
                 response.grandTotalIDs = total;
                 response.grandTotalPaid = totalPaid;
+                response.grandTotalPlanned = totalPlanned;
                 //response.countIDs = data.length;
             }
 

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog max-width="600px">
+    <v-dialog max-width="1000px">
         <template v-slot:activator="{on,attrs}">
             <v-btn class="mx-4 dark" v-bind="attrs" v-on="on">{{topic}}</v-btn>
         </template>
@@ -13,10 +13,11 @@
                     :items="topicList"
                     disable-pagination
                     hide-default-footer
-						bordered
-						height="60vh"
-						fixed-header
-						class="elevation-1"
+                    bordered
+                    height="60vh"
+                    fixed-header
+                    class="elevation-1"
+                    :sort-by="['itemId']"
                     dense>
                     <template v-slot:[`item.amount`]="{ item }">
                         {{item.amount}}
@@ -51,7 +52,9 @@ export default {
 				{text:'סעיף', 			value:'itemId', 	class: 'hdr-styles'},
 				{text:'תאור הסעיף', 	value:'description',class: 'hdr-styles', align:'right'},
                 {text:'מחיר',			value:'price',		class: 'hdr-styles', align:'right'},
+                {text:'מתוכנן',			value:'planned',	class: 'hdr-styles', align:'right'},
                 {text:'כמות',			value:'amount',		class: 'hdr-styles', align:'right'},
+                {text:'אושר',			value:'paid',   	class: 'hdr-styles', align:'right'},
                 {text:'סה"כ',			value:'total',		class: 'hdr-styles', align:'right'},
 			],
             dialog: false,
