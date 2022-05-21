@@ -20,7 +20,10 @@
 							></v-text-field>
 							<v-flex class="ml-4">
 								{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
-								<Additional v-bind:user="user" />
+								<!-- <Additional v-bind:user="user" /> -->
+								<Topic 	v-bind:itemId="99" 
+										v-bind:header="'תוספות'" 
+										v-bind:user="user" />
 							</v-flex>
 						</v-card-title>
 						<v-data-table 
@@ -158,7 +161,8 @@ import MainHeader from './MainHeader.vue';
 import 'viewerjs/dist/viewer.css'
 import { component as Viewer } from "v-viewer"
 import pdf from 'vue-pdf'
-import Additional from './Additional.vue'
+// import Additional from './Additional.vue'
+import Topic from './Topic.vue'
 
 
 export default {
@@ -167,7 +171,8 @@ export default {
 		MainHeader,
 		Viewer,
 		pdf,
-		Additional,
+		// Additional,
+		Topic,
 	},
 	//main data state used in component level
 	data() {

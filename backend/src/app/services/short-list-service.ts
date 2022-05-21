@@ -78,14 +78,16 @@ export class ShortListService {
                 const params: any = {
                     userName: query.userName,
                 }
-                if(query.additional){
-                    params["itemId"] = { "$regex": "^"+query.additional , "$options": "i"}; // "^" is a regular expression that tells the db to fetch only data that starts with the givien letters only
-                }
+                // if(query.additional){
+                //     params["itemId"] = { "$regex": "^"+query.additional , "$options": "i"}; // "^" is a regular expression that tells the db to fetch only data that starts with the givien letters only
+                // }
                 if(query.topic){
                     params["topic"] = { "$regex": query.topic , "$options": "i"}; // this will fetch all the results that matches with a string at any place in the string
                 }
-
-                let allData = await shortListModel.find(params).sort({"createdAt": -1})
+                if(query.itemId){
+                    params["itemId"] = { "$regex": "^"+query.itemId , "$options": "i"}; // "^" is a regular expression that tells the db to fetch only data that starts with the givien letters only
+                }
+                let allData = await shortListModel.find(params).sort({"itemId": 1})
                 
                 if (allData) {
                     return {

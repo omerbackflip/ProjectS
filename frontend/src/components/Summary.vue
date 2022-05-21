@@ -3,7 +3,7 @@
 	<div v-if="summaryIDs && summaryIDs.length" class="summary-wrapper">
 		<v-container>
 			<v-layout class="justify-content-space-between" row wrap >
-      			<v-flex xs12 md5>
+      			<v-flex xs12 md6>
 					<v-data-table 
 						:headers="headersID"
 						:items="summaryIDs"
@@ -23,6 +23,13 @@
 						<template v-slot:[`item.planned`]="{ item }">
 							{{ item.planned ? (item.planned).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
 						</template>
+						<template v-slot:[`item.description`]="{ item }">
+							<!-- <Topic v-bind:itemId="item.itemId" v-bind:topic="item.description" v-bind:total="item.total" v-bind:user="user" /> -->
+							<Topic 	v-bind:itemId="item.itemId" 
+									v-bind:header=" item.description+
+													(item.total ? ' - '+item.total.toLocaleString(undefined,{maximumFractionDigits: 0}) : '' )" 
+									v-bind:user="user" />
+						</template>	
 					</v-data-table>
 					<div class="grand-total mt-3 ml-3">
 						<strong>
@@ -48,7 +55,9 @@
 							{{ item.total ? (item.total).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
 						</template>
 						<template v-slot:[`item.topic`]="{ item }">
-							<Topic v-bind:topic="item.topic" v-bind:total="item.total" v-bind:user="user" />
+							<Topic 	v-bind:topic="item.topic" 
+									v-bind:header="item.total.toLocaleString(undefined,{maximumFractionDigits: 0}) + ' - ' + item.topic" 
+									v-bind:user="user" />
 						</template>	
 					</v-data-table>
 					<div class="grand-total mt-3 ml-3">
