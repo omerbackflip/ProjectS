@@ -19,6 +19,20 @@
 					single-line
 					hide-details
 				></v-text-field>
+				<v-flex class="ml-4">
+					<export-excel 
+						:data="payableItems" 
+						:fields="xlsHeders"
+						type="xlsx"
+						name="export"
+						:title="search ? search : 'Header text'"
+						footer="This is footer"
+						class="mt-1">
+						<v-btn class="btn btn-danger"> 
+							<v-icon>mdi-download</v-icon>Download To Excel
+						</v-btn>
+					</export-excel>
+				</v-flex>
 			</v-card-title>
 			<v-data-table 
 				:headers="headers"
@@ -81,6 +95,9 @@
 import { getAllPayableItems,addShortListItems } from '../api';
 import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
+import Vue from 'vue';
+import excel from 'vue-excel-export';
+Vue.use(excel);
 
 export default {
 	name: 'Payable-Items',
@@ -107,6 +124,13 @@ export default {
 				{text:'ADD',			value:'add_to_paka', class: 'text hdr-styles-payable'},
 			],
 			search: '',
+			xlsHeders:{
+				"ID"	:"itemId", 
+				"תאור"	:"description",
+				"יחידה"	:"unit", 
+				"מחיר"	:"price",
+				"כמות"	:"planned",
+			},
 		}
 	},
 	methods: {
@@ -300,4 +324,12 @@ td{
 	direction: rtl !important;
 }
 
+.v-card__title{
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+}
+
+.v-input {
+	padding-top: 0px !important;
+}
 </style>
