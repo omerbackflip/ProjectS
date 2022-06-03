@@ -117,12 +117,12 @@ export class ShortListService {
                 response.summaryIDs = await Promise.all(priceIds.map( async (priceId: any) =>{  //Promise.all will execute next line after all resolved
                     let priceItem = await this._databaseService.getSingleItem(payableItemsModel, {itemId : priceId}); // CHeck if possible to replace with area-keys.ts file
                     let sum = 0;
-                    let sum1 = 0;
+                    let sumPaid = 0;
                     let sumPlanned = 0;
                     data.forEach((el: any)=> {
                         if(el && el.itemId.slice(0,2) === priceId) {
                             sum+=(el.price * el.amount * query.discount) || 0;
-                            sum1+=(el.price * el.paid * query.discount) || 0;
+                            sumPaid+=(el.price * el.paid * query.discount) || 0;
                             sumPlanned+=(el.price * el.planned * query.discount) || 0;
                         }
                     });
@@ -133,7 +133,7 @@ export class ShortListService {
                             itemId:priceId,
                             description:priceItem?.description,
                             total: sum,
-                            paid: sum1,
+                            paid: sumPaid,
                             planned: sumPlanned,
                         }   
                     }
@@ -159,9 +159,11 @@ export class ShortListService {
                 response.summaryTopics = topics.map( (topic: any) =>{
                     let sum = 0;
                     let count = 0;
+                    let sumPaid = 0;
                     data.forEach((el: any)=> {
                         if(el && el.topic === topic) {
                             sum+=(el.price * el.amount * query.discount) || 0;
+                            sumPaid+=(el.price * el.paid * query.discount) || 0;
                             count+=1;
                         }
                     });
@@ -172,6 +174,7 @@ export class ShortListService {
                             topic:topic,
                             total: sum,
                             count: count,
+                            paid: sumPaid,
                         }   
                     }
                 });
@@ -236,7 +239,6 @@ export class ShortListService {
                                 response.topic      = item.Topic ? item.Topic : '';
                                 response.remarks    = item.Remarks ? item.Remarks : ''; // item MUST be the same name as in the Excel e.g "Remarks"
                                 response.userName   = body.userName;
-                                console.log(response)
                                 countImported++;
                                 await this._databaseService.addItem(shortListModel , response);
                             }

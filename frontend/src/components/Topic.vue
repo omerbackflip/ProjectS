@@ -6,7 +6,8 @@
         <v-card>
             <v-card-title>
                 <!-- <h2 >{{topic}} - {{total.toLocaleString(undefined,{maximumFractionDigits: 0})}}</h2> -->
-                <h2> {{header}}</h2>
+                <h2> {{header}}
+                <v-btn @click="loadTopic()"> Refresh </v-btn></h2>
             </v-card-title>
             <v-card-text>
                 <v-data-table
@@ -77,6 +78,7 @@ export default {
 			headers:[
 				{text:'סעיף', 			value:'itemId', 	class: 'hdr-styles'},
 				{text:'תאור הסעיף', 	value:'description',class: 'hdr-styles', align:'right', width: '30%'},
+                {text:'יחידה',			value:'unit',		class: 'hdr-styles', align:'right'},
                 {text:'מחיר',			value:'price',		class: 'hdr-styles', align:'right'},
                 {text:'מתוכנן',			value:'planned',	class: 'hdr-styles', align:'right'},
                 {text:'כמות',			value:'amount',		class: 'hdr-styles', align:'right'},

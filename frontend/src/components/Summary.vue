@@ -54,9 +54,12 @@
 						<template v-slot:[`item.total`]="{ item }">
 							{{ item.total ? (item.total).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
 						</template>
+						<template v-slot:[`item.paid`]="{ item }">
+							{{ item.paid ? (item.paid).toLocaleString(undefined,{maximumFractionDigits: 0}) : '' }}
+						</template>
 						<template v-slot:[`item.topic`]="{ item }">
 							<Topic 	v-bind:topic="item.topic" 
-									v-bind:header="item.total.toLocaleString(undefined,{maximumFractionDigits: 0}) + ' - ' + item.topic" 
+									v-bind:header="item.topic + ' - ' + item.total.toLocaleString(undefined,{maximumFractionDigits: 0})" 
 									v-bind:user="user" />
 						</template>	
 					</v-data-table>
@@ -92,16 +95,17 @@ export default {
 			grandTotalPlanned:0,
 			grandTotalTopics:0,
 			headersID:[
-				{text:'Total', 			value:'total', 		class: 'hdr-styles'},
-				{text:'Approved',		value:'paid',		class: 'hdr-styles'},
-				{text:'Planned', 		value:'planned',	class: 'hdr-styles'},
+				{text:'Total', 			value:'total', 		class: 'hdr-styles', align:'right'},
+				{text:'Approved',		value:'paid',		class: 'hdr-styles', align:'right'},
+				{text:'Planned', 		value:'planned',	class: 'hdr-styles', align:'right'},
 				{text:'Description', 	value:'description',class: 'hdr-styles', align:'right'},
 				{text:'ID',				value:'itemId',		class: 'hdr-styles'},
 			],
 			headersTopics:[
-				{text:'Total', 	value:'total',	class: 'hdr-styles', align:'right'},
-				{text:'Count', 	value:'count',	class: 'hdr-styles', align:'right'},
-				{text:'Topic', 	value:'topic',	class: 'hdr-styles', align:'right'},
+				{text:'Total', 		value:'total',	class: 'hdr-styles', align:'right'},
+				{text:'Approved',	value:'paid',	class: 'hdr-styles', align:'right'},
+				{text:'Count', 		value:'count',	class: 'hdr-styles', align:'right'},
+				{text:'Topic', 		value:'topic',	class: 'hdr-styles', align:'right'},
 			],
 		}
 	},
