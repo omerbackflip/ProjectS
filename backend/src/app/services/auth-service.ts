@@ -20,9 +20,11 @@ export class AuthService {
     private dbService: DatabaseService;
 
     public async getUserByUsernameAndPassword(authCreds: AuthLoginModel) {
-
         const authUser = await this.dbService.getSingleItem(userModel,{userName: authCreds.username});
+        console.log(authUser)
+
         if(authUser) {
+
             if (authUser && await this.compareAsync(authUser.password, authCreds.password)) {
                 return authUser;
             } else {

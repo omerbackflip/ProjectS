@@ -46,12 +46,11 @@
 				:search="search"
 				dense
 				item-key="itemId"
-				:single-expand="true"
 				:expanded.sync="expanded"
 				show-expand
 			>
 				<template v-slot:expanded-item="{ headers, item }">
-					<td class="chevron-class" :colspan="headers.length">
+					<td :colspan="headers.length">
 						More info about {{ item}}
 					</td>
 				</template>
@@ -126,7 +125,7 @@ export default {
 			itemIds: [],
 			user: {},
 			headers:[
-				{ text: '', value: 'data-table-expand' },  
+				{ text: 'EXPAND', value: 'data-table-expand' ,class: 'hdr-styles-payable' },  
 				{text:'ID', 			value:'itemId', 	class: 'hdr-styles-payable'},
 				{text:'DESCRIPTION', 	value:'description', class: 'hdr-styles-payable', align:'right', rtl: true},
 				{text:'UNIT',			value:'unit', 		class: 'hdr-styles-payable'},
@@ -344,6 +343,10 @@ td{
 	padding-top: 0px !important;
 }
 
-.chevron-class > button:before { content:"\2039" !important; }
-.chevron-class:after  { content:"\203A" !important; }
+.v-data-table__expand-icon:before {
+	 content:"\2039" !important; 
+    transform: rotate(90deg);
+	 width: 20px;
+	 height: 20px;
+}
 </style>
