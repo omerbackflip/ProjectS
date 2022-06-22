@@ -45,7 +45,16 @@
 				:item-class="itemRowBackground"
 				:search="search"
 				dense
+				item-key="itemId"
+				:single-expand="true"
+				:expanded.sync="expanded"
+				show-expand
 			>
+				<template v-slot:expanded-item="{ headers, item }">
+					<td class="chevron-class" :colspan="headers.length">
+						More info about {{ item}}
+					</td>
+				</template>
 
 				<template v-slot:[`item.price`]="{ item }">
 					{{item.price ? item.price.toLocaleString() : "" }}
@@ -117,6 +126,7 @@ export default {
 			itemIds: [],
 			user: {},
 			headers:[
+				{ text: '', value: 'data-table-expand' },  
 				{text:'ID', 			value:'itemId', 	class: 'hdr-styles-payable'},
 				{text:'DESCRIPTION', 	value:'description', class: 'hdr-styles-payable', align:'right', rtl: true},
 				{text:'UNIT',			value:'unit', 		class: 'hdr-styles-payable'},
@@ -131,6 +141,7 @@ export default {
 				"מחיר"	:"price",
 				"כמות"	:"planned",
 			},
+			expanded: [],
 		}
 	},
 	methods: {
@@ -332,4 +343,7 @@ td{
 .v-input {
 	padding-top: 0px !important;
 }
+
+.chevron-class > button:before { content:"\2039" !important; }
+.chevron-class:after  { content:"\203A" !important; }
 </style>
