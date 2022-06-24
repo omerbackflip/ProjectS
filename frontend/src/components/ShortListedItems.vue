@@ -41,7 +41,6 @@
 							</template>
 
 							<template v-slot:[`item.description`]="{ item }">
-								<!-- {{item.description.substr(12,300)}} -->
 								{{item.description}}
 							</template>
 

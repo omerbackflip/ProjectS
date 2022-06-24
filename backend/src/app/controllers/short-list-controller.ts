@@ -123,7 +123,6 @@ export class ShortListController {
 		@Res() res: Response,
 		@QueryParams() query: any
 	): Promise<Response<ResponseModel<any>>> {
-
 		const result = await this.shortListService.updateItem(req.body);
 		if (result) {
 			return res.send(result);

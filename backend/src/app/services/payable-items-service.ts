@@ -48,6 +48,9 @@ export class PayableItemsService {
                     let tempData = data.toObject();
                     tempData.added = true;
                     tempData.amount = item.amount;
+                    tempData.remarks = item.remarks;
+                    tempData.topic = item.topic;
+                    //console.log(tempData)
                     return tempData;
                 } else {
                     return data;

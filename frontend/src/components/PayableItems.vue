@@ -48,10 +48,25 @@
 				item-key="itemId"
 				:expanded.sync="expanded"
 				show-expand
+				:single-expand='true'
 			>
 				<template v-slot:expanded-item="{ headers, item }">
-					<td :colspan="headers.length">
-						More info about {{ item}}
+					<td v-if="item.added" :colspan="headers.length">
+					<v-btn x-small @click="updateItem(item)">update</v-btn>  
+					    
+						<v-row class="input-wrapper">
+							<v-col cols="4">
+							<v-text-field label="Amount" class="" v-model="item.amount" autocomplete="off"></v-text-field>  
+
+							</v-col>
+							<v-col cols="4">
+								<v-text-field label="Remarks" class="" v-model="item.remarks"></v-text-field>
+							</v-col>
+							<v-col cols="4">
+								<v-text-field label="Topic" class="" v-model="item.topic"></v-text-field>
+							</v-col>
+
+						</v-row>
 					</td>
 				</template>
 
@@ -60,7 +75,6 @@
 				</template>
 
 				<template class="dir-rtl text-right" v-slot:[`item.description`]="{ item }">
-					<!-- {{item.itemId.length === 10 ? item.description.substr(12,300) : item.description}} -->
 					{{ item.description }}
 				</template>
 
@@ -83,7 +97,6 @@
 					</td>	
 				</template>
 
-
 			</v-data-table>
 		</template>
 	</template>
@@ -100,7 +113,7 @@
 </template>
 
 <script>
-import { getAllPayableItems,addShortListItems } from '../api';
+import { getAllPayableItems,addShortListItems, updateShortListItem } from '../api';
 import {getUser} from '../data/utils';
 import MainHeader from './MainHeader.vue';
 import Vue from 'vue';
@@ -125,7 +138,7 @@ export default {
 			itemIds: [],
 			user: {},
 			headers:[
-				{ text: 'EXPAND', value: 'data-table-expand' ,class: 'hdr-styles-payable' },  
+				{text:'', 				value: 'data-table-expand' ,class: 'hdr-styles-payable' },  
 				{text:'ID', 			value:'itemId', 	class: 'hdr-styles-payable'},
 				{text:'DESCRIPTION', 	value:'description', class: 'hdr-styles-payable', align:'right', rtl: true},
 				{text:'UNIT',			value:'unit', 		class: 'hdr-styles-payable'},
@@ -224,6 +237,24 @@ export default {
 			this.size = e.target.value;
 			this.loadPayableItems();
 		},
+
+		//used to update remark, topic or amount for short list item
+		async updateItem(item) {
+			try {
+				const body = {};
+				if(item) {
+					body.itemId = item.itemId;
+					body.userName = this.user.userName;
+					body.amount = item.amount;
+					body.topic = item.topic;
+					body.remarks = item.remarks;
+					await updateShortListItem(body);
+				}
+			} catch (error) {
+				console.log(error);
+				this.showMessage("Couln't upload the shortlist file",'danger');
+			}
+		},
 	},
 	created(){
 		const user = JSON.parse(getUser());
@@ -290,7 +321,8 @@ export default {
 }
 
 td{
-  text-align: -webkit-left;
+  text-align: center;
+  /* text-align: -webkit-left; */
 }
 
 
@@ -344,9 +376,23 @@ td{
 }
 
 .v-data-table__expand-icon:before {
-	 content:"\2039" !important; 
+	content:"\2039" !important; 
     transform: rotate(90deg);
-	 width: 20px;
-	 height: 20px;
+	width: 20px;
+	height: 20px;
 }
+
+.input-expand{
+	border: 1px solid #666262;
+    border-radius: 5px;
+    padding: 5px 0px 5px 4px;
+    margin: 8px 12px 8px 20px;
+}
+.input-wrapper{
+width: fit-content !important;
+    text-align-last: left !important;
+    float: left !important;
+    margin-top: 10px !important;
+	}
+
 </style>
