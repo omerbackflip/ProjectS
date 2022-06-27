@@ -276,15 +276,18 @@ export class ShortListService {
             }
             if(body && body.itemIds && !(body.additional)) { // "itemIds" - this is called from payable_Items while adding multiple items using "+" bottom.
                 await Promise.all(
-                    body.itemIds.map(async (id: any) => {
+                    body.itemIds.map(async (item: any) => {
                         const response = await this._databaseService.getSingleItem(payableItemsModel ,{
-                            itemId: id
+                            itemId: item.id
                         });
                         
-                        if(response && !(await this._databaseService.isExists(shortListModel , {itemId : id , userName: body.userName}))) {
+                        if(response && !(await this._databaseService.isExists(shortListModel , {itemId : item.id , userName: body.userName}))) {
                             delete response.createdAt;
                             delete response._id;
                             response.userName = body.userName;
+                            response.topic = item.topic || '';
+                            response.remarks = item.remarks || '';
+                            response.amount = item.amount || '';
                            await this._databaseService.addItem(shortListModel , response);
                         }                        
                     })
