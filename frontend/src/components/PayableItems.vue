@@ -11,12 +11,6 @@
       {{ message }}
     </div>
     <template>
-      <!-- <div v-if="showSearch" class="search-wrapper d-flex mr-3">
-			<input v-model="keyword" class="form-control form-control-sm mt-2 mb-2 ml-4" type="text" placeholder="חפש מילים מסויימיות..." style="width:auto">
-			<button @click="loadListItems" class="btn btn-success btn-sm mt-2 mb-2 ml-2">
-				Search Global
-			</button>
-		</div> -->
       <template v-if="!isLoading && payableItems">
         <v-card-title>
           <v-text-field
@@ -54,75 +48,64 @@
           :search="search"
           dense
           item-key="itemId"
-          :expanded.sync="expanded"
-          show-expand
+          :expanded.sync="expanded">
+          <!-- show-expand
           :single-expand="true"
-        >
+        > -->
           <template v-slot:expanded-item="{ headers, item }">
             <td :colspan="headers.length">
-
               <v-row class="input-wrapper">
-				<v-col v-if="item.added" cols="3">
-					<v-btn class="update-button" x-small @click="updateItem(item)">update</v-btn>
-				</v-col>
+                <v-col v-if="item.added" cols="3">
+                  <v-btn class="update-button" x-small @click="updateItem(item)">update</v-btn>
+                </v-col>
                 <v-col :cols="(item.added) ? '3' : '4'">
                   <v-text-field
                     label="Amount"
                     class=""
-					@change="(e)=>!(item.added) ? addToList(item.itemId,e,'amount') : null"
-					solo
+                    @change="(e)=>!(item.added) ? addToList(item.itemId,e,'amount') : null"
+                    solo
                     v-model="item.amount"
                     autocomplete="off"
                   ></v-text-field>
                 </v-col>
-
                 <v-col :cols="(item.added) ? '3' : '4'">
                   <v-text-field
                     label="Remarks"
                     class=""
-					solo
-					@change="(e)=>!(item.added) ? addToList(item.itemId,e,'remarks') : null"
+                    solo
+                    @change="(e)=>!(item.added) ? addToList(item.itemId,e,'remarks') : null"
                     v-model="item.remarks"
                   ></v-text-field>
                 </v-col>
-
                 <v-col :cols="(item.added) ? '3' : '4'">
                   <v-text-field
                     label="Topic"
                     class=""
-					solo
-					@change="(e)=>!(item.added) ? addToList(item.itemId,e,'topic') : null"
+                    solo
+                    @change="(e)=>!(item.added) ? addToList(item.itemId,e,'topic') : null"
                     v-model="item.topic"
                   ></v-text-field>
                 </v-col>
-
               </v-row>
             </td>
           </template>
-
           <template v-slot:[`item.price`]="{ item }">
             {{ item.price ? item.price.toLocaleString() : "" }}
           </template>
-
-          <template
-            class="dir-rtl text-right"
-            v-slot:[`item.description`]="{ item }"
-          >
+          <template v-slot:[`item.description`]="{ item }" class="dir-rtl text-right">
             {{ item.description }}
           </template>
-
           <template v-slot:[`item.add_to_paka`]="{ item }">
             <td v-if="!item.added && !(item.unit === 'הערה')">
-              <input
+              <input v-if="item.itemId.length === 10"
                 :checked="itemIds.includes(item.itemId)"
-                v-if="item.itemId.length === 10"
                 @change="addToList(item.itemId,'','remarks',true); handleExpansion(item)"
                 style="text-align: center"
                 type="checkbox"
                 class="cursor-pointer"
               />
             </td>
-            <td @click="handleExpansion(item)" v-else-if="item.added">
+            <td v-else-if="item.added" @click="handleExpansion(item)">
               <p v-if="item.itemId.length === 10">{{ item.amount }}</p>
             </td>
             <td v-else-if="item.unit === 'הערה' && !item.added">
@@ -133,18 +116,10 @@
       </template>
     </template>
 
-	<v-snackbar
-      v-model="snackbar"
-    >
+	  <v-snackbar v-model="snackbar">
       {{ snackBarText }}
-
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="pink"
-          snackBarText
-          v-bind="attrs"
-          @click="snackbar = false"
-        >
+        <v-btn color="pink" snackBarText v-bind="attrs" @click="snackbar = false">
           Close
         </v-btn>
       </template>
@@ -196,7 +171,7 @@ export default {
 	  snackBarText: '',
       user: {},
       headers: [
-        { text: "", value: "data-table-expand", class: "hdr-styles-payable" },
+        // { text: "", value: "data-table-expand", class: "hdr-styles-payable" },
         { text: "ID", value: "itemId", class: "hdr-styles-payable" },
         {
           text: "DESCRIPTION",
@@ -266,7 +241,7 @@ export default {
             this.message = response.data.message;
             this.messageType = "success";
             this.loadPayableItems(this.currentPage);
-			this.itemIds.map(item => this.handleExpansion(item.id));
+			      this.itemIds.map(item => this.handleExpansion(item.id));
             setTimeout(() => (this.message = ""), 4000);
           }
         }
@@ -288,10 +263,7 @@ export default {
     toggleSearch() {
       this.showSearch = !this.showSearch;
     },
-    //to load this function when search keyword is entered
-    // loadListItems(){
-    // 	this.loadPayableItems(0,this.keyword);
-    // },
+
     //add to short list function
     addToList(id,e,key,check) {
       //getting index if the item is already pushed in itemIds
@@ -301,31 +273,35 @@ export default {
         this.itemIds.push({ [key]: e, id });
       } else {
         //else remove it
-		if(check) {
-	        this.itemIds.splice(index, 1);
-		} else {
-			this.itemIds[index] = {...this.itemIds[index], [key]: e}
-		}
+        if(check) {
+              this.itemIds.splice(index, 1);
+        } else {
+          this.itemIds[index] = {...this.itemIds[index], [key]: e}
+        }
       }
       this.$emit("getCheckedItems", this.itemIds);
     },
+
     getExtension(filename) {
       var i = filename.lastIndexOf(".");
       return i < 0 ? "" : filename.substr(i);
     },
+
     changeSize(e) {
       this.size = e.target.value;
       this.loadPayableItems();
     },
-	handleExpansion(item) {
+
+	  handleExpansion(item) {
       const itemIndex = this.expanded.indexOf(item);
       itemIndex>=0 ? this.expanded.splice(itemIndex, 1) : this.expanded.push(item);
     },
-	handleDataChange(id,key,e){
-		this.itemPayloads[id] = {
-			[key]: e,
-		}
-	},
+	  handleDataChange(id,key,e){
+      this.itemPayloads[id] = {
+        [key]: e,
+      }
+    },
+
     //used to update remark, topic or amount for short list item
     async updateItem(item) {
       try {
@@ -337,16 +313,16 @@ export default {
           body.topic = item.topic;
           body.remarks = item.remarks;
           const response = await updateShortListItem(body);
-		  if(response) {
-			this.snackbar = true;
-			this.snackBarText = "Successfully updated item!";
-			this.handleExpansion(item);
-		  }
+          if(response) {
+            this.snackbar = true;
+            this.snackBarText = "Successfully updated item!";
+            this.handleExpansion(item);
+          }
         }
       } catch (error) {
         console.log(error);
-		this.snackbar = true;
-		this.snackBarText = "Couln't upload the shortlist file!";
+        this.snackbar = true;
+        this.snackBarText = "Couln't upload the shortlist file!";
         this.showMessage("Couln't upload the shortlist file", "danger");
       }
     },

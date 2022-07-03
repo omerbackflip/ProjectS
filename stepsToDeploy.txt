@@ -1,22 +1,23 @@
 1. Open putty with IP
-2. Enter username root and password
-3. Commands to run the project to production
+2. Enter username root 
+3. Enter password EliGadot3719123
+4. Commands to run the project to production
 
 	pm2 list (list all running proceses)  //this is only to list and see that no current running
 	pm2 kill (kill all existing processes) //this to kill all.
 
 
 	FRONTEND
-	cd ../home/projectS/        ||       cd ../home/bookeeping/client
+	cd ../home/projectS/       
 	- git pull origin master (ignore this if you have latest code)
-	- cd frontend      ||   cd client
+	- cd frontend  
 	- to check if there are which files in the folder "ls"
-	- rm -rf ./dist and run "npm run build" || "npm run build:production"   // this is to remove dist folder (only in case it exsist)
-	- npm run build (if you have the latest code or build name folder dist (then ignore this)
+	- rm -rf ./dist 		  	// this is to remove dist folder (only in case it exsist)
+	- npm run build 			// (if you have the latest code or build name folder dist (then ignore this)
 	- pm2 kill (kill all existing processes)
-	- pm2 serve ./dist (to serve the frontend new build)
+	- pm2 serve ./dist 		// (to serve the frontend new build)
 
 	BACKEND
-	cd ../backend  // only for ProjectS
-	pm2 start "npx ts-node ./src/server.ts" || pm2 start server.js
+	cd ../backend  			// only for ProjectS
+	pm2 start "npx ts-node ./src/server.ts" 
  

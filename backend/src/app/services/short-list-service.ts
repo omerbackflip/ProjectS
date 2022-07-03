@@ -112,6 +112,7 @@ export class ShortListService {
             //console.log(data.length);
             //Get ID's summary
             const priceIds = [...new Set(data.map((item: any) => item.itemId.slice(0, 2)))];
+            priceIds.sort();
             let response: any = {};
             if(data && priceIds) {
                 response.summaryIDs = await Promise.all(priceIds.map( async (priceId: any) =>{  //Promise.all will execute next line after all resolved
