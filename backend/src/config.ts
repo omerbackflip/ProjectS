@@ -44,7 +44,7 @@ const conf = convict({
     server: {
         port: {
             format: 'port',
-            default: 3001,
+            default: 3000,
             env: 'APP_PORT',
         },
     },

@@ -15,7 +15,7 @@
 	- rm -rf ./dist 		  	// this is to remove dist folder (only in case it exsist)
 	- npm run build 			// (if you have the latest code or build name folder dist (then ignore this)
 	- pm2 kill (kill all existing processes)
-	- pm2 serve ./dist 		// (to serve the frontend new build)
+	- pm2 serve ./dist --name projectS --port 8081		// (to serve the frontend new build)
 
 	BACKEND
 	cd ../backend  			// only for ProjectS

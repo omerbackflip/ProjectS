@@ -1,7 +1,7 @@
 {
   "name": "short-list-supplier_app",
   "version": "1.0.0",
-  "author": "10Pearls",
+  "author": "Eli",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -19,7 +19,8 @@
     "test:coverage": "npm test -- --coverage",
     "test:coverage:unit": "npm run test:unit -- --coverage",
     "test:coverage:integration": "npm run test:integration -- --coverage",
-    "start": "concurrently \"npx ts-node ./src/server.ts\" \"cd ../frontend && npm run serve\""
+    "start": "concurrently \"npx ts-node ./src/server.ts\" \"cd ../frontend && npm run serve:development\"",
+    "start:development":"npx ts-node ./src/server.ts"
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
