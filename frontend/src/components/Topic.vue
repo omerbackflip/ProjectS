@@ -38,6 +38,12 @@
                     <template v-slot:[`item.total`]="{ item }">
                         {{item.amount ? (item.amount*item.price*user.discount).toLocaleString(undefined,{maximumFractionDigits: 0}) : ''}}
                     </template>
+                    <template v-slot:[`item.topic`]="{ item }">
+                        <textarea @change="updateItem($event, item.itemId, 'topic')"
+                                    class="form-control form-control-sm mt-2" 
+                                    type="text" 
+                                    :value="item.topic"></textarea>
+                    </template>
                     <template v-slot:[`item.remarks`]="{ item }">
                         <textarea @change="updateItem($event, item.itemId, 'remarks')"
                                     class="form-control form-control-sm mt-2" 
@@ -77,14 +83,15 @@ export default {
             topicList: [],
 			headers:[
 				{text:'סעיף', 			value:'itemId', 	class: 'hdr-styles'},
-				{text:'תאור הסעיף', 	value:'description',class: 'hdr-styles', align:'right', width: '30%'},
+				{text:'תאור הסעיף', 	value:'description',class: 'hdr-styles', align:'right', width: '25%'},
                 {text:'יחידה',			value:'unit',		class: 'hdr-styles', align:'right'},
                 {text:'מחיר',			value:'price',		class: 'hdr-styles', align:'right'},
                 {text:'מתוכנן',			value:'planned',	class: 'hdr-styles', align:'right'},
                 {text:'כמות',			value:'amount',		class: 'hdr-styles', align:'right'},
                 {text:'אושר',			value:'paid',   	class: 'hdr-styles', align:'right'},
                 {text:'סה"כ',			value:'total',		class: 'hdr-styles', align:'right'},
-                {text:'הערה',			value:'remarks',		class: 'hdr-styles', align:'right', width: '30%'},
+                {text:'נושא',			value:'topic',		class: 'hdr-styles', align:'right', width: '10%'},
+                {text:'הערה',			value:'remarks',		class: 'hdr-styles', align:'right', width: '20%'},
 			],
             dialog: false,
             additionalID : '99.00.????',
