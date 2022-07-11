@@ -104,8 +104,6 @@ export class ShortListService {
         }
     }
 
-
-
     public async getSummaries(query: any, excel?: boolean) {
         try {
             const data = await this._databaseService.getManyItems(shortListModel , {userName: query.userName});
@@ -196,7 +194,6 @@ export class ShortListService {
         }
     }
     
-
     //This function is used to import excel file for short listed items
     public async saveShortListedItems(body: any, workbook: any) {
         try {
@@ -234,6 +231,7 @@ export class ShortListService {
                             } else {    // this section adds the "99.xx.xxxx" items to the short_list
                                 let response : any = {};
                                 response.itemId     = item.ID;
+                                response.price      = 1/body.discount;
                                 response.planned    = item.Planned ? item.Planned : '';
                                 response.paid       = item.Paid ? item.Paid : '';                            
                                 response.amount     = item.Amount ? item.Amount : '';
@@ -385,7 +383,6 @@ export class ShortListService {
             }
         }
     }
-
 
     public async addFile(body: any, file: any) {
         try {

@@ -102,11 +102,12 @@ export async function addShortListItems(body) {
     return await put(`/short-list-items/add`, body);
 }
 
-export async function importShortListDataFile(file ,userName) {
+export async function importShortListDataFile(file ,userName, discount) {
     const formData = new FormData();	
     if(file){
         formData.append('file', file);
         formData.append('userName',userName);
+        formData.append('discount',discount);
     }
     
     return await post(`/short-list-items/upload`, formData);

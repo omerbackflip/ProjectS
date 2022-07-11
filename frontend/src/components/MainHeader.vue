@@ -547,7 +547,7 @@ export default {
 		async shortListItems() {
 			try {
 				if(this.shortListFile) {
-					const response = await importShortListDataFile(this.shortListFile , this.user.userName);
+					const response = await importShortListDataFile(this.shortListFile , this.user.userName, this.user.discount);
 					if (response.data && !(response.data.hasErrors)) {
 						this.showMessage(response.data.message,'success');
 						this.importShortlist = false;
