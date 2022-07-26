@@ -1,7 +1,7 @@
 <template>
     <v-dialog max-width="1500px">
         <template v-slot:activator="{on,attrs}">
-            <v-btn class="mx-4 dark" v-bind="attrs" v-on="on">{{header}}</v-btn>
+            <v-btn class="mx-4 dark font-size-12" v-bind="attrs" v-on="on">{{header}}</v-btn>
         </template>
         <v-card>
             <v-card-title>
@@ -164,5 +164,8 @@ export default {
 h2 {
     width: 100%;
     text-align:center;
+}
+.font-size-12{
+	font-size: 12px;
 }
 </style>

@@ -11,22 +11,39 @@
 				</div> -->
 					<template  v-if="!isLoading && shortListedItems">
 						<v-card-title>
-							<v-text-field
-								v-model="search"
-								append-icon="mdi-magnify"
-								label="Search Local"
-								single-line
-								hide-details
-							></v-text-field>
-							<v-flex class="ml-4">
-								{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
-								<!-- <Additional v-bind:user="user" /> -->
-								<Topic 	v-bind:itemId="99" 
-										v-bind:header="'תוספות'" 
-										v-bind:user="user" />
-							</v-flex>
+							<v-row>
+								<v-col cols="3">
+									<v-text-field
+										v-model="search"
+										append-icon="mdi-magnify"
+										label="Search Local"
+										single-line
+										hide-details
+										class="search-field"
+									></v-text-field>
+								</v-col>
+								<v-col cols="7">
+									<v-flex class="total-wrapper ml-4">
+										<v-row>
+											<v-col cols="7">
+												<span class="font-size-12">
+													{{`Grand Total = ${grandTotal.toLocaleString(undefined,{maximumFractionDigits: 0})} `}}
+													<!-- <Additional v-bind:user="user" /> -->
+												</span>
+											</v-col>
+											<v-col cols="1">
+												<Topic 	v-bind:itemId="99" 
+														v-bind:header="'תוספות'" 
+														v-bind:user="user" />
+											</v-col>
+										</v-row>
+									</v-flex>
+								</v-col>
+							</v-row>
 						</v-card-title>
+
 						<v-data-table 
+							v-show="!isMobile()"
 							:headers="headers"
 							:items="shortListedItems"
 							disable-pagination
@@ -108,7 +125,7 @@
 								<div v-if="(item.attachedFile)" class="image-upload">
 									<viewer @inited="inited" class="viewer" ref="viewer">
 										<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
-											<img :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
+											<img  :src="`data:image/png;base64,${item.imageSrc.data}`" class="rounded mx-auto d-block width-thumb">
 										</template>
 										<template v-else>
 											<v-tooltip v-if="item.attachedFile.mimetype === 'application/pdf'" bottom>
@@ -131,6 +148,75 @@
 								</v-btn>
 							</template>							
 						</v-data-table>
+
+
+						<v-list class="v-list-wrapper" two-line v-show="isMobile()">
+							<template v-for="(item, index) in shortListedItems">
+							<v-list-item @click="listItemEdit(item,index)" :key="item.title">
+								<template >
+								<v-list-item-content>
+									<v-list-item-action-text class="pre-wrap" v-text="item.remarks"></v-list-item-action-text>
+									<v-list-item-title class="pre-wrap" v-text="item.description"></v-list-item-title>
+
+									<v-list-item-subtitle
+									class="text--primary"
+									v-text="item.itemId"
+									></v-list-item-subtitle>
+
+									<v-list-item-subtitle v-text="item.unit"></v-list-item-subtitle>
+									<div>
+										<span  v-if="!(item.attachedFile)" class="image-upload">
+										<input
+											style="display: 'none'"
+											id="raised-button-file"
+											ref="attachFile"  @input="($event) => addAttach($event)"
+											type="file"
+										/>
+										<label htmlFor="raised-button-file">
+											<v-btn icon @click="openFilePicker(item.itemId)"> <v-icon small>upload</v-icon> </v-btn>
+										</label> 
+									</span>
+
+									<!-- View/Download file -->
+									<div v-if="(item.attachedFile)" class="image-upload">
+										<viewer  @inited="inited" class="viewer" ref="viewer">
+											<template v-if="['image/gif', 'image/jpeg', 'image/png'].includes(item.attachedFile.mimetype) && item.imageSrc && item.imageSrc.data">
+												<img @click="closeEdit()" :src="`data:image/png;base64,${item.imageSrc.data}`" :class="isMobile() ? '' : 'mx-auto'" class="rounded d-block width-thumb">
+											</template>
+											<template v-else>
+												<v-tooltip v-if="item.attachedFile.mimetype === 'application/pdf'" bottom>
+													<template v-slot:activator="{ on }">
+														<v-btn text x-small outlined @click="viewPDF(item.imageSrc.data)" v-on="on">view pdf</v-btn>
+													</template>
+												</v-tooltip>
+											</template>
+										</viewer>
+										<v-btn icon @click="deleteAttach(item.itemId)">			<v-icon small>delete</v-icon></v-btn>
+										<v-btn icon @click="downloadAttach(item.attachedFile)"> 	<v-icon small>download</v-icon> </v-btn>
+									</div>
+									</div>
+								</v-list-item-content>
+
+								<v-list-item-action>
+
+									<p color="grey lighten-1"> {{item.amount}}</p>
+									<p color="grey lighten-1"> {{item.topic}}</p>
+									<v-btn small class="icon-button" @click="deleteItem(item.itemId)">
+										<v-icon small class="icon-clickable">delete</v-icon>
+									</v-btn>
+								</v-list-item-action>
+								
+								</template>
+							</v-list-item>
+
+							<v-divider
+								v-if="index < shortListedItems.length - 1"
+								:key="index"
+							></v-divider>
+
+							</template>
+						</v-list>
+
 					</template>
 				</template>
 			</template>
@@ -141,7 +227,49 @@
 				<md-progress-spinner></md-progress-spinner>
 			</template>
 		</div>
+
+		<!-- Fields edit dialog -->
+		<v-row v-if="itemData.itemId" justify="center">
+			<v-dialog v-model="dialog" persistent max-width="600px">
+				<v-card>
+					<v-card-title>
+						<span class="text-h5">Edit</span>
+					</v-card-title>
+					<v-card-text>
+						<v-container>
+							<v-row>
+								<v-col cols="12" sm="6" md="4" >
+									<input :id="itemData.itemId.slice(0,2)" 
+										class="form-control form-control-sm" 
+										@change="updateItem($event, itemData.itemId, 'amount',itemData.index)" 
+										:value="itemData.amount"
+										autocomplete="off">
+								</v-col>
+								<v-col cols="12" sm="6" md="4" >
+									<input @change="updateItem($event, itemData.itemId, 'topic',itemData.index)"
+											class="form-control form-control-sm" 
+											type="text" 
+											:value="itemData.topic">
+								</v-col>
+								<v-col cols="12" sm="6" md="4" >
+									<textarea @change="updateItem($event, itemData.itemId, 'remarks',itemData.index)"
+										class="form-control form-control-sm mt-2" 
+										type="text" 
+										:value="itemData.remarks"></textarea>
+								</v-col>
+							</v-row>
+						</v-container>
+					</v-card-text>
+					<v-card-actions>
+					<v-spacer></v-spacer>
+					<v-btn color="blue darken-1" text @click="dialog = false">	Save </v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
+		</v-row>
+
 	</div>
+	
 </template>
 
 <script>
@@ -180,11 +308,13 @@ export default {
 			idPrefixes: [],
 			idPrefix: '01',
 			isLoading : false,
+			dialog: false,
 			file: '',
 			itemClicked: undefined,
 			keyword: '',
 			selectedItemId: '',
 			grandTotal:0,
+			itemData: {},
 			showSearch: false,
 			summary: [],
 			user : {},
@@ -277,14 +407,16 @@ export default {
 		},
 
 		//used to update remark or amount for short list item
-		async updateItem(e,itemId, key) {
+		async updateItem(e,itemId, key,index) {
 			try {
 				const body = {};
 				if(e && e.target) {
 					body[key] = String(e.target.value);  //"e.target.value" contains the content of the changed field (amount or remark)
 					body.itemId = itemId;
 					body.userName = this.user.userName;
+					this.shortListItems[index] = {...this.shortListItems[index], [key]: e.target.value};
 					await updateShortListItem(body);
+					this.loadShortListedItems();
 				}
 			} catch (error) {
 				console.log(error);
@@ -295,6 +427,7 @@ export default {
 		//used to remove any short listed item file
 		async deleteAttach(itemId) {
 			try {
+				this.closeEdit();
 				if(window.confirm(`Are you sure you want to delete file  ??`)){
 					await removeFile(itemId,this.user.userName);
 					this.loadShortListedItems();
@@ -309,10 +442,20 @@ export default {
 			var win = window.open();
 		    win.document.write(`<iframe src=data:application/pdf;base64,${data} frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen"><\/iframe>`);
 		},
-
+		listItemEdit(item,index) {
+			this.itemData = {
+				amount: item.amount,
+				topic: item.topic,
+				remarks: item.remarks,
+				itemId: item.itemId,
+				index
+			};
+			this.dialog = true;
+		},
 		//used to delete any short listed item
 		async deleteItem(itemId, key) {
 			try {
+				this.closeEdit();
 				if(window.confirm(`Are you sure you want to delete item  ${itemId}  ??`)){
 					await deleteShortListItem(itemId,this.user.userName);
 					this.loadShortListedItems();
@@ -322,7 +465,14 @@ export default {
 				this.showMessage("Couln't delete the shortlist file",'danger');
 			}
 		},
-
+		//Function used to check if website is on mobile
+		isMobile() {
+			if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+				return true
+			} else {
+				return false
+			}
+		},
 		//used to add file to a short list item
 		async addAttach(event) {
 			try {
@@ -341,6 +491,7 @@ export default {
 		//used to download file for a short list item
 		async downloadAttach(attachedFile) {
 			try {
+				this.closeEdit();
 				if(attachedFile && attachedFile.path){
 					downloadAttachedFile({destination: attachedFile.filename});
 				}
@@ -375,9 +526,15 @@ export default {
 		},
 
 		openFilePicker(id) {
+			this.closeEdit();
 			this.selectedItemId = id;
 			document.getElementById("raised-button-file").click();
 		},
+		closeEdit(){
+			setTimeout(() => {
+				this.dialog = false;
+			}, 5);
+		}
 	},
 
 	created(){
@@ -521,6 +678,28 @@ td{
 {
     width: 80px;
     cursor: pointer;
+}
+
+.total-wrapper{
+	margin-top: 12px;
+    text-align: -webkit-center;
+}
+
+.v-list-wrapper{
+	margin-top: 11px;
+}
+
+.pre-wrap{
+	white-space: pre-wrap !important;
+}
+
+.font-size-12{
+	font-size: 12px;
+}
+
+.search-field label{
+	font-size: 12px ;
+	margin-top: 7px ;
 }
 
 </style>
