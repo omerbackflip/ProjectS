@@ -32,8 +32,8 @@
 												</span>
 											</v-col>
 											<v-col cols="1">
-												<Topic 	v-bind:itemId="99" 
-														v-bind:header="'תוספות'" 
+												<Topic 	v-bind:itemId="99"
+														v-bind:header="'תוספות'"
 														v-bind:user="user" />
 											</v-col>
 										</v-row>
@@ -42,7 +42,7 @@
 							</v-row>
 						</v-card-title>
 
-						<v-data-table 
+						<v-data-table
 							v-show="!isMobile()"
 							:headers="headers"
 							:items="shortListedItems"
@@ -70,22 +70,22 @@
 							</template>
 
 							<template v-slot:[`item.amount`]="{ item }">
-								<input :id="item.itemId.slice(0,2)" 
-										class="form-control form-control-sm" 
-										@change="updateItem($event, item.itemId, 'amount')" 
+								<input :id="item.itemId.slice(0,2)"
+										class="form-control form-control-sm"
+										@change="updateItem($event, item.itemId, 'amount')"
 										:value="item.amount"
-										autocomplete="off">	
+										autocomplete="off">
 							</template>
 
 							<template v-slot:[`item.topic`]="{ item }">
 								<input @change="updateItem($event, item.itemId, 'topic')"
-										class="form-control form-control-sm" 
-										type="text" 
+										class="form-control form-control-sm"
+										type="text"
 										:value="item.topic">
 								<!-- <v-select 	@change="updateItem($event, item.itemId, 'topic')"
 											v-model="item.topic"
 											:items="topics"
-											:value="item.topic"								
+											:value="item.topic"
 								></v-select> -->
 							</template>
 
@@ -95,14 +95,14 @@
 
 							<template v-slot:[`item.remarks`]="{ item }">
 								<textarea @change="updateItem($event, item.itemId, 'remarks')"
-										  class="form-control form-control-sm mt-2" 
-										  type="text" 
+										  class="form-control form-control-sm mt-2"
+										  type="text"
 										  :value="item.remarks"></textarea>
 							</template>
 
 							<!-- ---------------------- Short listed attached files  ---------------------- -->
 							<template v-slot:[`item.IMG`]="{ item }">
-					
+
 								<!-- Upload file -->
 								<span  v-if="!(item.attachedFile)" class="image-upload">
 									<input
@@ -118,7 +118,7 @@
 										</md-icon>
 									</div> -->
 										<v-btn icon @click="openFilePicker(item.itemId)"> <v-icon small>upload</v-icon> </v-btn>
-									</label> 
+									</label>
 								</span>
 
 								<!-- View/Download file -->
@@ -146,7 +146,7 @@
 								<v-btn small class="icon-button" @click="deleteItem(item.itemId)">
 									<v-icon small class="icon-clickable">delete</v-icon>
 								</v-btn>
-							</template>							
+							</template>
 						</v-data-table>
 
 
@@ -155,15 +155,10 @@
 							<v-list-item @click="listItemEdit(item,index)" :key="item.title">
 								<template >
 								<v-list-item-content>
-									<v-list-item-action-text class="pre-wrap" v-text="item.remarks"></v-list-item-action-text>
 									<v-list-item-title class="pre-wrap" v-text="item.description"></v-list-item-title>
+									<v-list-item-action-text class="pre-wrap" v-text="item.remarks"></v-list-item-action-text>
 
-									<v-list-item-subtitle
-									class="text--primary"
-									v-text="item.itemId"
-									></v-list-item-subtitle>
-
-									<v-list-item-subtitle v-text="item.unit"></v-list-item-subtitle>
+									<!-- <v-list-item-subtitle v-text="item.unit"></v-list-item-subtitle> -->
 									<div>
 										<span  v-if="!(item.attachedFile)" class="image-upload">
 										<input
@@ -174,7 +169,7 @@
 										/>
 										<label htmlFor="raised-button-file">
 											<v-btn icon @click="openFilePicker(item.itemId)"> <v-icon small>upload</v-icon> </v-btn>
-										</label> 
+										</label>
 									</span>
 
 									<!-- View/Download file -->
@@ -198,14 +193,17 @@
 								</v-list-item-content>
 
 								<v-list-item-action>
-
-									<p color="grey lighten-1"> {{item.amount}}</p>
+									<!-- <v-list-item-subtitle class="pre-wrap" v-text="item.itemId"></v-list-item-subtitle> -->
+									<!-- <v-list-item-subtitle class="text--primary" v-text="item.topic"></v-list-item-subtitle> -->
+									<p color="grey lighten-1"> {{item.itemId}}</p>
 									<p color="grey lighten-1"> {{item.topic}}</p>
-									<v-btn small class="icon-button" @click="deleteItem(item.itemId)">
+									<p color="grey lighten-1" class="text--primary"> {{item.amount ? (item.amount).toLocaleString() +' '+ item.unit :'' }}</p>
+									<!-- <v-list-item-subtitle class="text--primary" v-text="item.amount ? (item.amount).toLocaleString() +' '+ item.unit :'' "></v-list-item-subtitle> -->
+									<v-btn x-small class="icon-button" @click="deleteItem(item.itemId)">
 										<v-icon small class="icon-clickable">delete</v-icon>
 									</v-btn>
 								</v-list-item-action>
-								
+
 								</template>
 							</v-list-item>
 
@@ -239,22 +237,22 @@
 						<v-container>
 							<v-row>
 								<v-col cols="12" sm="6" md="4" >
-									<input :id="itemData.itemId.slice(0,2)" 
-										class="form-control form-control-sm" 
-										@change="updateItem($event, itemData.itemId, 'amount',itemData.index)" 
+									<input :id="itemData.itemId.slice(0,2)"
+										class="form-control form-control-sm"
+										@change="updateItem($event, itemData.itemId, 'amount',itemData.index)"
 										:value="itemData.amount"
 										autocomplete="off">
 								</v-col>
 								<v-col cols="12" sm="6" md="4" >
 									<input @change="updateItem($event, itemData.itemId, 'topic',itemData.index)"
-											class="form-control form-control-sm" 
-											type="text" 
+											class="form-control form-control-sm"
+											type="text"
 											:value="itemData.topic">
 								</v-col>
 								<v-col cols="12" sm="6" md="4" >
 									<textarea @change="updateItem($event, itemData.itemId, 'remarks',itemData.index)"
-										class="form-control form-control-sm mt-2" 
-										type="text" 
+										class="form-control form-control-sm mt-2"
+										type="text"
 										:value="itemData.remarks"></textarea>
 								</v-col>
 							</v-row>
@@ -262,20 +260,20 @@
 					</v-card-text>
 					<v-card-actions>
 					<v-spacer></v-spacer>
-					<v-btn color="blue darken-1" text @click="dialog = false">	Save </v-btn>
+					<v-btn color="blue darken-1" text @click="dialog = false"> Close </v-btn>
 					</v-card-actions>
 				</v-card>
 			</v-dialog>
 		</v-row>
 
 	</div>
-	
+
 </template>
 
 <script>
-import { 
+import {
 	getAllShortListedItems,
-	importShortListDataFile , 
+	importShortListDataFile ,
 	updateShortListItem,
 	deleteShortListItem,
 	removeFile,
@@ -333,16 +331,16 @@ export default {
 				{text:'מצורף',			value:'IMG', 		class: 'hdr-styles', 				width: '1%'},
 				{text:'מחק',			value:'DEL', 		class: 'hdr-styles', 				width: '1%'},
 			],
-			messageType : 'danger',	
+			messageType : 'danger',
 			disableFileUpload : false,
 			search: '',
 			topics: ['AAA','BBB'],
 		}
 	},
 	methods: {
-		
+
 		// this is for preview the Image
-		inited (viewer) {			
+		inited (viewer) {
 			this.$viewer = viewer
 		},
 
@@ -368,9 +366,9 @@ export default {
 							if(item.attachedFile) {
 								item.imageSrc = await getImageById({destination: item.attachedFile.path});
 							}
-							return item;							
+							return item;
 						} catch (error) {
-							return error;	//guess should be "return error" and not item as originaly 
+							return error;	//guess should be "return error" and not item as originaly
 						}
 					}));
 					this.$emit('getData', response.data.idPrefixes);
@@ -398,7 +396,7 @@ export default {
 						this.loadShortListedItems();
 					} else {
 						this.showMessage(response.message,'danger');
-					}	
+					}
 				}
 			} catch (error) {
 				console.log(error);
@@ -516,7 +514,7 @@ export default {
 		showMessage(message,type){
 			this.message = message;
 			this.messageType = type;
-			setTimeout(() => this.message = '', 6000);	
+			setTimeout(() => this.message = '', 6000);
 			if(this.$refs.attachFile) {
 				this.$refs.attachFile.value=null;
 			}
@@ -702,4 +700,24 @@ td{
 	margin-top: 7px ;
 }
 
+.v-divider{
+	margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.v-list-item__content{
+	padding-top: 0px !important;
+    padding-bottom: 0px !important;
+	text-align-last: right;
+}
+
+.v-list-item__action--stack {
+	margin-left: 12px !important;
+	    color: red !important;
+}
+
+p {
+	direction: rtl;
+	font-weight: bold;
+}
 </style>

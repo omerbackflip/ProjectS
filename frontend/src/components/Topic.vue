@@ -7,7 +7,9 @@
             <v-card-title>
                 <!-- <h2 >{{topic}} - {{total.toLocaleString(undefined,{maximumFractionDigits: 0})}}</h2> -->
                 <h2> {{header}}
-                <v-btn @click="loadTopic()"> Refresh </v-btn></h2>
+                    <v-btn @click="loadTopic()"> Refresh </v-btn>
+                    <v-btn > <v-icon small>download</v-icon> </v-btn>
+                </h2>
             </v-card-title>
             <v-card-text>
                 <v-data-table

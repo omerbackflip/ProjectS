@@ -749,9 +749,9 @@ td{
 	  button{
 		  font-size: 8px !important;
 	  }
-	  .title-dashboard{
+	  /* .title-dashboard{
 		  display: none;
-	  }
+	  } */
   }
 
   .user-icon:hover{
