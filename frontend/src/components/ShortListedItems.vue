@@ -266,6 +266,14 @@
 			</v-dialog>
 		</v-row>
 
+		<v-snackbar v-model="snackbar">
+			{{ snackBarText }}
+			<template v-slot:action="{ attrs }">
+				<v-btn color="pink" snackBarText v-bind="attrs" @click="snackbar = false">
+					Close
+				</v-btn>
+			</template>
+		</v-snackbar>
 	</div>
 
 </template>
@@ -335,6 +343,8 @@ export default {
 			disableFileUpload : false,
 			search: '',
 			topics: ['AAA','BBB'],
+			snackbar: false,
+	  		snackBarText: '',
 		}
 	},
 	methods: {
@@ -414,6 +424,8 @@ export default {
 					body.userName = this.user.userName;
 					this.shortListItems[index] = {...this.shortListItems[index], [key]: e.target.value};
 					await updateShortListItem(body);
+					this.snackbar = true;
+					this.snackBarText = "Successfully updated item!";
 					this.loadShortListedItems();
 				}
 			} catch (error) {
