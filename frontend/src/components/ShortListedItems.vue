@@ -426,7 +426,7 @@ export default {
 					await updateShortListItem(body);
 					this.snackbar = true;
 					this.snackBarText = "Successfully updated item!";
-					this.loadShortListedItems();
+					// this.loadShortListedItems();
 				}
 			} catch (error) {
 				console.log(error);
@@ -468,7 +468,7 @@ export default {
 				this.closeEdit();
 				if(window.confirm(`Are you sure you want to delete item  ${itemId}  ??`)){
 					await deleteShortListItem(itemId,this.user.userName);
-					this.loadShortListedItems();
+					// this.loadShortListedItems();
 				}
 			} catch (error) {
 				console.log(error);

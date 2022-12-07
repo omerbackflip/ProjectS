@@ -63,6 +63,7 @@ const conf = convict({
             format: '*',
             //default: 'admin',
             default: 'mivne_tzibur',            
+            // default: 'sataf',            
             env: 'DB_NAME',
         },
         username: {
