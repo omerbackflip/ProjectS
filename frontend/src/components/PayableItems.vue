@@ -56,6 +56,7 @@
             <td :colspan="headers.length">
               <v-row class="input-wrapper">
                 <v-col v-if="item.added" cols="3">
+                  {{"(" + item.paid + ")"}}
                   <v-btn class="update-button" x-small @click="updateItem(item)">update</v-btn>
                 </v-col>
                 <v-col :cols="(item.added) ? '3' : '4'">

@@ -50,6 +50,7 @@ export class PayableItemsService {
                     tempData.amount = item.amount;
                     tempData.remarks = item.remarks;
                     tempData.topic = item.topic;
+                    tempData.paid = item.paid;
                     //console.log(tempData)
                     return tempData;
                 } else {
