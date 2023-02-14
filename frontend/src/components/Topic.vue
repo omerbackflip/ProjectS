@@ -150,11 +150,11 @@ export default {
         },
 
         //used to update remark or amount for short list item
-		async updateItem(e,itemId, key) {
+		async updateItem(e,itemId, fieldName) {
 			try {
 				const body = {};
 				if(e && e.target) {
-					body[key] = String(e.target.value);  //"e.target.value" contains the content of the changed field (amount or remark)
+					body[fieldName] = String(e.target.value);  //"e.target.value" contains the content of the changed field (amount or remark)
 					body.itemId = itemId;
 					body.userName = this.user.userName;
 					await updateShortListItem(body);

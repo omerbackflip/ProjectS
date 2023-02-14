@@ -27,7 +27,8 @@
 							<!-- <Topic v-bind:itemId="item.itemId" v-bind:topic="item.description" v-bind:total="item.total" v-bind:user="user" /> -->
 							<Topic 	v-bind:itemId="item.itemId" 
 									v-bind:header=" item.description+
-													(item.total ? ' - '+item.total.toLocaleString(undefined,{maximumFractionDigits: 0}) : '' )" 
+													(item.total ? ' - '+item.total.toLocaleString(undefined,{maximumFractionDigits: 0}) : '' )+ 
+													' - (' + (item.paid.toLocaleString(undefined,{maximumFractionDigits: 0})) +')' " 
 									v-bind:user="user" />
 						</template>	
 					</v-data-table>
@@ -59,7 +60,8 @@
 						</template>
 						<template v-slot:[`item.topic`]="{ item }">
 							<Topic 	v-bind:topic="item.topic" 
-									v-bind:header="item.topic + ' - ' + item.total.toLocaleString(undefined,{maximumFractionDigits: 0})" 
+									v-bind:header="item.topic + ' - ' + item.total.toLocaleString(undefined,{maximumFractionDigits: 0})+ 
+													' - (' + (item.paid.toLocaleString(undefined,{maximumFractionDigits: 0})) +')' " 
 									v-bind:user="user" />
 						</template>	
 					</v-data-table>
