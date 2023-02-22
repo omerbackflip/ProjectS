@@ -8,7 +8,16 @@
                 <!-- <h2 >{{topic}} - {{total.toLocaleString(undefined,{maximumFractionDigits: 0})}}</h2> -->
                 <h2> {{header}}
                     <v-btn @click="loadTopic()"> Refresh </v-btn>
-                    <v-btn > <v-icon small>download</v-icon> </v-btn>
+                    <export-excel
+                        class   = "btn btn-default"
+                        :data   = "topicList"
+                        :fields = "xlsHeders"
+                        :name   = "header"
+                        :title  = "header">   
+                     <v-btn > <v-icon small>download</v-icon> </v-btn>
+                    </export-excel>
+
+
                 </h2>
             </v-card-title>
             <v-card-text>
@@ -35,10 +44,12 @@
                         {{item.planned ? item.planned : ''}}
                     </template>
                     <template v-slot:[`item.price`]="{ item }">
-                        {{(item.price*user.discount).toLocaleString(undefined,{maximumFractionDigits: 0})}}
+                        <!-- {{(item.price*user.discount).toLocaleString(undefined,{maximumFractionDigits: 0})}} -->
+                        {{(item.price).toLocaleString(undefined,{maximumFractionDigits: 2})}}
                     </template>
                     <template v-slot:[`item.total`]="{ item }">
-                        {{item.amount ? (item.amount*item.price*user.discount).toLocaleString(undefined,{maximumFractionDigits: 0}) : ''}}
+                        <!-- {{item.amount ? (item.amount*item.price*user.discount).toLocaleString(undefined,{maximumFractionDigits: 0}) : ''}} -->
+                        {{(item.total).toLocaleString(undefined,{maximumFractionDigits: 0})}}
                     </template>
                     <template v-slot:[`item.topic`]="{ item }">
                         <textarea @change="updateItem($event, item.itemId, 'topic')"
@@ -80,6 +91,10 @@ import {
     addShortListItems,
 	updateShortListItem,
 } from '../api';
+import Vue from 'vue'
+import excel from 'vue-excel-export'
+ 
+Vue.use(excel)
 
 export default {
     props:[
@@ -103,6 +118,18 @@ export default {
                 {text:'נושא',			value:'topic',		class: 'hdr-styles', align:'right', width: '10%'},
                 {text:'הערה',			value:'remarks',		class: 'hdr-styles', align:'right', width: '20%'},
 			],
+			xlsHeders: {
+				סעיף: "itemId",
+				תאור: "description",
+				יחידה: "unit",
+				מחיר: "price",
+				מתוכנן: "planned",
+				כמות: "amount",
+				אושר: "paid",
+				"סה-כ": "total",
+				נושא: "topic",
+				הערה: "remarks",
+			},
             dialog: false,
             additionalID : '99.00.????',
             additionalDescription : '',
@@ -124,6 +151,11 @@ export default {
                 const response = await getItemsID(params);
                 if (response.data) {
                     this.topicList = response.data.result;
+                    this.topicList.map(item =>{
+                      item.price = item.price * this.user.discount
+                      item.total = item.amount * item.price
+                      return {...item}
+                    }) 
                 }
             } catch (error) {
                 console.log(error);
