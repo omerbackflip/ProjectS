@@ -16,8 +16,6 @@
                         :title  = "header">   
                      <v-btn > <v-icon small>download</v-icon> </v-btn>
                     </export-excel>
-
-
                 </h2>
             </v-card-title>
             <v-card-text>
@@ -73,14 +71,14 @@
                 <v-btn small @click="addAdditional">add</v-btn>
                 </template>
             </v-card-text>
-                    	  <v-snackbar v-model="snackbar">
-      {{ snackBarText }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" snackBarText v-bind="attrs" @click="snackbar = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
+            <!-- <v-snackbar v-model="snackbar">
+                {{ snackBarText }}
+                <template v-slot:action="{ attrs }">
+                    <v-btn color="pink" snackBarText v-bind="attrs" @click="snackbar = false">
+                    Close
+                    </v-btn>
+            </template>
+            </v-snackbar> -->
         </v-card>
     </v-dialog>
 </template>
@@ -190,8 +188,9 @@ export default {
 					body.itemId = itemId;
 					body.userName = this.user.userName;
 					await updateShortListItem(body);
-            this.snackbar = true;
-            this.snackBarText = "Successfully updated item!";
+		            this.loadTopic();
+            // this.snackbar = true;
+            // this.snackBarText = "Successfully updated item!";
 				}
 			} catch (error) {
 				console.log(error);
