@@ -1,7 +1,7 @@
-root : npm install
+not needed  ---  root : npm install
 
-open front end command line
-just type "npm run serve"
+not needed  ---  open front end command line
+not needed  ---  just type "npm run serve"
 
 open backend command line
 just type "npm start"

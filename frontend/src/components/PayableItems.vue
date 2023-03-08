@@ -93,6 +93,9 @@
           <template v-slot:[`item.price`]="{ item }">
             {{ item.price ? item.price.toLocaleString() : "" }}
           </template>
+          <template v-slot:[`item.discount`]="{ item }">
+            {{ item.price ? (item.price * user.discount).toFixed().toLocaleString() : "" }}
+          </template>
           <template v-slot:[`item.description`]="{ item }" class="dir-rtl text-right">
             {{ item.description }}
           </template>
@@ -185,6 +188,12 @@ export default {
         {
           text: "PRICE",
           value: "price",
+          class: "hdr-styles-payable",
+          align: "right",
+        },
+        {
+          text: "DISCOUNT",
+          value: "discount",
           class: "hdr-styles-payable",
           align: "right",
         },
